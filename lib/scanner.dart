@@ -31,7 +31,6 @@ class Scanner {
   Scanner(this.source);
 
   List<Token> scanTokens() {
-    print(source.length);
     while (!isAtEnd()) {
       start = current;
       scanToken();
@@ -104,7 +103,9 @@ class Scanner {
         break;
       case '/':
         if (match('/')) {
-          while (peek() != '\n' && !isAtEnd()) advance();
+          while (peek() != '\n' && !isAtEnd()) {
+            advance();
+          }
         } else {
           addToken(TokenType.SLASH);
         }
@@ -176,7 +177,7 @@ class Scanner {
   }
 
   String peekNext() {
-    if (current + 1 >= source.length) return '0';
+    if (current + 1 >= source.length) return '\u0000';
     return source[current + 1];
   }
 
@@ -193,7 +194,7 @@ class Scanner {
   }
 
   String peek() {
-    if (isAtEnd()) return '0';
+    if (isAtEnd()) return '\u0000';
     return source[current];
   }
 
@@ -203,13 +204,11 @@ class Scanner {
 
   bool isAtEnd() {
     bool atEnd = current >= source.length;
-    print("at end is $current, ${source.length}, $atEnd");
     return atEnd;
   }
 
   String advance() {
     current++;
-    print("current is $current, ${source[current-1]}");
     return source[current - 1];
   }
 
