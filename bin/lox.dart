@@ -1,11 +1,18 @@
 import 'dart:io';
 // import 'dart:math';
 import "package:dax/error.dart";
+import 'package:dax/expr.dart';
+import 'package:dax/parser.dart';
 // import 'package:dax/cli.dart' as cli;
 import 'package:dax/scanner.dart';
+import 'package:dax/stmt.dart';
 import 'package:dax/token.dart';
+
+import 'ast_printer.dart';
+import 'interpreter.dart';
 // import 'package:path/path.dart';
 
+Interpreter interpreter = Interpreter();
 void main(List<String> arguments) {
   exitCode = 0;
   if (arguments.length > 1) {
@@ -24,6 +31,9 @@ void runFile(String path) {
   run(fileString);
   if (hadError) {
     exitCode = 65;
+  }
+  if (hadRuntimeError) {
+    exitCode = 70;
   }
 }
 
@@ -100,7 +110,17 @@ void run(String source) {
   Scanner scanner = Scanner(source);
 
   List<Token> tokens = scanner.scanTokens();
-  for (var token in tokens) {
-    stdout.writeln(token.toString());
+  // for (var token in tokens) {
+  //   stdout.writeln(token.toString());
+  // }
+  Parser parser = Parser(tokens);
+  // Expr? expression = parser.parse();
+  // if (expression == null) return;
+  // print("ast:" + AstPrinter().print(expression));
+  List<Stmt> statements = parser.parse();
+  for (Stmt stmt in statements) {
+    print("ast:" + AstPrinter().printStmt(stmt));
   }
+  if (hadError) return;
+  interpreter.interpret(statements);
 }

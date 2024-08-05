@@ -1,25 +1,44 @@
-import 'package:dax/expr.dart';
+import 'package:dax/expr.dart' as Expr;
+import 'package:dax/stmt.dart' as Stmt;
 import 'package:dax/token.dart';
 import 'package:dax/token_type.dart';
 
-
-class AstPrinter implements Visitor<String> {
-  String print(Expr expr) {
+class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
+  String print(Expr.Expr expr) {
     return expr.accept(this);
   }
 
+  String printStmt(Stmt.Stmt stmt) {
+    return stmt.accept(this);
+  }
+
   @override
-  String visitBinaryExpr(Binary expr) {
+  String visitWhileStmt(Stmt.While stmt) {
+    return parenthesize2("while", [stmt.condition, stmt.body]);
+  }
+
+  @override
+  String visitLogicalExpr(Expr.Logical expr) {
     return parenthesize(expr.operator.lexeme, [expr.left, expr.right]);
   }
 
   @override
-  String visitGroupingExpr(Grouping expr) {
+  String visitAssignExpr(Expr.Assign expr) {
+    return parenthesize2("=", [expr.name, expr.value]);
+  }
+
+  @override
+  String visitBinaryExpr(Expr.Binary expr) {
+    return parenthesize(expr.operator.lexeme, [expr.left, expr.right]);
+  }
+
+  @override
+  String visitGroupingExpr(Expr.Grouping expr) {
     return parenthesize("group", [expr.expression]);
   }
 
   @override
-  String visitLiteralExpr(Literal expr) {
+  String visitLiteralExpr(Expr.Literal expr) {
     if (expr.value == null) {
       return "nil";
     }
@@ -27,26 +46,94 @@ class AstPrinter implements Visitor<String> {
   }
 
   @override
-  String visitUnaryExpr(Unary expr) {
+  String visitUnaryExpr(Expr.Unary expr) {
     return parenthesize(expr.operator.lexeme, [expr.right]);
   }
 
-  String parenthesize(String name, List<Expr> exprs) {
+  @override
+  String visitVariableExpr(Expr.Variable expr) {
+    return expr.name.lexeme;
+  }
+
+  @override
+  String visitIfStmt(Stmt.If stmt) {
+    if (stmt.elseBranch == null) {
+      return parenthesize2("if", [stmt.condition, stmt.thenBranch]);
+    }
+    return parenthesize2(
+        "if", [stmt.condition, stmt.thenBranch, stmt.elseBranch]);
+  }
+
+  @override
+  String visitBlockStmt(Stmt.Block stmt) {
+    StringBuffer sb = StringBuffer();
+    sb.write("(block");
+    for (Stmt.Stmt statement in stmt.statements) {
+      sb.write(statement.accept(this));
+    }
+    sb.write(")");
+    return sb.toString();
+  }
+
+  @override
+  String visitExpressionStmt(Stmt.Expression stmt) {
+    return parenthesize(";", [stmt.expression]);
+  }
+
+  @override
+  String visitPrintStmt(Stmt.Print stmt) {
+    return parenthesize("print", [stmt.expression]);
+  }
+
+  @override
+  String visitVarStmt(Stmt.Var stmt) {
+    if (stmt.initializer == null) {
+      return parenthesize2("var", [stmt.name]);
+    }
+    return parenthesize2("var", [stmt.name, "=", stmt.initializer!]);
+  }
+
+  String parenthesize(String name, List<Expr.Expr> exprs) {
     StringBuffer sb = StringBuffer();
     sb.write("($name");
-    for (Expr expr in exprs) {
+    for (Expr.Expr expr in exprs) {
       sb.write(" ");
       sb.write(expr.accept(this));
     }
     sb.write(")");
     return sb.toString();
   }
+
+  String parenthesize2(String name, List<Object?> parts) {
+    StringBuffer sb = StringBuffer();
+    sb.write("($name");
+    transform(sb, parts);
+    sb.write(")");
+    return sb.toString();
+  }
+
+  void transform(StringBuffer sb, List<Object?> parts) {
+    for (Object? part in parts) {
+      sb.write(" ");
+      if (part is Expr.Expr) {
+        sb.write(part.accept(this));
+      } else if (part is Stmt.Stmt) {
+        sb.write(part.accept(this));
+      } else if (part is Token) {
+        sb.write(part.lexeme);
+      } else if (part is List) {
+        transform(sb, part as List<Object>);
+      } else {
+        sb.write(part.toString());
+      }
+    }
+  }
 }
 
 void main(List<String> args) {
-  Expr expression = Binary(
-      Unary(Token(TokenType.MINUS, "-", null, 1), Literal(123)),
+  Expr.Expr expression = Expr.Binary(
+      Expr.Unary(Token(TokenType.MINUS, "-", null, 1), Expr.Literal(123)),
       Token(TokenType.STAR, "*", null, 1),
-      Grouping(Literal(45.67)));
+      Expr.Grouping(Expr.Literal(45.67)));
   print(AstPrinter().print(expression));
 }
