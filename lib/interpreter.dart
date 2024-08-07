@@ -155,6 +155,15 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   }
 
   @override
+  Object visitArrayExpr(Expr.Array expr) {
+    List<Object?> elements = [];
+    for (Expr.Expr element in expr.elements) {
+      elements.add(evaluate(element));
+    }
+    return elements;
+  }
+
+  @override
   Object? visitGetExpr(Expr.Get expr) {
     Object? object = evaluate(expr.object);
     if (object is LoxInstance) {

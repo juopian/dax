@@ -12,6 +12,7 @@ void main(List<String> args) {
     "Assign   : Token name, Expr value",
     "Binary   : Expr left, Token operator, Expr right",
     "Call     : Expr callee, Token paren, List<Expr> arguments",
+    "Array    : List<Expr> elements",
     "Get      : Expr object, Token name",
     "Grouping : Expr expression",
     "Literal  : Object? value",

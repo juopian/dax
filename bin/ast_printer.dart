@@ -58,6 +58,20 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
   }
 
   @override
+  String visitArrayExpr(Expr.Array expr) {
+    StringBuffer sb = StringBuffer();
+    sb.write("[");
+    for (int i = 0; i < expr.elements.length; i++) {
+      if (i > 0) {
+        sb.write(", ");
+      }
+      sb.write(expr.elements[i].accept(this));
+    }
+    sb.write("]");
+    return sb.toString();
+  }
+
+  @override
   String visitGroupingExpr(Expr.Grouping expr) {
     return parenthesize("group", [expr.expression]);
   }

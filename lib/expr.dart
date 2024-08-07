@@ -1,4 +1,4 @@
-import 'token.dart';
+import 'package:dax/token.dart';
 
 abstract class Expr {
   T accept<T>(Visitor<T> visitor);
@@ -28,6 +28,13 @@ class Call extends Expr {
   Call(this.callee, this.paren, this.arguments, );
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitCallExpr(this);
+}
+
+class Array extends Expr {
+  final List<Expr> elements;
+  Array(this.elements, );
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitArrayExpr(this);
 }
 
 class Get extends Expr {
@@ -104,6 +111,7 @@ abstract class Visitor<T> {
   T visitAssignExpr(Assign expr);
   T visitBinaryExpr(Binary expr);
   T visitCallExpr(Call expr);
+  T visitArrayExpr(Array expr);
   T visitGetExpr(Get expr);
   T visitGroupingExpr(Grouping expr);
   T visitLiteralExpr(Literal expr);

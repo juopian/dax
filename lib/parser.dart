@@ -293,7 +293,7 @@ class Parser {
   }
 
   Expr call() {
-    Expr expr = primary();
+    Expr expr = array(); //change to array
     while (true) {
       if (match([TokenType.LEFT_PAREN])) {
         expr = finishCall(expr);
@@ -322,6 +322,20 @@ class Parser {
     Token paren = consume(TokenType.RIGHT_PAREN, "Expect ')' after arguments.");
 
     return Call(callee, paren, arguments);
+  }
+
+  Expr array() {
+    if (match([TokenType.LEFT_BRACKET])) {
+      List<Expr> elements = [];
+      if (!check(TokenType.RIGHT_BRACKET)) {
+        do {
+          elements.add(expression());
+        } while (match([TokenType.COMMA]));
+      }
+      consume(TokenType.RIGHT_BRACKET, 'Expect \']\' after array elements.');
+      return Array(elements);
+    }
+    return primary();
   }
 
   Expr primary() {
