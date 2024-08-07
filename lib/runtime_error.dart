@@ -1,7 +1,7 @@
 
-import 'package:dax/token.dart';
+import 'token.dart';
 
-class RuntimeError extends Error {
+class RuntimeError implements Exception {
   final Token token;
   final String message;
   RuntimeError(this.token, this.message);

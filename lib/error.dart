@@ -1,8 +1,8 @@
 import 'dart:io';
 
-import 'package:dax/runtime_error.dart';
-import 'package:dax/token.dart';
-import 'package:dax/token_type.dart';
+import 'runtime_error.dart';
+import 'token.dart';
+import 'token_type.dart';
 
 bool hadError = false;
 bool hadRuntimeError = false; 

@@ -13,6 +13,31 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
   }
 
   @override
+  String visitSuperExpr(Expr.Super expr) {
+    return parenthesize2("super", [expr.method]);
+  }
+
+  @override
+  String visitThisExpr(Expr.This expr) {
+    return "this";
+  }
+
+  @override
+  String visitGetExpr(Expr.Get expr) {
+    return parenthesize2(".", [expr.object, expr.name.lexeme]);
+  }
+
+  @override
+  String visitSetExpr(Expr.Set expr) {
+    return parenthesize2("=", [expr.object, expr.name.lexeme, expr.value]);
+  }
+
+  @override
+  String visitCallExpr(Expr.Call expr) {
+    return parenthesize2("call", [expr.callee, expr.arguments]);
+  }
+
+  @override
   String visitWhileStmt(Stmt.While stmt) {
     return parenthesize2("while", [stmt.condition, stmt.body]);
   }
@@ -92,6 +117,34 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     }
     return parenthesize2("var", [stmt.name, "=", stmt.initializer!]);
   }
+
+  @override
+  String visitFunctionalStmt(Stmt.Functional stmt) {
+    StringBuffer sb = StringBuffer();
+    sb.write("(fun ");
+    sb.write(stmt.name.lexeme);
+    sb.write(")");
+    return sb.toString();
+  }
+
+  @override
+  String visitClassStmt(Stmt.Class stmt) {
+    StringBuffer sb = StringBuffer();
+    sb.write("(class ");
+    sb.write(stmt.name.lexeme);
+    sb.write(")");
+    return sb.toString();
+  }
+
+
+  @override
+  String visitReturnStmt(Stmt.Return stmt) {
+    if (stmt.value == null) {
+      return "(return))";
+    }
+    return parenthesize("return", [stmt.value!]);
+  }
+
 
   String parenthesize(String name, List<Expr.Expr> exprs) {
     StringBuffer sb = StringBuffer();

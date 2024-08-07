@@ -12,11 +12,29 @@ class Block extends Stmt {
   T accept<T>(Visitor<T> visitor) => visitor.visitBlockStmt(this);
 }
 
+class Class extends Stmt {
+  final Token name;
+  final Variable? superclass;
+  final List<Functional> methods;
+  Class(this.name, this.superclass, this.methods, );
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitClassStmt(this);
+}
+
 class Expression extends Stmt {
   final Expr expression;
   Expression(this.expression, );
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitExpressionStmt(this);
+}
+
+class Functional extends Stmt {
+  final Token name;
+  final List<Token> params;
+  final List<Stmt> body;
+  Functional(this.name, this.params, this.body, );
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitFunctionalStmt(this);
 }
 
 class If extends Stmt {
@@ -33,6 +51,14 @@ class Print extends Stmt {
   Print(this.expression, );
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitPrintStmt(this);
+}
+
+class Return extends Stmt {
+  final Token keyword;
+  final Expr? value;
+  Return(this.keyword, this.value, );
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitReturnStmt(this);
 }
 
 class Var extends Stmt {
@@ -53,9 +79,12 @@ class While extends Stmt {
 
 abstract class Visitor<T> {
   T visitBlockStmt(Block stmt);
+  T visitClassStmt(Class stmt);
   T visitExpressionStmt(Expression stmt);
+  T visitFunctionalStmt(Functional stmt);
   T visitIfStmt(If stmt);
   T visitPrintStmt(Print stmt);
+  T visitReturnStmt(Return stmt);
   T visitVarStmt(Var stmt);
   T visitWhileStmt(While stmt);
 }

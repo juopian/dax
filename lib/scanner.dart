@@ -1,6 +1,6 @@
-import "package:dax/token_type.dart";
-import 'package:dax/token.dart';
-import 'package:dax/error.dart';
+import "token_type.dart";
+import 'token.dart';
+import 'error.dart';
 
 class Scanner {
   final String source;

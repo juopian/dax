@@ -1,4 +1,4 @@
-import 'package:dax/token_type.dart';
+import 'token_type.dart';
 
 class Token {
   final TokenType type;

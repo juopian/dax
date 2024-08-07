@@ -1,9 +1,8 @@
-import 'package:dax/error.dart';
-import 'package:dax/expr.dart';
-import 'package:dax/stmt.dart';
-import 'package:dax/token.dart';
-
-import 'package:dax/token_type.dart';
+import 'error.dart';
+import 'expr.dart';
+import 'stmt.dart';
+import 'token.dart';
+import 'token_type.dart';
 
 class ParseError implements Exception {}
 
@@ -34,14 +33,55 @@ class Parser {
 
   Stmt? declaration() {
     try {
-      // if (match([TokenType.CLASS])) return classDeclaration();
-      // if (match([TokenType.FUN])) return function("function");
+      if (match([TokenType.CLASS])) return classDeclaration();
+      if (match([TokenType.FUN])) return function("function");
       if (match([TokenType.VAR])) return varDeclaration();
       return statement();
     } on ParseError {
       synchronize();
       return null;
     }
+  }
+
+  Stmt classDeclaration() {
+    Token name = consume(TokenType.IDENTIFIER, "Expect class name.");
+
+    Variable? superclass;
+    if (match([TokenType.LESS])) {
+      consume(TokenType.IDENTIFIER, "Expect superclass name.");
+      superclass = Variable(previous());
+    }
+
+    consume(TokenType.LEFT_BRACE, "Expect '{' before class body.");
+
+    List<Functional> methods = [];
+    while (!check(TokenType.RIGHT_BRACE) && !isAtEnd()) {
+      methods.add(function("method"));
+    }
+
+    consume(TokenType.RIGHT_BRACE, "Expect '}' after class body.");
+
+    return Class(name, superclass, methods);
+  }
+
+  Functional function(String kind) {
+    Token name = consume(TokenType.IDENTIFIER, "Expect $kind name.");
+    consume(TokenType.LEFT_PAREN, "Expect '(' after $kind name.");
+    List<Token> parameters = [];
+    if (!check(TokenType.RIGHT_PAREN)) {
+      do {
+        if (parameters.length >= 255) {
+          error(peek(), "Can't have more than 255 parameters.");
+        }
+        parameters.add(
+          consume(TokenType.IDENTIFIER, "Expect parameter name."),
+        );
+      } while (match([TokenType.COMMA]));
+    }
+    consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+    consume(TokenType.LEFT_BRACE, "Expect '{' before $kind body.");
+    List<Stmt> body = block();
+    return Functional(name, parameters, body);
   }
 
   Stmt varDeclaration() {
@@ -62,7 +102,7 @@ class Parser {
     if (match([TokenType.FOR])) return forStatement();
     if (match([TokenType.IF])) return ifStatement();
     if (match([TokenType.PRINT])) return printStatement();
-    // if (match([TokenType.RETURN])) return returnStatement();
+    if (match([TokenType.RETURN])) return returnStatement();
     if (match([TokenType.WHILE])) return whileStatement();
     if (match([TokenType.LEFT_BRACE])) return Block(block());
     return expressionStatement();
@@ -114,6 +154,16 @@ class Parser {
     return If(condition, thenBranch, elseBranch);
   }
 
+  Stmt returnStatement() {
+    Token keyword = previous();
+    Expr? value;
+    if (!check(TokenType.SEMICOLON)) {
+      value = expression();
+    }
+    consume(TokenType.SEMICOLON, "Expect ';' after return value.");
+    return Return(keyword, value);
+  }
+
   Stmt whileStatement() {
     consume(TokenType.LEFT_PAREN, "Expect '(' after 'while'.");
     Expr condition = expression();
@@ -158,6 +208,9 @@ class Parser {
       if (expr is Variable) {
         Token name = expr.name;
         return Assign(name, value);
+      } else if (expr is Get) {
+        Get _get = expr;
+        return Set(_get.object, _get.name, value);
       }
       throw error(equals, "Invalid assignment target.");
     }
@@ -235,7 +288,40 @@ class Parser {
       Expr right = unary();
       return Unary(operator, right);
     }
-    return primary();
+    // return primary();
+    return call();
+  }
+
+  Expr call() {
+    Expr expr = primary();
+    while (true) {
+      if (match([TokenType.LEFT_PAREN])) {
+        expr = finishCall(expr);
+      } else if (match([TokenType.DOT])) {
+        Token name =
+            consume(TokenType.IDENTIFIER, "Expect property name after '.'.");
+        expr = Get(expr, name);
+      } else {
+        break;
+      }
+    }
+    return expr;
+  }
+
+  Expr finishCall(Expr callee) {
+    List<Expr> arguments = [];
+    if (!check(TokenType.RIGHT_PAREN)) {
+      do {
+        if (arguments.length >= 255) {
+          error(peek(), "Can't have more than 255 arguments.");
+        }
+        arguments.add(expression());
+      } while (match([TokenType.COMMA]));
+    }
+
+    Token paren = consume(TokenType.RIGHT_PAREN, "Expect ')' after arguments.");
+
+    return Call(callee, paren, arguments);
   }
 
   Expr primary() {
@@ -245,6 +331,14 @@ class Parser {
     if (match([TokenType.NUMBER, TokenType.STRING])) {
       return Literal(previous().literal);
     }
+    if (match([TokenType.SUPER])) {
+      Token keyword = previous();
+      consume(TokenType.DOT, "Expect '.' after 'SUPER'.");
+      Token method =
+          consume(TokenType.IDENTIFIER, "Expect superclass method name.");
+      return Super(keyword, method);
+    }
+    if (match([TokenType.THIS])) return This(previous());
     if (match([TokenType.IDENTIFIER])) {
       return Variable(previous());
     }

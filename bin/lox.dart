@@ -1,19 +1,21 @@
 import 'dart:io';
 // import 'dart:math';
 import "package:dax/error.dart";
-import 'package:dax/expr.dart';
+// import 'package:dax/expr.dart';
 import 'package:dax/parser.dart';
+import 'package:dax/resolver.dart';
 // import 'package:dax/cli.dart' as cli;
 import 'package:dax/scanner.dart';
 import 'package:dax/stmt.dart';
 import 'package:dax/token.dart';
 
 import 'ast_printer.dart';
-import 'interpreter.dart';
+import 'package:dax/interpreter.dart';
 // import 'package:path/path.dart';
 
-Interpreter interpreter = Interpreter();
+late Interpreter interpreter;
 void main(List<String> arguments) {
+  interpreter = Interpreter(); // 如果不引用不会执行构造函数
   exitCode = 0;
   if (arguments.length > 1) {
     print('Usage: dlox [script].\n');
@@ -122,5 +124,7 @@ void run(String source) {
     print("ast:" + AstPrinter().printStmt(stmt));
   }
   if (hadError) return;
+  Resolver resolver = Resolver(interpreter);
+  resolver.resolve(statements);
   interpreter.interpret(statements);
 }
