@@ -1,5 +1,5 @@
-import 'package:dax/token.dart';
-import 'package:dax/expr.dart';
+import 'token.dart';
+import 'expr.dart';
 
 abstract class Stmt {
   T accept<T>(Visitor<T> visitor);

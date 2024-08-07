@@ -10,40 +10,18 @@ import 'stmt.dart' as Stmt;
 import 'runtime_error.dart';
 import 'token.dart';
 import 'token_type.dart';
-import 'widget.dart';
-// import 'package:flutter/material.dart';
-
-class ClockFunction implements LoxCallable {
-  @override
-  int arity() {
-    return 0;
-  }
-
-  @override
-  Object? call(Interpreter interpreter, List<Object?> arguments) {
-    return DateTime.now().millisecondsSinceEpoch / 1000.0;
-  }
-
-  @override
-  String toString() {
-    return "<native fn>";
-  }
-}
+import 'global_function.dart';
 
 class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   final Environment globals = Environment(null);
   final Map<Expr.Expr, int> locals = {};
   late Environment environment;
-  // late Widget renderWidget;
+  late Object renderWidget;
 
   Interpreter() {
-    print("init Interpreter");
     environment = globals;
     globals.define("clock", ClockFunction());
     globals.define("String", StringFunction());
-    // globals.define("Text", TextFunction());
-    // globals.define("Column", ColumnFunction());
-    // globals.define("TextButton", TextButtonFunction());
   }
 
   void registerFunction(String name, LoxCallable function) {
@@ -68,9 +46,9 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   //   }
   // }
 
-  // Widget getRenderedWidget() {
-  //   return renderWidget;
-  // }
+  Object getRenderedWidget() {
+    return renderWidget;
+  }
 
   void interpret(List<Stmt.Stmt> statements) {
     try {
@@ -169,9 +147,9 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     }
     var result = function.call(this, arguments);
     if (function is LoxFunction) {
-      // if (function.declaration.name.lexeme == "build" && result is Widget) {
-      //   renderWidget = result;
-      // }
+      if (function.declaration.name.lexeme == "build") {
+        renderWidget = result!;
+      }
     }
     return result;
   }
@@ -218,8 +196,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     LoxInstance object = environment.getAt(distance - 1, "this") as LoxInstance;
     LoxFunction? method = superclass.findMethod(expr.method.lexeme);
     if (method == null) {
-      throw RuntimeError(
-          expr.method, "Undefined property '${expr.method.lexeme}'.");
+      throw RuntimeError(expr.method, "Undefined property '${expr.method.lexeme}'.");
     }
     return method.bind(object);
   }
@@ -384,7 +361,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     environment.define(stmt.name.lexeme, null);
     // LoxClass klass = LoxClass(stmt.name.lexeme);
 
-    if (stmt.superclass != null) {
+    if(stmt.superclass != null) {
       environment = Environment(environment);
       environment.define("super", superclass);
     }
@@ -416,4 +393,4 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       this.environment = previous;
     }
   }
-}
+}// 

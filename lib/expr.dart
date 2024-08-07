@@ -1,4 +1,4 @@
-import 'package:dax/token.dart';
+import 'token.dart';
 
 abstract class Expr {
   T accept<T>(Visitor<T> visitor);

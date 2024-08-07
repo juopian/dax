@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:cli/dax.dart';
+import 'package:dax/dax.dart';
 
 void main() {
   runApp(const MyApp());
@@ -51,7 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   fun increase(){
      i = i + 1;
-     print i;
+     update();
   }
 
   fun build() {
@@ -67,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Resolver resolver = Resolver(interpreter);
     resolver.resolve(statements);
     interpreter.interpret(statements);
-    renderedWidget = interpreter.getRenderedWidget();
+    renderedWidget = interpreter.getRenderedWidget() as Widget;
   }
 
   void updateUI() {
@@ -79,6 +79,20 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void registerGlobalFunctions() {
     interpreter.registerFunction(
+      "Text",
+      GenericLoxCallable(() => 1,
+          (Interpreter interpreter, List<Object?> arguments) {
+        return Text(arguments.first as String);
+      }),
+    );
+    interpreter.registerFunction(
+      "Column",
+      GenericLoxCallable(() => 2,
+          (Interpreter interpreter, List<Object?> arguments) {
+        return Column(children: arguments.cast<Widget>());
+      }),
+    );
+    interpreter.registerFunction(
         "TextButton",
         GenericLoxCallable(() => 2,
             (Interpreter interpreter, List<Object?> arguments) {
@@ -86,8 +100,13 @@ class _MyHomePageState extends State<MyHomePage> {
               child: arguments.first as Widget,
               onPressed: () {
                 (arguments.last as LoxFunction).call(interpreter, arguments);
-                updateUI();
               });
+        }));
+    interpreter.registerFunction(
+        "update",
+        GenericLoxCallable(() => 0,
+            (Interpreter interpreter, List<Object?> arguments) {
+          updateUI();
         }));
   }
 

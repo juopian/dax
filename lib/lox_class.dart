@@ -1,4 +1,4 @@
-import 'package:dax/interpreter.dart';
+import 'interpreter.dart';
 
 import 'lox_callable.dart';
 import 'lox_function.dart';
