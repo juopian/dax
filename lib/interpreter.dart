@@ -155,6 +155,15 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   }
 
   @override
+  Object visitDictExpr(Expr.Dict expr) {
+    Map<String, Object?> entries = {};
+    expr.entries.forEach((key, value) {
+      entries[key] = evaluate(value);
+    });
+    return entries;
+  }
+
+  @override
   Object visitArrayExpr(Expr.Array expr) {
     List<Object?> elements = [];
     for (Expr.Expr element in expr.elements) {
@@ -166,6 +175,9 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   @override
   Object? visitGetExpr(Expr.Get expr) {
     Object? object = evaluate(expr.object);
+    if (object is Map) {
+      return object[expr.name.lexeme];
+    }
     if (object is LoxInstance) {
       return object.get(expr.name); // get方法绑定了实例
     }
@@ -205,7 +217,8 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     LoxInstance object = environment.getAt(distance - 1, "this") as LoxInstance;
     LoxFunction? method = superclass.findMethod(expr.method.lexeme);
     if (method == null) {
-      throw RuntimeError(expr.method, "Undefined property '${expr.method.lexeme}'.");
+      throw RuntimeError(
+          expr.method, "Undefined property '${expr.method.lexeme}'.");
     }
     return method.bind(object);
   }
@@ -213,6 +226,21 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   @override
   Object? visitThisExpr(Expr.This expr) {
     return lookUpVariable(expr.keyword, expr);
+  }
+
+  @override
+  Object? visitMappingExpr(Expr.Mapping expr) {
+    Object? objects = evaluate(expr.callee);
+    if (objects is List<Object?>) {
+      List<Object?> results = [];
+      LoxFunction mapFun = LoxFunction(expr.lambda, environment, false);
+      for (var i in objects) {
+        var result = mapFun.call(this, [i]);
+        results.add(result);
+      }
+      return results;
+    }
+    throw RuntimeError(expr.name, "Only Array have mapping.");
   }
 
   @override
@@ -370,7 +398,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     environment.define(stmt.name.lexeme, null);
     // LoxClass klass = LoxClass(stmt.name.lexeme);
 
-    if(stmt.superclass != null) {
+    if (stmt.superclass != null) {
       environment = Environment(environment);
       environment.define("super", superclass);
     }
@@ -402,4 +430,4 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       this.environment = previous;
     }
   }
-}// 
+}//     

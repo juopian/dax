@@ -293,19 +293,45 @@ class Parser {
   }
 
   Expr call() {
-    Expr expr = array(); //change to array
+    Expr expr = arrayOrMap(); //change to array
     while (true) {
       if (match([TokenType.LEFT_PAREN])) {
         expr = finishCall(expr);
       } else if (match([TokenType.DOT])) {
         Token name =
             consume(TokenType.IDENTIFIER, "Expect property name after '.'.");
-        expr = Get(expr, name);
+        if (name.lexeme == 'map') {
+          expr = mappingExpr(expr, name);
+        } else {
+          expr = Get(expr, name);
+        }
       } else {
         break;
       }
     }
     return expr;
+  }
+
+  Expr mappingExpr(Expr callee, Token name) {
+    consume(TokenType.LEFT_PAREN, "Expect '(' after 'map'.");
+    consume(TokenType.LEFT_PAREN, "Expect '(' after map.");
+    List<Token> parameters = [];
+    if (!check(TokenType.RIGHT_PAREN)) {
+      do {
+        if (parameters.length >= 2) {
+          error(peek(), "Can't have more than 2 parameters.");
+        }
+        parameters.add(
+          consume(TokenType.IDENTIFIER, "Expect parameter name."),
+        );
+      } while (match([TokenType.COMMA]));
+    }
+    consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+    consume(TokenType.LEFT_BRACE, "Expect '{' before map body.");
+    List<Stmt> body = block();
+    consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+    Functional lambda = Functional(name, parameters, body);
+    return Mapping(callee, name, lambda);
   }
 
   Expr finishCall(Expr callee) {
@@ -315,7 +341,15 @@ class Parser {
         if (arguments.length >= 255) {
           error(peek(), "Can't have more than 255 arguments.");
         }
-        arguments.add(expression());
+        // 检测是否名称参数
+        if (peekNext().type == TokenType.COLON) {
+          Token name = consume(TokenType.IDENTIFIER, "Expect argument name before :.");
+          consume(TokenType.COLON, "Expect : after $name.");
+          Expr expr = expression();
+          arguments.add(Dict({name.lexeme: expr}));
+        } else {
+          arguments.add(expression());
+        }
       } while (match([TokenType.COMMA]));
     }
 
@@ -324,7 +358,7 @@ class Parser {
     return Call(callee, paren, arguments);
   }
 
-  Expr array() {
+  Expr arrayOrMap() {
     if (match([TokenType.LEFT_BRACKET])) {
       List<Expr> elements = [];
       if (!check(TokenType.RIGHT_BRACKET)) {
@@ -332,8 +366,19 @@ class Parser {
           elements.add(expression());
         } while (match([TokenType.COMMA]));
       }
-      consume(TokenType.RIGHT_BRACKET, 'Expect \']\' after array elements.');
+      consume(TokenType.RIGHT_BRACKET, "Expect ']' after array elements.");
       return Array(elements);
+    } else if (match([TokenType.LEFT_BRACE])) {
+      Map<String, Expr> entries = {};
+      if (!check(TokenType.RIGHT_BRACE)) {
+        do {
+          Token key = consume(TokenType.STRING, 'Expect key.');
+          consume(TokenType.COLON, "Expect ':' after dictionary key.");
+          entries['${key.literal}'] = expression();
+        } while (match([TokenType.COMMA]));
+      }
+      consume(TokenType.RIGHT_BRACE, "Expect '}' after array elements.");
+      return Dict(entries);
     }
     return primary();
   }
@@ -345,6 +390,7 @@ class Parser {
     if (match([TokenType.NUMBER, TokenType.STRING])) {
       return Literal(previous().literal);
     }
+
     if (match([TokenType.SUPER])) {
       Token keyword = previous();
       consume(TokenType.DOT, "Expect '.' after 'SUPER'.");
@@ -353,9 +399,11 @@ class Parser {
       return Super(keyword, method);
     }
     if (match([TokenType.THIS])) return This(previous());
+
     if (match([TokenType.IDENTIFIER])) {
       return Variable(previous());
     }
+
     if (match([TokenType.LEFT_PAREN])) {
       Expr expr = expression();
       consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");
@@ -397,6 +445,11 @@ class Parser {
 
   Token peek() {
     return tokens[current];
+  }
+
+  Token peekNext() {
+    if (current + 1 >= tokens.length) return tokens.last;
+    return tokens[current + 1];
   }
 
   Token previous() {

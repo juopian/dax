@@ -4,4 +4,9 @@ fun text() {
   return "Hello, world!";
 }
 
+fun add(x, y) {
+  return x + y;
+}
+
 print text();
+print add(100, 200);

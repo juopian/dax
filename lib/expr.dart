@@ -1,4 +1,5 @@
 import 'package:dax/token.dart';
+import 'package:dax/stmt.dart';
 
 abstract class Expr {
   T accept<T>(Visitor<T> visitor);
@@ -35,6 +36,22 @@ class Array extends Expr {
   Array(this.elements, );
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitArrayExpr(this);
+}
+
+class Dict extends Expr {
+  final Map<String,Expr> entries;
+  Dict(this.entries, );
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitDictExpr(this);
+}
+
+class Mapping extends Expr {
+  final Expr callee;
+  final Token name;
+  final Functional lambda;
+  Mapping(this.callee, this.name, this.lambda, );
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitMappingExpr(this);
 }
 
 class Get extends Expr {
@@ -112,6 +129,8 @@ abstract class Visitor<T> {
   T visitBinaryExpr(Binary expr);
   T visitCallExpr(Call expr);
   T visitArrayExpr(Array expr);
+  T visitDictExpr(Dict expr);
+  T visitMappingExpr(Mapping expr);
   T visitGetExpr(Get expr);
   T visitGroupingExpr(Grouping expr);
   T visitLiteralExpr(Literal expr);

@@ -1,3 +1,4 @@
+import 'package:dax/runtime_error.dart';
 import 'package:flutter/material.dart';
 import 'package:dax/dax.dart';
 
@@ -29,24 +30,17 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-  int _counter = 0;
 
   bool loaded = false;
   final Interpreter interpreter = Interpreter();
   late Widget renderedWidget;
 
-  void _incrementCounter() {
-    setState(() {
-      _counter++;
-    });
-  }
 
   @override
   void initState() {
     super.initState();
     registerGlobalFunctions();
     Scanner scanner = Scanner('''
-  print("Hello, World!");
   var i = 0;
 
   fun increase(){
@@ -55,7 +49,11 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   fun build() {
-    return Column(Text("you are hero:" + String(i)),TextButton(Text("click me"), increase));
+    return Column(
+      children: [
+        Text("You are my hero: " + String(i)),
+        TextButton(child:Text("click me"), onPressed: increase)]
+      );
   }
 
   build();
@@ -77,6 +75,15 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
+  Object parseArguments(List<Object?> arguments, String name) {
+    for (Object? argument in arguments) {
+      if (argument is Map && argument.containsKey(name)) {
+        return argument[name];
+      }
+    }
+    throw "Argument not found: $name";
+  }
+
   void registerGlobalFunctions() {
     interpreter.registerFunction(
       "Text",
@@ -87,9 +94,12 @@ class _MyHomePageState extends State<MyHomePage> {
     );
     interpreter.registerFunction(
       "Column",
-      GenericLoxCallable(() => 2,
+      GenericLoxCallable(() => 1,
           (Interpreter interpreter, List<Object?> arguments) {
-        return Column(children: arguments.cast<Widget>());
+        if (arguments.first is Map) {}
+        return Column(
+            children:
+                (parseArguments(arguments, 'children') as List).cast<Widget>());
       }),
     );
     interpreter.registerFunction(
@@ -97,9 +107,10 @@ class _MyHomePageState extends State<MyHomePage> {
         GenericLoxCallable(() => 2,
             (Interpreter interpreter, List<Object?> arguments) {
           return TextButton(
-              child: arguments.first as Widget,
+              child: parseArguments(arguments, 'child') as Widget,
               onPressed: () {
-                (arguments.last as LoxFunction).call(interpreter, arguments);
+                (parseArguments(arguments, 'onPressed') as LoxFunction)
+                    .call(interpreter, arguments);
               });
         }));
     interpreter.registerFunction(
@@ -121,18 +132,9 @@ class _MyHomePageState extends State<MyHomePage> {
           mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             renderedWidget,
-            Text(
-              '$_counter',
-              style: Theme.of(context).textTheme.headline4,
-            ),
           ],
         ),
       ),
-      floatingActionButton: FloatingActionButton(
-        onPressed: _incrementCounter,
-        tooltip: 'Increment',
-        child: const Icon(Icons.add),
-      ), // This trailing comma makes auto-formatting nicer for build methods.
     );
   }
 }

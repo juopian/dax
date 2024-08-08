@@ -13,6 +13,11 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
   }
 
   @override
+  String visitMappingExpr(Expr.Mapping expr) {
+    return parenthesize2("map", [expr.callee, expr.name, expr.lambda]);
+  }
+
+  @override
   String visitSuperExpr(Expr.Super expr) {
     return parenthesize2("super", [expr.method]);
   }
@@ -55,6 +60,24 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
   @override
   String visitBinaryExpr(Expr.Binary expr) {
     return parenthesize(expr.operator.lexeme, [expr.left, expr.right]);
+  }
+
+  @override
+  String visitDictExpr(Expr.Dict expr) {
+    StringBuffer sb = StringBuffer();
+    sb.write("{");
+    int i = 0;
+    for (var entry in expr.entries.entries) {
+      if (i > 0) {
+        sb.write(", ");
+      }
+      sb.write(entry.key);
+      sb.write(": ");
+      sb.write(entry.value.accept(this));
+      i++;
+    }
+    sb.write("}");
+    return sb.toString(); 
   }
 
   @override

@@ -1,0 +1,10 @@
+var a = [1, 2, 3];
+var b = a.map((x) { return x * 2; });
+print a;
+print b;
+
+var c = ["a" , "b" , "c"];
+var d = c.map((x) { return x + ">>"; });
+
+print c;
+print d;

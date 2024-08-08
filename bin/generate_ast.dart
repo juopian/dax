@@ -13,6 +13,8 @@ void main(List<String> args) {
     "Binary   : Expr left, Token operator, Expr right",
     "Call     : Expr callee, Token paren, List<Expr> arguments",
     "Array    : List<Expr> elements",
+    "Dict     : Map<String,Expr> entries",
+    "Mapping  : Expr callee, Token name, Functional lambda",
     "Get      : Expr object, Token name",
     "Grouping : Expr expression",
     "Literal  : Object? value",
@@ -28,7 +30,7 @@ void main(List<String> args) {
     "Block      : List<Stmt> statements",
     "Class      : Token name, Variable? superclass, List<Functional> methods",
     "Expression : Expr expression",
-    "Functional   : Token name, List<Token> params, List<Stmt> body",
+    "Functional : Token name, List<Token> params, List<Stmt> body",
     "If         : Expr condition, Stmt thenBranch, Stmt? elseBranch",
     "Print      : Expr expression",
     "Return     : Token keyword, Expr? value",
@@ -44,6 +46,8 @@ void defineAst(String outputDir, String baseName, List<String> types) {
   sink.writeln("import 'package:dax/token.dart';");
   if (baseName == 'Stmt') {
     sink.writeln("import 'package:dax/expr.dart';");
+  } else {
+    sink.writeln("import 'package:dax/stmt.dart';");
   }
   sink.writeln('''
 

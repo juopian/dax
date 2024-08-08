@@ -23,6 +23,14 @@ class LoxFunction implements LoxCallable {
 
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments) {
+    /*
+      fun add(x, y) {
+        return x + y;
+      }
+      add(1,2);
+      add(x:1, y:2);
+      add(y:1, x:2);
+    */
     Environment environment = Environment(closure);
     for (int i = 0; i < declaration.params.length; i++) {
       environment.define(declaration.params[i].lexeme, arguments[i]);

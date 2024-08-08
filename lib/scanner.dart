@@ -61,6 +61,9 @@ class Scanner {
       case '}':
         addToken(TokenType.RIGHT_BRACE);
         break;
+      case ':':
+        addToken(TokenType.COLON);
+        break;
       case ',':
         addToken(TokenType.COMMA);
         break;

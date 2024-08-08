@@ -194,6 +194,22 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
   }
 
   @override
+  void visitDictExpr(Expr.Dict expr) {
+    for (MapEntry<String,Expr.Expr> entry in expr.entries.entries) {
+      resolveExpr(entry.value);
+    }
+    return;
+  }
+
+  @override
+  void visitMappingExpr(Expr.Mapping expr) {
+    resolveExpr(expr.callee);
+    resolveFunction(expr.lambda, FunctionType.FUNCTION);
+    return;
+  }
+
+
+  @override
   void visitCallExpr(Expr.Call expr) {
     resolveExpr(expr.callee);
 
