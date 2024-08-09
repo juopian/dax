@@ -181,6 +181,9 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     if (object is LoxInstance) {
       return object.get(expr.name); // get方法绑定了实例
     }
+    if(expr.name.lexeme == "toString") {
+      return object.toString();
+    }
     throw RuntimeError(expr.name, "Only instances have properties.");
   }
 

@@ -1,0 +1,3 @@
+var a = "汉字";
+
+print a;

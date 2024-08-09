@@ -49,15 +49,31 @@ class _MyHomePageState extends State<MyHomePage> {
      update();
   }
 
+  fun item(i) {
+    return Text("位置: \${i.x}" );
+  }
+
+  fun mp(i) {
+    return i.x;
+  }
+
+  print arr.map(mp);
+
   fun build() {
     return Column(
       children: [
         Column(children: [
           Text("Hello, world!") 
         ]),
-        Column(children: arr.map((i){ return Text("Item" + str(i.x)); })),
+        Column(
+          children: arr.map(item)
+        ),
         Text("You are my hero: " + str(i)),
-        TextButton(child:Text("click me"), onPressed: increase)]
+        TextButton(
+          child:Text("click me"), 
+          onPressed: increase
+          )
+        ]
       );
   }
 

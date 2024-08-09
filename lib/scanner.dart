@@ -150,6 +150,7 @@ class Scanner {
     Token previous = tokens.last;
     return (previous.type == TokenType.EQUAL ||
             previous.type == TokenType.LEFT_PAREN) ||
+        previous.type == TokenType.COLON ||
         previous.type == TokenType.MINUS ||
         previous.type == TokenType.PLUS ||
         previous.type == TokenType.STAR ||
@@ -170,9 +171,41 @@ class Scanner {
   }
 
   void string() {
+    bool interplote = false;
     while (peek() != '"' && !isAtEnd()) {
       if (peek() == '\n') line++;
-      advance();
+      if (peek() == '\$') {
+        advance();
+        if (peek() == '{') {
+          // print("start : $start, current: $current");
+          if (current - start > 2) {
+            if (interplote == true) {
+              addToken(TokenType.PLUS);
+            }
+            addToken1(
+                TokenType.STRING, source.substring(start + 1, current - 1));
+            addToken(TokenType.PLUS);
+          }
+          interplote = true;
+          addToken(TokenType.LEFT_PAREN);
+          advance();
+          while (peek() != '}' && !isAtEnd()) {
+            start = current;
+            scanToken();
+          }
+          if (peek() == '}') {
+            addToken(TokenType.RIGHT_PAREN);
+            addToken(TokenType.DOT);
+            addToken2(TokenType.IDENTIFIER, "toString");
+            start = current;
+            advance();
+          } else {
+            error(line, "Unterminated expression in string interpolation.");
+          }
+        }
+      } else {
+        advance();
+      }
     }
 
     if (isAtEnd()) {
@@ -182,8 +215,12 @@ class Scanner {
 
     advance();
 
-    String value = source.substring(start + 1, current - 1);
-    addToken1(TokenType.STRING, value);
+    if (current - start > 2) {
+      if (interplote) {
+        addToken(TokenType.PLUS);
+      }
+      addToken1(TokenType.STRING, source.substring(start + 1, current - 1));
+    }
   }
 
   void number() {
@@ -250,6 +287,10 @@ class Scanner {
   void addToken1(TokenType type, Object? literal) {
     String text = source.substring(start, current);
     tokens.add(Token(type, text, literal, line));
+  }
+
+  void addToken2(TokenType type, String lexeme) {
+    tokens.add(Token(type, lexeme, null, line));
   }
 
   bool match(String expected) {

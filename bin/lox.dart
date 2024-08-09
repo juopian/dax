@@ -11,7 +11,6 @@ import 'package:dax/interpreter.dart';
 
 late Interpreter interpreter;
 void main(List<String> arguments) {
-  print(int.parse('-1'));
   interpreter = Interpreter(); // 如果不引用不会执行构造函数
   exitCode = 0;
   if (arguments.length > 1) {
