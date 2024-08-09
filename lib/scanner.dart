@@ -71,7 +71,11 @@ class Scanner {
         addToken(TokenType.DOT);
         break;
       case '-':
-        addToken(TokenType.MINUS);
+        if (allow()) {
+          number();
+        } else {
+          addToken(TokenType.MINUS);
+        }
         break;
       case '+':
         addToken(TokenType.PLUS);
@@ -141,6 +145,18 @@ class Scanner {
     }
   }
 
+  bool allow() {
+    if (tokens.isEmpty) return true;
+    Token previous = tokens.last;
+    return (previous.type == TokenType.EQUAL ||
+            previous.type == TokenType.LEFT_PAREN) ||
+        previous.type == TokenType.MINUS ||
+        previous.type == TokenType.PLUS ||
+        previous.type == TokenType.STAR ||
+        previous.type == TokenType.SLASH ||
+        previous.type == TokenType.PRINT;
+  }
+
   void identifier() {
     while (isAlphaNumeric(peek())) {
       advance();
@@ -174,15 +190,21 @@ class Scanner {
     while (isDigit(peek())) {
       advance();
     }
-
+    bool isDouble = false;
     if (peek() == '.' && isDigit(peekNext())) {
+      isDouble = true;
       advance();
       while (isDigit(peek())) {
         advance();
       }
     }
 
-    addToken1(TokenType.NUMBER, double.parse(source.substring(start, current)));
+    String numberStr = source.substring(start, current);
+    if (isDouble) {
+      addToken1(TokenType.NUMBER, double.parse(numberStr));
+    } else {
+      addToken1(TokenType.NUMBER, int.parse(numberStr));
+    }
   }
 
   String peekNext() {

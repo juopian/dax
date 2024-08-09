@@ -21,7 +21,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   Interpreter() {
     environment = globals;
     globals.define("clock", ClockFunction());
-    globals.define("String", StringFunction());
+    globals.define("str", StringFunction());
   }
 
   void registerFunction(String name, LoxCallable function) {
@@ -233,7 +233,22 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     Object? objects = evaluate(expr.callee);
     if (objects is List<Object?>) {
       List<Object?> results = [];
-      LoxFunction mapFun = LoxFunction(expr.lambda, environment, false);
+      Stmt.Functional mp;
+      if (expr.lambda is Stmt.Functional) {
+        mp = expr.lambda as Stmt.Functional;
+      } else if (expr.lambda is Expr.Expr) {
+        var func = evaluate(expr.lambda as Expr.Expr);
+        if (func is! LoxFunction) {
+          throw RuntimeError(
+              expr.name, "Only func can be used as Mapping function");
+        } else {
+          mp = func.declaration;
+        }
+      } else {
+        throw RuntimeError(
+            expr.name, "Only func can be used as Mapping function");
+      }
+      LoxFunction mapFun = LoxFunction(mp, environment, false);
       for (var i in objects) {
         var result = mapFun.call(this, [i]);
         results.add(result);

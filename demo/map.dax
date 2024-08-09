@@ -6,5 +6,11 @@ print b;
 var c = ["a" , "b" , "c"];
 var d = c.map((x) { return x + ">>"; });
 
+fun mp(i) {
+  return i * i;
+}
+var e = a.map(mp);
+
 print c;
 print d;
+print e;

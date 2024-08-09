@@ -195,7 +195,7 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
 
   @override
   void visitDictExpr(Expr.Dict expr) {
-    for (MapEntry<String,Expr.Expr> entry in expr.entries.entries) {
+    for (MapEntry<String, Expr.Expr> entry in expr.entries.entries) {
       resolveExpr(entry.value);
     }
     return;
@@ -204,10 +204,13 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
   @override
   void visitMappingExpr(Expr.Mapping expr) {
     resolveExpr(expr.callee);
-    resolveFunction(expr.lambda, FunctionType.FUNCTION);
+    if (expr.lambda is Stmt.Functional) {
+      resolveFunction(expr.lambda as Stmt.Functional, FunctionType.FUNCTION);
+    } else {
+      resolveExpr(expr.lambda as Expr.Expr);
+    }
     return;
   }
-
 
   @override
   void visitCallExpr(Expr.Call expr) {

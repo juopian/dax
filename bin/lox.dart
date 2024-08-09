@@ -1,20 +1,17 @@
 import 'dart:io';
-// import 'dart:math';
 import "package:dax/error.dart";
-// import 'package:dax/expr.dart';
 import 'package:dax/parser.dart';
 import 'package:dax/resolver.dart';
-// import 'package:dax/cli.dart' as cli;
 import 'package:dax/scanner.dart';
 import 'package:dax/stmt.dart';
 import 'package:dax/token.dart';
 
 import 'ast_printer.dart';
 import 'package:dax/interpreter.dart';
-// import 'package:path/path.dart';
 
 late Interpreter interpreter;
 void main(List<String> arguments) {
+  print(int.parse('-1'));
   interpreter = Interpreter(); // 如果不引用不会执行构造函数
   exitCode = 0;
   if (arguments.length > 1) {
@@ -55,10 +52,12 @@ void runPrompt() {
         enterPressed = true;
         stdout.write('\n');
       } else if (byte == 127) {
-        stdout.write('\b \b');
         String line = inputBuffer.toString();
-        inputBuffer.clear();
-        inputBuffer.write(line.substring(0, line.length - 1));
+        if (line.isNotEmpty) {
+          stdout.write('\b \b');
+          inputBuffer.clear();
+          inputBuffer.write(line.substring(0, line.length - 1));
+        }
       } else if (byte == 27) {
         stdin.readByteSync();
         int arrowkey = stdin.readByteSync();

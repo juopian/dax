@@ -314,6 +314,11 @@ class Parser {
 
   Expr mappingExpr(Expr callee, Token name) {
     consume(TokenType.LEFT_PAREN, "Expect '(' after 'map'.");
+    if (!check(TokenType.LEFT_PAREN)) {
+      Expr expr = expression();
+      consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+      return Mapping(callee, name, expr);
+    }
     consume(TokenType.LEFT_PAREN, "Expect '(' after map.");
     List<Token> parameters = [];
     if (!check(TokenType.RIGHT_PAREN)) {
@@ -343,7 +348,8 @@ class Parser {
         }
         // 检测是否名称参数
         if (peekNext().type == TokenType.COLON) {
-          Token name = consume(TokenType.IDENTIFIER, "Expect argument name before :.");
+          Token name =
+              consume(TokenType.IDENTIFIER, "Expect argument name before :.");
           consume(TokenType.COLON, "Expect : after $name.");
           Expr expr = expression();
           arguments.add(Dict({name.lexeme: expr}));

@@ -48,7 +48,7 @@ class Dict extends Expr {
 class Mapping extends Expr {
   final Expr callee;
   final Token name;
-  final Functional lambda;
+  final Object lambda;
   Mapping(this.callee, this.name, this.lambda, );
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitMappingExpr(this);

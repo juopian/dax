@@ -42,6 +42,7 @@ class _MyHomePageState extends State<MyHomePage> {
     registerGlobalFunctions();
     Scanner scanner = Scanner('''
   var i = 0;
+  var arr = [{"x":1}, {"x":2}, {"x":3}];
 
   fun increase(){
      i = i + 1;
@@ -51,7 +52,11 @@ class _MyHomePageState extends State<MyHomePage> {
   fun build() {
     return Column(
       children: [
-        Text("You are my hero: " + String(i)),
+        Column(children: [
+          Text("Hello, world!") 
+        ]),
+        Column(children: arr.map((i){ return Text("Item" + str(i.x)); })),
+        Text("You are my hero: " + str(i)),
         TextButton(child:Text("click me"), onPressed: increase)]
       );
   }
