@@ -1,6 +1,8 @@
 import 'package:dax/runtime_error.dart';
 import 'package:flutter/material.dart';
 import 'package:dax/dax.dart';
+import 'package:usecases/color_map.dart';
+import 'package:usecases/fontweight_map.dart';
 
 void main() {
   runApp(const MyApp());
@@ -30,11 +32,9 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
-
   bool loaded = false;
   final Interpreter interpreter = Interpreter();
   late Widget renderedWidget;
-
 
   @override
   void initState() {
@@ -50,31 +50,62 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   fun item(i) {
-    return Text("位置: \${i.x}" );
+    return Text("位置: \${i["x"]}", 
+      style: TextStyle(
+        color: Colors.blue, 
+        fontSize: 20
+      )
+    );
   }
 
   fun mp(i) {
     return i.x;
   }
 
-  print arr.map(mp);
+  fun getItems() {
+    var i = 0;
+    var items = [];
+    while(i < 20) {
+      items.add(i) ;
+      i = i + 1;
+    }
+    return items; 
+  }
+
 
   fun build() {
-    return Column(
-      children: [
-        Column(children: [
-          Text("Hello, world!") 
-        ]),
-        Column(
-          children: arr.map(item)
-        ),
-        Text("You are my hero: " + str(i)),
-        TextButton(
-          child:Text("click me"), 
-          onPressed: increase
+    return Expanded(
+      child: Column(
+        children: [
+          Column(children: [
+            Text("Hello, world!", 
+              style: TextStyle(
+                fontWeight: FontWeight.bold,
+                fontSize: 30.0
+              )
+            ) 
+          ]),
+          Column(children : []),
+          Column(
+            children: arr.map(item)
+          ),
+          Text("You are my hero: " + str(i)),
+          TextButton(
+            child:Text("click me"), 
+            onPressed: increase
+          ),
+          Expanded( 
+            child: ListView(
+              children: getItems().map((i){ 
+                return Text("位置: \${i}", 
+                  style: TextStyle(fontSize: 20, color: Colors.cyan)
+                ); 
+              })
+            ) 
           )
         ]
-      );
+      )
+    );
   }
 
   build();
@@ -96,34 +127,96 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Object parseArguments(List<Object?> arguments, String name) {
+  Object? parseArguments(List<Object?> arguments, String name) {
     for (Object? argument in arguments) {
       if (argument is Map && argument.containsKey(name)) {
         return argument[name];
       }
     }
-    throw "Argument not found: $name";
+    // throw "Argument not found: $name";
+    return null;
   }
 
   void registerGlobalFunctions() {
-    interpreter.registerFunction(
+    // interpreter.registerFunction("TextStyle", function);
+    interpreter.registerGlobal("Colors", colorMap);
+    interpreter.registerGlobal("FontWeight", fontWeightMap);
+    interpreter.registerGlobal(
+      "Expanded",
+      GenericLoxCallable(() => 1,
+          (Interpreter interpreter, List<Object?> arguments) {
+        return Expanded(
+          child: parseArguments(arguments, 'child') as Widget,
+        );
+      }),
+    );
+    interpreter.registerGlobal(
+      "TextStyle",
+      GenericLoxCallable(() => 1,
+          (Interpreter interpreter, List<Object?> arguments) {
+        double? fontSize;
+        var sizeParsed = parseArguments(arguments, 'fontSize');
+        if (sizeParsed != null) {
+          if (sizeParsed is int) {
+            fontSize = sizeParsed.toDouble();
+          } else if (sizeParsed is double) {
+            fontSize = sizeParsed;
+          }
+        }
+        Color? color;
+        var colorParsed = parseArguments(arguments, 'color');
+        if (colorParsed != null) {
+          color = colorParsed as Color;
+        }
+        FontWeight? fontWeight;
+        var fontWeightParsed = parseArguments(arguments, 'fontWeight');
+        if (fontWeightParsed != null) {
+          fontWeight = fontWeightParsed as FontWeight;
+        }
+        return TextStyle(
+            fontWeight: fontWeight, fontSize: fontSize, color: color);
+      }),
+    );
+    interpreter.registerGlobal(
       "Text",
       GenericLoxCallable(() => 1,
           (Interpreter interpreter, List<Object?> arguments) {
-        return Text(arguments.first as String);
+        TextStyle? style;
+        var styleParsed = parseArguments(arguments, 'style');
+        if (styleParsed != null) {
+          style = styleParsed as TextStyle;
+        }
+        return Text(
+          arguments.first as String,
+          style: style,
+        );
       }),
     );
-    interpreter.registerFunction(
+    interpreter.registerGlobal(
       "Column",
       GenericLoxCallable(() => 1,
           (Interpreter interpreter, List<Object?> arguments) {
-        if (arguments.first is Map) {}
-        return Column(
-            children:
-                (parseArguments(arguments, 'children') as List).cast<Widget>());
+        var childrenParsed = parseArguments(arguments, 'children');
+        if (childrenParsed == null) {
+          throw "Argument not found: children";
+        }
+        List<Widget> children = (childrenParsed as List).cast<Widget>();
+        return Column(children: children);
       }),
     );
-    interpreter.registerFunction(
+    interpreter.registerGlobal(
+      "ListView",
+      GenericLoxCallable(() => 1,
+          (Interpreter interpreter, List<Object?> arguments) {
+        var childrenParsed = parseArguments(arguments, 'children');
+        if (childrenParsed == null) {
+          throw "Argument not found: children";
+        }
+        List<Widget> children = (childrenParsed as List).cast<Widget>();
+        return ListView(children: children);
+      }),
+    );
+    interpreter.registerGlobal(
         "TextButton",
         GenericLoxCallable(() => 2,
             (Interpreter interpreter, List<Object?> arguments) {
@@ -134,7 +227,7 @@ class _MyHomePageState extends State<MyHomePage> {
                     .call(interpreter, arguments);
               });
         }));
-    interpreter.registerFunction(
+    interpreter.registerGlobal(
         "update",
         GenericLoxCallable(() => 0,
             (Interpreter interpreter, List<Object?> arguments) {

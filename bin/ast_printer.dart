@@ -18,6 +18,11 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
   }
 
   @override
+  String visitIndexingExpr(Expr.Indexing expr) {
+    return parenthesize2("[]", [expr.callee, expr.key]);
+  }
+
+  @override
   String visitSuperExpr(Expr.Super expr) {
     return parenthesize2("super", [expr.method]);
   }

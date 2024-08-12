@@ -54,6 +54,15 @@ class Mapping extends Expr {
   T accept<T>(Visitor<T> visitor) => visitor.visitMappingExpr(this);
 }
 
+class Indexing extends Expr {
+  final Expr callee;
+  final Token name;
+  final Expr key;
+  Indexing(this.callee, this.name, this.key, );
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitIndexingExpr(this);
+}
+
 class Get extends Expr {
   final Expr object;
   final Token name;
@@ -131,6 +140,7 @@ abstract class Visitor<T> {
   T visitArrayExpr(Array expr);
   T visitDictExpr(Dict expr);
   T visitMappingExpr(Mapping expr);
+  T visitIndexingExpr(Indexing expr);
   T visitGetExpr(Get expr);
   T visitGroupingExpr(Grouping expr);
   T visitLiteralExpr(Literal expr);

@@ -213,6 +213,13 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
   }
 
   @override
+  void visitIndexingExpr(Expr.Indexing expr) {
+    resolveExpr(expr.callee);
+    resolveExpr(expr.key);
+    return;
+  }
+
+  @override
   void visitCallExpr(Expr.Call expr) {
     resolveExpr(expr.callee);
 

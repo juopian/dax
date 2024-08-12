@@ -1,0 +1,8 @@
+var i = 1;
+var arr = [];
+while(i < 20) {
+  arr.add(i);
+  i = i+1;
+}
+
+print arr;

@@ -305,11 +305,19 @@ class Parser {
         } else {
           expr = Get(expr, name);
         }
+      } else if (match([TokenType.LEFT_BRACKET])) {
+        expr = indexingExpr(expr);
       } else {
         break;
       }
     }
     return expr;
+  }
+
+  Expr indexingExpr(Expr callee) {
+    Expr index = expression();
+    Token paren = consume(TokenType.RIGHT_BRACKET, "Expect ']' after key.");
+    return Indexing(callee, paren, index);
   }
 
   Expr mappingExpr(Expr callee, Token name) {

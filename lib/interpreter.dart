@@ -24,8 +24,9 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     globals.define("str", StringFunction());
   }
 
-  void registerFunction(String name, LoxCallable function) {
-    globals.define(name, function);
+  // void registerFunction(String name, LoxCallable function) {
+  void registerGlobal(String name, Object obj) {
+    globals.define(name, obj);
   }
 
   dynamic invokeFunction(String name) {
@@ -137,14 +138,17 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     for (Expr.Expr argument in expr.arguments) {
       arguments.add(evaluate(argument));
     }
+    if( callee is Function) {
+      return Function.apply(callee, arguments);
+    }
     if (callee is! LoxCallable) {
       throw RuntimeError(expr.paren, "Can only call functions and classes.");
     }
     LoxCallable function = callee;
-    if (arguments.length != function.arity()) {
-      throw RuntimeError(expr.paren,
-          "Expected ${function.arity()} arguments but got ${arguments.length}.");
-    }
+    // if (arguments.length != function.arity()) {
+    //   throw RuntimeError(expr.paren,
+    //       "Expected ${function.arity()} arguments but got ${arguments.length}.");
+    // }
     var result = function.call(this, arguments);
     if (function is LoxFunction) {
       if (function.declaration.name.lexeme == "build") {
@@ -152,6 +156,18 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       }
     }
     return result;
+  }
+
+  @override
+  Object? visitIndexingExpr(Expr.Indexing expr) {
+    Object? object = evaluate(expr.callee);
+    if (object is List) {
+      return object[evaluate(expr.key) as int];
+    }
+    if (object is Map) {
+      return object[evaluate(expr.key) as String];
+    }
+    throw RuntimeError(expr.name, "Only list or map can be used in indexing.");
   }
 
   @override
@@ -178,10 +194,19 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     if (object is Map) {
       return object[expr.name.lexeme];
     }
+    if (object is List) {
+      if (expr.name.lexeme == "add") {
+        return object.add;
+      } else if (expr.name.lexeme == "pop") {
+        return object.removeLast; 
+      } else {
+        throw RuntimeError(expr.name, "Only add and pop can be used in array.");
+      }
+    }
     if (object is LoxInstance) {
       return object.get(expr.name); // get方法绑定了实例
     }
-    if(expr.name.lexeme == "toString") {
+    if (expr.name.lexeme == "toString") {
       return object.toString();
     }
     throw RuntimeError(expr.name, "Only instances have properties.");
