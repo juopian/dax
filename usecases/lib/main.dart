@@ -1,8 +1,10 @@
-import 'package:dax/runtime_error.dart';
 import 'package:flutter/material.dart';
 import 'package:dax/dax.dart';
-import 'package:usecases/color_map.dart';
-import 'package:usecases/fontweight_map.dart';
+import 'package:usecases/base.dart';
+import 'package:usecases/common.dart';
+import 'package:usecases/decoration.dart';
+import 'package:usecases/edgeinsets.dart';
+import 'package:usecases/widget.dart';
 
 void main() {
   runApp(const MyApp());
@@ -16,8 +18,12 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
-      ),
+          scaffoldBackgroundColor: Colors.white,
+          appBarTheme: const AppBarTheme(
+              elevation: 3,
+              centerTitle: true,
+              color: Colors.white,
+              foregroundColor: Colors.black87)),
       home: const MyHomePage(title: 'Dax Demo'),
     );
   }
@@ -94,6 +100,32 @@ class _MyHomePageState extends State<MyHomePage> {
             child:Text("click me"), 
             onPressed: increase
           ),
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
+            margin: EdgeInsets.all(20.0),
+            decoration: BoxDecoration(
+              color: Colors.blue,
+              border: Border.all(
+                width: 2,
+                color: Colors.blue
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Color(0xff66bb6a),
+                  offset: Offset(2, 2),
+                  blurRadius: 5.0,
+                  spreadRadius: 1.0
+                )
+              ],
+              borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))
+            ),
+            child: Text("This is a container", 
+              style: TextStyle(
+                fontSize: 20, 
+                color: Color(0xff66bb6a)
+              )
+            )
+          ),
           Expanded( 
             child: ListView(
               children: getItems().map((i){ 
@@ -107,6 +139,12 @@ class _MyHomePageState extends State<MyHomePage> {
       )
     );
   }
+
+  // fun build() {
+  //   return Expanded(
+  //     child: Text("Hello world", style: TextStyle(fontSize: 20))
+  //   );
+  // }
 
   build();
 ''');
@@ -138,95 +176,24 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void registerGlobalFunctions() {
-    // interpreter.registerFunction("TextStyle", function);
     interpreter.registerGlobal("Colors", colorMap);
     interpreter.registerGlobal("FontWeight", fontWeightMap);
-    interpreter.registerGlobal(
-      "Expanded",
-      GenericLoxCallable(() => 1,
-          (Interpreter interpreter, List<Object?> arguments) {
-        return Expanded(
-          child: parseArguments(arguments, 'child') as Widget,
-        );
-      }),
-    );
-    interpreter.registerGlobal(
-      "TextStyle",
-      GenericLoxCallable(() => 1,
-          (Interpreter interpreter, List<Object?> arguments) {
-        double? fontSize;
-        var sizeParsed = parseArguments(arguments, 'fontSize');
-        if (sizeParsed != null) {
-          if (sizeParsed is int) {
-            fontSize = sizeParsed.toDouble();
-          } else if (sizeParsed is double) {
-            fontSize = sizeParsed;
-          }
-        }
-        Color? color;
-        var colorParsed = parseArguments(arguments, 'color');
-        if (colorParsed != null) {
-          color = colorParsed as Color;
-        }
-        FontWeight? fontWeight;
-        var fontWeightParsed = parseArguments(arguments, 'fontWeight');
-        if (fontWeightParsed != null) {
-          fontWeight = fontWeightParsed as FontWeight;
-        }
-        return TextStyle(
-            fontWeight: fontWeight, fontSize: fontSize, color: color);
-      }),
-    );
-    interpreter.registerGlobal(
-      "Text",
-      GenericLoxCallable(() => 1,
-          (Interpreter interpreter, List<Object?> arguments) {
-        TextStyle? style;
-        var styleParsed = parseArguments(arguments, 'style');
-        if (styleParsed != null) {
-          style = styleParsed as TextStyle;
-        }
-        return Text(
-          arguments.first as String,
-          style: style,
-        );
-      }),
-    );
-    interpreter.registerGlobal(
-      "Column",
-      GenericLoxCallable(() => 1,
-          (Interpreter interpreter, List<Object?> arguments) {
-        var childrenParsed = parseArguments(arguments, 'children');
-        if (childrenParsed == null) {
-          throw "Argument not found: children";
-        }
-        List<Widget> children = (childrenParsed as List).cast<Widget>();
-        return Column(children: children);
-      }),
-    );
-    interpreter.registerGlobal(
-      "ListView",
-      GenericLoxCallable(() => 1,
-          (Interpreter interpreter, List<Object?> arguments) {
-        var childrenParsed = parseArguments(arguments, 'children');
-        if (childrenParsed == null) {
-          throw "Argument not found: children";
-        }
-        List<Widget> children = (childrenParsed as List).cast<Widget>();
-        return ListView(children: children);
-      }),
-    );
-    interpreter.registerGlobal(
-        "TextButton",
-        GenericLoxCallable(() => 2,
-            (Interpreter interpreter, List<Object?> arguments) {
-          return TextButton(
-              child: parseArguments(arguments, 'child') as Widget,
-              onPressed: () {
-                (parseArguments(arguments, 'onPressed') as LoxFunction)
-                    .call(interpreter, arguments);
-              });
-        }));
+    interpreter.registerGlobal("EdgeInsets", edgeInsetsMap);
+    interpreter.registerGlobal("Border", borderMap);
+    interpreter.registerGlobal("BorderRadius", borderRadiusMap);
+    interpreter.registerGlobal("Radius", radiusMap);
+    interpreter.registerGlobal("Offset", IOffset());
+    interpreter.registerGlobal("Color", IColor());
+    interpreter.registerGlobal("Expanded", IExpanded());
+    interpreter.registerGlobal("TextStyle", ITextStyle());
+    interpreter.registerGlobal("Text", IText());
+    interpreter.registerGlobal("Column", IColumn());
+    interpreter.registerGlobal("ListView", IListView());
+    interpreter.registerGlobal("TextButton", ITextButton());
+    interpreter.registerGlobal("LinearGradient", ILinearGradient());
+    interpreter.registerGlobal("Container", IContainer());
+    interpreter.registerGlobal("BoxShadow", IBoxShadow());
+    interpreter.registerGlobal("BoxDecoration", IBoxDecoration());
     interpreter.registerGlobal(
         "update",
         GenericLoxCallable(() => 0,

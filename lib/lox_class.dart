@@ -35,11 +35,12 @@ class LoxClass implements LoxCallable {
   }
 
   @override
-  Object? call(Interpreter interpreter, List<Object?> arguments) {
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
     LoxInstance instance = LoxInstance(this);
     LoxFunction? initializer = findMethod('init');
     if (initializer != null) {
-      initializer.bind(instance).call(interpreter, arguments);
+      initializer.bind(instance).call(interpreter, arguments, namedArguments);
     }
     return instance;
   }

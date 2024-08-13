@@ -32,7 +32,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   dynamic invokeFunction(String name) {
     final callable = globals.getAt(0, name);
     if (callable != null && callable is LoxCallable) {
-      return callable.call(this, []);
+      return callable.call(this, [], {});
     }
     throw RuntimeError((callable as LoxFunction).declaration.name,
         'Function not found: $name');
@@ -135,11 +135,21 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   Object? visitCallExpr(Expr.Call expr) {
     Object? callee = evaluate(expr.callee);
     List<Object?> arguments = [];
+    Map<Symbol, Object?> namedArguments = {};
     for (Expr.Expr argument in expr.arguments) {
-      arguments.add(evaluate(argument));
+      var arg = evaluate(argument);
+      if (arg is Map) {
+        namedArguments.addAll({Symbol(arg.keys.first): arg.values.first});
+      } else {
+        arguments.add(evaluate(argument));
+      }
+      // arguments.add(evaluate(argument));
     }
-    if( callee is Function) {
-      return Function.apply(callee, arguments);
+    if (callee is Function) {
+      // print('call function');
+      // print(arguments);
+      // print(namedArguments);
+      return Function.apply(callee, arguments, namedArguments);
     }
     if (callee is! LoxCallable) {
       throw RuntimeError(expr.paren, "Can only call functions and classes.");
@@ -149,7 +159,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     //   throw RuntimeError(expr.paren,
     //       "Expected ${function.arity()} arguments but got ${arguments.length}.");
     // }
-    var result = function.call(this, arguments);
+    var result = function.call(this, arguments, namedArguments);
     if (function is LoxFunction) {
       if (function.declaration.name.lexeme == "build") {
         renderWidget = result!;
@@ -198,7 +208,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       if (expr.name.lexeme == "add") {
         return object.add;
       } else if (expr.name.lexeme == "pop") {
-        return object.removeLast; 
+        return object.removeLast;
       } else {
         throw RuntimeError(expr.name, "Only add and pop can be used in array.");
       }
@@ -278,7 +288,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       }
       LoxFunction mapFun = LoxFunction(mp, environment, false);
       for (var i in objects) {
-        var result = mapFun.call(this, [i]);
+        var result = mapFun.call(this, [i], {});
         results.add(result);
       }
       return results;

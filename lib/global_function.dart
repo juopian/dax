@@ -8,7 +8,8 @@ class ClockFunction implements LoxCallable {
   }
 
   @override
-  Object? call(Interpreter interpreter, List<Object?> arguments) {
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
     return DateTime.now().millisecondsSinceEpoch / 1000.0;
   }
 
@@ -25,7 +26,8 @@ class StringFunction implements LoxCallable {
   }
 
   @override
-  Object? call(Interpreter interpreter, List<Object?> arguments) {
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
     return '${arguments.first}';
   }
 }
@@ -40,6 +42,7 @@ class GenericLoxCallable implements LoxCallable {
   int arity() => _arity();
 
   @override
-  Object? call(Interpreter interpreter, List<Object?> arguments) =>
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+          Map<Symbol, Object?> namedArguments) =>
       _call(interpreter, arguments);
 }

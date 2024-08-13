@@ -72,7 +72,7 @@ class Scanner {
         break;
       case '-':
         if (allow()) {
-          number();
+          number(c);
         } else {
           addToken(TokenType.MINUS);
         }
@@ -134,8 +134,8 @@ class Scanner {
         string();
         break;
       default:
-        if (isDigit(c)) {
-          number();
+        if (isDigit(c, false)) {
+          number(c);
         } else if (isAlpha(c)) {
           identifier();
         } else {
@@ -223,15 +223,20 @@ class Scanner {
     }
   }
 
-  void number() {
-    while (isDigit(peek())) {
+  void number(String c) {
+    bool isHex = false;
+    if (c == '0' && peek() == 'x') {
+      isHex = true;
+      advance();
+    }
+    while (isDigit(peek(), isHex)) {
       advance();
     }
     bool isDouble = false;
-    if (peek() == '.' && isDigit(peekNext())) {
+    if (peek() == '.' && isDigit(peekNext(), false)) {
       isDouble = true;
       advance();
-      while (isDigit(peek())) {
+      while (isDigit(peek(), false)) {
         advance();
       }
     }
@@ -258,7 +263,7 @@ class Scanner {
   }
 
   bool isAlphaNumeric(String c) {
-    return isAlpha(c) || isDigit(c);
+    return isAlpha(c) || isDigit(c, false);
   }
 
   String peek() {
@@ -266,9 +271,15 @@ class Scanner {
     return source[current];
   }
 
-  bool isDigit(String c) =>
-      c.codeUnitAt(0) >= '0'.codeUnitAt(0) &&
-      c.codeUnitAt(0) <= '9'.codeUnitAt(0);
+  bool isDigit(String c, bool isHex) =>
+      (c.codeUnitAt(0) >= '0'.codeUnitAt(0) &&
+          c.codeUnitAt(0) <= '9'.codeUnitAt(0) &&
+          !isHex) |
+      ((((c.codeUnitAt(0) >= 'a'.codeUnitAt(0) &&
+                  c.codeUnitAt(0) <= 'f'.codeUnitAt(0)) |
+              (c.codeUnitAt(0) >= '0'.codeUnitAt(0) &&
+                  c.codeUnitAt(0) <= '9'.codeUnitAt(0))) &&
+          isHex));
 
   bool isAtEnd() {
     bool atEnd = current >= source.length;
