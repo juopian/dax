@@ -14,6 +14,7 @@ void main(List<String> args) {
     "Call     : Expr callee, Token paren, List<Expr> arguments",
     "Array    : List<Expr> elements",
     "Dict     : Map<String,Expr> entries",
+    "Anonymous: Token name, List<Token> params, List<Stmt> body",
     "Mapping  : Expr callee, Token name, Object lambda",
     "Indexing : Expr callee, Token name, Expr key",
     "Get      : Expr object, Token name",

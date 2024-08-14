@@ -13,6 +13,11 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
   }
 
   @override
+  String visitAnonymousExpr(Expr.Anonymous expr) {
+    return parenthesize2("anonymous", expr.body);
+  }
+
+  @override
   String visitMappingExpr(Expr.Mapping expr) {
     return parenthesize2("map", [expr.callee, expr.name, expr.lambda]);
   }

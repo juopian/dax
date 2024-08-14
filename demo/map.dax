@@ -14,3 +14,6 @@ var e = a.map(mp);
 print c;
 print d;
 print e;
+
+var f = (i){ return 1 + i;};
+print a.map(f);

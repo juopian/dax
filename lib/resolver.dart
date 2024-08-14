@@ -163,6 +163,22 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
   }
 
   @override
+  void visitAnonymousExpr(Expr.Anonymous expr) {
+    declare(expr.name);
+    define(expr.name);
+    FunctionType enclosingFunctionType = currentFunctionType;
+    currentFunctionType = FunctionType.FUNCTION;
+    beginScope();
+    for (Token param in expr.params) {
+      declare(param);
+      define(param);
+    }
+    resolve(expr.body);
+    endScope();
+    currentFunctionType = enclosingFunctionType;
+  }
+
+  @override
   void visitVariableExpr(Expr.Variable expr) {
     if (!scopes.isEmpty && scopes.peek()[expr.name.lexeme] == false) {
       error1(expr.name, 'Can not read local variable in its own initializer.');

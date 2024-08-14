@@ -150,6 +150,7 @@ class Scanner {
     Token previous = tokens.last;
     return (previous.type == TokenType.EQUAL ||
             previous.type == TokenType.LEFT_PAREN) ||
+        previous.type == TokenType.COMMA ||
         previous.type == TokenType.COLON ||
         previous.type == TokenType.MINUS ||
         previous.type == TokenType.PLUS ||

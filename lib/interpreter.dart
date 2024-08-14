@@ -313,6 +313,12 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   }
 
   @override
+  Object? visitAnonymousExpr(Expr.Anonymous expr) {
+    var fun = Stmt.Functional(expr.name, expr.params, expr.body);
+    return LoxFunction(fun, environment, false); 
+  }
+
+  @override
   Object? visitVariableExpr(Expr.Variable expr) {
     // return environment.get(expr.name);
     return lookUpVariable(expr.name, expr);

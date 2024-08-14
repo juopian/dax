@@ -322,29 +322,32 @@ class Parser {
 
   Expr mappingExpr(Expr callee, Token name) {
     consume(TokenType.LEFT_PAREN, "Expect '(' after 'map'.");
-    if (!check(TokenType.LEFT_PAREN)) {
-      Expr expr = expression();
-      consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
-      return Mapping(callee, name, expr);
-    }
-    consume(TokenType.LEFT_PAREN, "Expect '(' after map.");
-    List<Token> parameters = [];
-    if (!check(TokenType.RIGHT_PAREN)) {
-      do {
-        if (parameters.length >= 2) {
-          error(peek(), "Can't have more than 2 parameters.");
-        }
-        parameters.add(
-          consume(TokenType.IDENTIFIER, "Expect parameter name."),
-        );
-      } while (match([TokenType.COMMA]));
-    }
+    Expr expr = expression();
     consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
-    consume(TokenType.LEFT_BRACE, "Expect '{' before map body.");
-    List<Stmt> body = block();
-    consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
-    Functional lambda = Functional(name, parameters, body);
-    return Mapping(callee, name, lambda);
+    return Mapping(callee, name, expr);
+    // if (!check(TokenType.LEFT_PAREN)) {
+    //   Expr expr = expression();
+    //   consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+    //   return Mapping(callee, name, expr);
+    // }
+    // consume(TokenType.LEFT_PAREN, "Expect '(' after map.");
+    // List<Token> parameters = [];
+    // if (!check(TokenType.RIGHT_PAREN)) {
+    //   do {
+    //     if (parameters.length >= 2) {
+    //       error(peek(), "Can't have more than 2 parameters.");
+    //     }
+    //     parameters.add(
+    //       consume(TokenType.IDENTIFIER, "Expect parameter name."),
+    //     );
+    //   } while (match([TokenType.COMMA]));
+    // }
+    // consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+    // consume(TokenType.LEFT_BRACE, "Expect '{' before map body.");
+    // List<Stmt> body = block();
+    // consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+    // Functional lambda = Functional(name, parameters, body);
+    // return Mapping(callee, name, lambda);
   }
 
   Expr finishCall(Expr callee) {
@@ -398,6 +401,7 @@ class Parser {
   }
 
   Expr primary() {
+    // print("name is ${peek().lexeme}, type: ${peek().type}}");
     if (match([TokenType.FALSE])) return Literal(false);
     if (match([TokenType.TRUE])) return Literal(true);
     if (match([TokenType.NIL])) return Literal(null);
@@ -417,7 +421,39 @@ class Parser {
     if (match([TokenType.IDENTIFIER])) {
       return Variable(previous());
     }
+    bool isAnonymous = false;
+    var currentSnap = current;
+    if (match([TokenType.LEFT_PAREN])) {
+      if (!check(TokenType.RIGHT_PAREN)) {
+        do {
+          expression();
+        } while (match([TokenType.COMMA]));
+      }
+      consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+      if (check(TokenType.LEFT_BRACE)) {
+        isAnonymous = true;
+      }
+      current = currentSnap;
+    }
 
+    // print("isAnonymous: $isAnonymous");
+    if (isAnonymous) {
+      consume(TokenType.LEFT_PAREN, "Expect '(' after map.");
+      List<Token> parameters = [];
+      if (!check(TokenType.RIGHT_PAREN)) {
+        do {
+          parameters.add(
+            consume(TokenType.IDENTIFIER, "Expect parameter name."),
+          );
+        } while (match([TokenType.COMMA]));
+      }
+      Token paren =
+          consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+      consume(TokenType.LEFT_BRACE, "Expect '{' before map body.");
+      List<Stmt> body = block();
+      Expr anonymousFun = Anonymous(paren, parameters, body);
+      return anonymousFun;
+    }
     if (match([TokenType.LEFT_PAREN])) {
       Expr expr = expression();
       consume(TokenType.RIGHT_PAREN, "Expect ')' after expression.");

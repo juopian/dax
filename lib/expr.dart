@@ -45,6 +45,15 @@ class Dict extends Expr {
   T accept<T>(Visitor<T> visitor) => visitor.visitDictExpr(this);
 }
 
+class Anonymous extends Expr {
+  final Token name;
+  final List<Token> params;
+  final List<Stmt> body;
+  Anonymous(this.name, this.params, this.body, );
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitAnonymousExpr(this);
+}
+
 class Mapping extends Expr {
   final Expr callee;
   final Token name;
@@ -139,6 +148,7 @@ abstract class Visitor<T> {
   T visitCallExpr(Call expr);
   T visitArrayExpr(Array expr);
   T visitDictExpr(Dict expr);
+  T visitAnonymousExpr(Anonymous expr);
   T visitMappingExpr(Mapping expr);
   T visitIndexingExpr(Indexing expr);
   T visitGetExpr(Get expr);

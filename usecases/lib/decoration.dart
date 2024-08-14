@@ -43,6 +43,35 @@ class IBoxDecoration implements LoxCallable {
   int arity() => 0;
 }
 
+class ILinearGradient implements LoxCallable {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    AlignmentGeometry begin = Alignment.centerLeft;
+    AlignmentGeometry end = Alignment.centerRight;
+    var beginParsed = namedArguments[const Symbol('begin')];
+    if (beginParsed != null) {
+      begin = beginParsed as AlignmentGeometry;
+    }
+    var endParsed = namedArguments[const Symbol('end')];
+    if (endParsed != null) {
+      end = endParsed as AlignmentGeometry;
+    }
+    List<Color> colors = [];
+    var colorsParsed = namedArguments[const Symbol('colors')];
+    if (colorsParsed != null) {
+      colors = (colorsParsed as List).cast<Color>();
+    }
+    return LinearGradient(
+        begin: begin,
+        end: end,
+        colors: colors);
+  }
+
+  @override
+  int arity() => 0;
+}
+
 class ITextStyle implements LoxCallable {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,

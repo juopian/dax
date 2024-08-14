@@ -22,6 +22,27 @@ class IOffset implements LoxCallable {
   }
 }
 
+class IAlignment implements LoxCallable {
+
+
+  @override
+  int arity() {
+    return 0;
+  }
+  
+  @override
+  Object call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    double x = 0;
+    double y = 0;
+    if (arguments.length == 2) {
+      x = parseDouble(arguments[0]) ?? 0;
+      y = parseDouble(arguments[1]) ?? 0;
+    }
+    return Alignment(x, y);
+  }
+}
+
 class IColor implements LoxCallable {
   @override
   int arity() {

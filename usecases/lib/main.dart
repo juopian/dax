@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:dax/dax.dart';
 import 'package:usecases/base.dart';
+import 'package:usecases/icon.dart';
 import 'package:usecases/common.dart';
 import 'package:usecases/decoration.dart';
 import 'package:usecases/edgeinsets.dart';
@@ -49,10 +50,15 @@ class _MyHomePageState extends State<MyHomePage> {
     Scanner scanner = Scanner('''
   var i = 0;
   var arr = [{"x":1}, {"x":2}, {"x":3}];
-
+  var radius = 5;
   fun increase(){
      i = i + 1;
      update();
+  }
+
+  fun switchRadius() {
+    radius = radius + 3;
+    update();
   }
 
   fun item(i) {
@@ -100,6 +106,13 @@ class _MyHomePageState extends State<MyHomePage> {
             child:Text("click me"), 
             onPressed: increase
           ),
+          TextButton(
+            child:Text("switch radius"), 
+            onPressed: () {
+              radius = radius + 3;
+              update();
+            } 
+          ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
             margin: EdgeInsets.all(20.0),
@@ -109,6 +122,11 @@ class _MyHomePageState extends State<MyHomePage> {
                 width: 2,
                 color: Colors.blue
               ),
+              gradient: LinearGradient(
+                colors: [Color(0xff66bb6a), Color(0xff43a047)],
+                begin: Alignment(-1, -1),
+                end: Alignment(1,1)
+              ),
               boxShadow: [
                 BoxShadow(
                   color: Color(0xff66bb6a),
@@ -117,7 +135,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   spreadRadius: 1.0
                 )
               ],
-              borderRadius: BorderRadius.vertical(top: Radius.circular(20.0))
+              borderRadius: BorderRadius.vertical(top: Radius.circular(radius))
             ),
             child: Text("This is a container", 
               style: TextStyle(
@@ -179,10 +197,12 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("Colors", colorMap);
     interpreter.registerGlobal("FontWeight", fontWeightMap);
     interpreter.registerGlobal("EdgeInsets", edgeInsetsMap);
+    interpreter.registerGlobal("Icons", iconMap);
     interpreter.registerGlobal("Border", borderMap);
     interpreter.registerGlobal("BorderRadius", borderRadiusMap);
     interpreter.registerGlobal("Radius", radiusMap);
     interpreter.registerGlobal("Offset", IOffset());
+    interpreter.registerGlobal("Alignment", IAlignment());
     interpreter.registerGlobal("Color", IColor());
     interpreter.registerGlobal("Expanded", IExpanded());
     interpreter.registerGlobal("TextStyle", ITextStyle());
