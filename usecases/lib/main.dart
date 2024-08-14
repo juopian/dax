@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:dax/dax.dart';
+import 'package:flutter/services.dart';
 import 'package:usecases/base.dart';
 import 'package:usecases/icon.dart';
 import 'package:usecases/common.dart';
+import 'package:usecases/basic.dart';
 import 'package:usecases/decoration.dart';
 import 'package:usecases/edgeinsets.dart';
-import 'package:usecases/widget.dart';
+import 'package:usecases/layout.dart';
+import 'package:usecases/scroll.dart';
+import 'package:usecases/container.dart';
 
 void main() {
   runApp(const MyApp());
@@ -51,6 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var i = 0;
   var arr = [{"x":1}, {"x":2}, {"x":3}];
   var radius = 5;
+  var isChecked = true;
   fun increase(){
      i = i + 1;
      update();
@@ -86,25 +91,45 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
   fun build() {
-    return Expanded(
-      child: Column(
+    return Scaffold(
+      appBar: AppBar(
+        title: Text("title"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.add, color: Colors.cyan),
+            onPressed: switchRadius
+          ),
+          IconButton(
+            icon: Icon(Icons.history),
+            onPressed: (){} 
+          )
+        ]
+      ),
+      body: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Column(children: [
-            Text("Hello, world!", 
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 30.0
-              )
-            ) 
-          ]),
-          Column(children : []),
+          Text("Hello world!", 
+            style: TextStyle(color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold)
+          ),
           Column(
             children: arr.map(item)
           ),
           Text("You are my hero: " + str(i)),
-          TextButton(
-            child:Text("click me"), 
-            onPressed: increase
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              TextButton(
+              child:Text("click me"), 
+              onPressed: increase
+            ),
+            OutlinedButton(
+              child:Text("click me"), 
+              onPressed: increase
+            ), 
+            ElevatedButton(
+              child:Text("click me"), 
+              onPressed: increase
+            )]
           ),
           TextButton(
             child:Text("switch radius"), 
@@ -143,6 +168,55 @@ class _MyHomePageState extends State<MyHomePage> {
                 color: Color(0xff66bb6a)
               )
             )
+          ),
+          Image(
+            height: 60,
+            image: NetworkImage("https://avatars2.githubusercontent.com/u/20411648?s=460&v=4")
+          ),
+          Row(
+            children: [
+              CircularProgressIndicator(),
+              Checkbox(
+                value: isChecked,
+                onChanged: (value) {
+                  isChecked = value;
+                  update();
+                }
+              )
+            ]
+          ),
+          TextField(
+            maxLines: 1,
+            style: TextStyle(fontSize: 20),
+            onChanged: (value) {
+              print value;
+            },
+            decoration: InputDecoration(
+              contentPadding: EdgeInsets.all(10),
+              prefixIcon: Icon(Icons.star),
+              enabledBorder: OutlineInputBorder(
+                 borderRadius: BorderRadius.circular(1),
+                 borderSide: BorderSide(
+                    color: Colors.blue
+                 )
+              ),
+              focusedBorder: OutlineInputBorder(
+                 borderRadius: BorderRadius.circular(10),
+                 borderSide: BorderSide(
+                    color: Colors.red
+                 )
+              )
+            )),
+          Row(
+            children: [
+              Expanded(
+                child: Container(height: 20, color: Colors.red)
+              ),
+              Expanded(
+                flex:2,
+                child: Container(height: 20, color: Colors.green)
+              )
+            ]
           ),
           Expanded( 
             child: ListView(
@@ -200,19 +274,42 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("Icons", iconMap);
     interpreter.registerGlobal("Border", borderMap);
     interpreter.registerGlobal("BorderRadius", borderRadiusMap);
+    interpreter.registerGlobal("MainAxisAlignment", mainAxisAlignmentMap);
+    interpreter.registerGlobal("CrossAxisAlignment", crossAxisAlignmentMap);
+    interpreter.registerGlobal("TextAlign", textAlignMap);
+    interpreter.registerGlobal("BoxFit", boxFitMap);
     interpreter.registerGlobal("Radius", radiusMap);
+    interpreter.registerGlobal("TextInputType", textInputTypeMap);
+    interpreter.registerGlobal("BorderStyle", borderStyleMap);
     interpreter.registerGlobal("Offset", IOffset());
+    interpreter.registerGlobal("Image", IImage());
+    interpreter.registerGlobal("AssetImage", IAssetImage());
+    interpreter.registerGlobal("NetworkImage", INetworkImage());
     interpreter.registerGlobal("Alignment", IAlignment());
     interpreter.registerGlobal("Color", IColor());
     interpreter.registerGlobal("Expanded", IExpanded());
     interpreter.registerGlobal("TextStyle", ITextStyle());
     interpreter.registerGlobal("Text", IText());
+    interpreter.registerGlobal("Row", IRow());
     interpreter.registerGlobal("Column", IColumn());
     interpreter.registerGlobal("ListView", IListView());
     interpreter.registerGlobal("TextButton", ITextButton());
+    interpreter.registerGlobal("BorderSide", IBorderSide());
+    interpreter.registerGlobal("ElevatedButton", IElevatedButton());
+    interpreter.registerGlobal("OutlinedButton", IOutlinedButton());
     interpreter.registerGlobal("LinearGradient", ILinearGradient());
+    interpreter.registerGlobal("CircularProgressIndicator", ICircularProgressIndicator());
     interpreter.registerGlobal("Container", IContainer());
     interpreter.registerGlobal("BoxShadow", IBoxShadow());
+    interpreter.registerGlobal("InputDecoration", IInputDecoration());
+    interpreter.registerGlobal("UnderlineInputBorder", IUnderlineInputBorder());
+    interpreter.registerGlobal("OutlineInputBorder", IOutlineInputBorder());
+    interpreter.registerGlobal("Icon", IIcon());
+    interpreter.registerGlobal("IconButton", IIconButton());
+    interpreter.registerGlobal("Checkbox", ICheckbox());
+    interpreter.registerGlobal("TextField", ITextField());
+    interpreter.registerGlobal("AppBar", IAppBar());
+    interpreter.registerGlobal("Scaffold", IScaffold());
     interpreter.registerGlobal("BoxDecoration", IBoxDecoration());
     interpreter.registerGlobal(
         "update",
@@ -224,18 +321,19 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-      ),
-      body: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            renderedWidget,
-          ],
-        ),
-      ),
-    );
+    return renderedWidget;
+    // return Scaffold(
+    //   appBar: AppBar(
+    //     title: Text(widget.title),
+    //   ),
+    //   body: Center(
+    //     child: Column(
+    //       mainAxisAlignment: MainAxisAlignment.center,
+    //       children: <Widget>[
+    //         renderedWidget,
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 }

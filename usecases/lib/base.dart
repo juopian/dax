@@ -55,3 +55,30 @@ class IColor implements LoxCallable {
     return Color(arguments[0] as int);
   }
 }
+
+class IAssetImage implements LoxCallable {
+  @override
+  int arity() {
+    return 0;
+  }
+
+  @override
+  Object call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    return AssetImage(arguments[0] as String);
+  }
+}
+
+
+class INetworkImage implements LoxCallable {
+  @override
+  int arity() {
+    return 0;
+  }
+
+  @override
+  Object call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    return NetworkImage(arguments[0] as String);
+  }
+}

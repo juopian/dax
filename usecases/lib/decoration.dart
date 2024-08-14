@@ -62,10 +62,7 @@ class ILinearGradient implements LoxCallable {
     if (colorsParsed != null) {
       colors = (colorsParsed as List).cast<Color>();
     }
-    return LinearGradient(
-        begin: begin,
-        end: end,
-        colors: colors);
+    return LinearGradient(begin: begin, end: end, colors: colors);
   }
 
   @override
@@ -120,6 +117,249 @@ class IBoxShadow implements LoxCallable {
         offset: offset,
         blurRadius: blurRadius,
         spreadRadius: spreadRadius);
+  }
+
+  @override
+  int arity() => 0;
+}
+
+class IInputDecoration implements LoxCallable {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    String? labelText;
+    var labelTextParsed = namedArguments[const Symbol('labelText')];
+    if (labelTextParsed != null) {
+      labelText = labelTextParsed as String;
+    }
+    String? hintText;
+    var hintTextParsed = namedArguments[const Symbol('hintText')];
+    if (hintTextParsed != null) {
+      hintText = hintTextParsed as String;
+    }
+    Widget? icon;
+    var iconParsed = namedArguments[const Symbol('icon')];
+    if (iconParsed != null) {
+      icon = iconParsed as Widget;
+    }
+    Widget? prefixIcon;
+    var prefixIconParsed = namedArguments[const Symbol('prefixIcon')];
+    if (prefixIconParsed != null) {
+      prefixIcon = prefixIconParsed as Widget;
+    }
+    Widget? suffixIcon;
+    var suffixIconParsed = namedArguments[const Symbol('suffixIcon')];
+    if (suffixIconParsed != null) {
+      suffixIcon = suffixIconParsed as Widget;
+    }
+    String? errorText;
+    var errorTextParsed = namedArguments[const Symbol('errorText')];
+    if (errorTextParsed != null) {
+      errorText = errorTextParsed as String;
+    }
+    String? prefixText;
+    var prefixTextParsed = namedArguments[const Symbol('prefixText')];
+    if (prefixTextParsed != null) {
+      prefixText = prefixTextParsed as String;
+    }
+    String? suffixText;
+    var suffixTextParsed = namedArguments[const Symbol('suffixText')];
+    if (suffixTextParsed != null) {
+      suffixText = suffixTextParsed as String;
+    }
+    String? helperText;
+    var helperTextParsed = namedArguments[const Symbol('helperText')];
+    if (helperTextParsed != null) {
+      helperText = helperTextParsed as String;
+    }
+    bool isCollapsed = false;
+    var isCollapsedParsed = namedArguments[const Symbol('isCollapsed')];
+    if (isCollapsedParsed != null) {
+      isCollapsed = isCollapsedParsed as bool;
+    }
+    bool enabled = true;
+    var enabledParsed = namedArguments[const Symbol('enabled')];
+    if (enabledParsed != null) {
+      enabled = enabledParsed as bool;
+    }
+    bool? filled;
+    var filledParsed = namedArguments[const Symbol('filled')];
+    if (filledParsed != null) {
+      filled = filledParsed as bool;
+    }
+    bool? isDense;
+    var isDenseParsed = namedArguments[const Symbol('isDense')];
+    if (isDenseParsed != null) {
+      isDense = isDenseParsed as bool;
+    }
+    Color? fillColor;
+    var fillColorParsed = namedArguments[const Symbol('fillColor')];
+    if (fillColorParsed != null) {
+      fillColor = fillColorParsed as Color;
+    }
+    Color? hoverColor;
+    var hoverColorParsed = namedArguments[const Symbol('hoverColor')];
+    if (hoverColorParsed != null) {
+      hoverColor = hoverColorParsed as Color;
+    }
+    TextStyle? labelStyle;
+    var labelStyleParsed = namedArguments[const Symbol('textStyle')];
+    if (labelStyleParsed != null) {
+      labelStyle = labelStyleParsed as TextStyle;
+    }
+    TextStyle? hintStyle;
+    var hintStyleParsed = namedArguments[const Symbol('hintStyle')];
+    if (hintStyleParsed != null) {
+      hintStyle = hintStyleParsed as TextStyle;
+    }
+    TextStyle? errorStyle;
+    var errorStyleParsed = namedArguments[const Symbol('errorStyle')];
+    if (errorStyleParsed != null) {
+      errorStyle = errorStyleParsed as TextStyle;
+    }
+    TextStyle? helperStyle;
+    var helperStyleParsed = namedArguments[const Symbol('helperStyle')];
+    if (helperStyleParsed != null) {
+      helperStyle = helperStyleParsed as TextStyle;
+    }
+    TextStyle? prefixStyle;
+    var prefixStyleParsed = namedArguments[const Symbol('prefixStyle')];
+    if (prefixStyleParsed != null) {
+      prefixStyle = prefixStyleParsed as TextStyle;
+    }
+    TextStyle? suffixStyle;
+    var suffixStyleParsed = namedArguments[const Symbol('suffixStyle')];
+    if (suffixStyleParsed != null) {
+      suffixStyle = suffixStyleParsed as TextStyle;
+    }
+    EdgeInsetsGeometry? contentPadding;
+    var contentPaddingParsed = namedArguments[const Symbol('contentPadding')];
+    if (contentPaddingParsed != null) {
+      contentPadding = contentPaddingParsed as EdgeInsetsGeometry;
+    }
+    InputBorder? border;
+    var borderParsed = namedArguments[const Symbol('border')];
+    if (borderParsed != null) {
+      border = borderParsed as InputBorder;
+    }
+    InputBorder? focusedBorder;
+    var focusedBorderParsed = namedArguments[const Symbol('focusedBorder')];
+    if (focusedBorderParsed != null) {
+      focusedBorder = focusedBorderParsed as InputBorder;
+    }
+    InputBorder? enabledBorder;
+    var enabledBorderParsed = namedArguments[const Symbol('enabledBorder')];
+    if (enabledBorderParsed != null) {
+      enabledBorder = enabledBorderParsed as InputBorder;
+    }
+    InputBorder? errorBorder;
+    var errorBorderParsed = namedArguments[const Symbol('errorBorder')];
+    if (errorBorderParsed != null) {
+      errorBorder = errorBorderParsed as InputBorder;
+    }
+    return InputDecoration(
+        contentPadding: contentPadding,
+        isCollapsed: isCollapsed,
+        enabled: enabled,
+        filled: true,
+        isDense: isDense,
+        border: border,
+        focusedBorder: focusedBorder,
+        enabledBorder: enabledBorder,
+        errorBorder: errorBorder,
+        fillColor: fillColor,
+        hoverColor: hoverColor,
+        labelStyle: labelStyle,
+        hintStyle: hintStyle,
+        errorStyle: errorStyle,
+        helperStyle: helperStyle,
+        prefixStyle: prefixStyle,
+        suffixStyle: suffixStyle,
+        helperText: helperText,
+        labelText: labelText,
+        hintText: hintText,
+        icon: icon,
+        prefixIcon: prefixIcon,
+        suffixIcon: suffixIcon,
+        prefixText: prefixText,
+        suffixText: suffixText,
+        errorText: errorText);
+  }
+
+  @override
+  int arity() => 0;
+}
+
+class IUnderlineInputBorder implements LoxCallable {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    BorderSide borderSide = const BorderSide();
+    BorderRadius borderRaidus = const BorderRadius.only(
+      topLeft: Radius.circular(4),
+      topRight: Radius.circular(4),
+    );
+    var borderRaidusParsed = namedArguments[const Symbol('borderRadius')];
+    if (borderRaidusParsed != null) {
+      borderRaidus = borderRaidusParsed as BorderRadius;
+    }
+    var borderSideParsed = namedArguments[const Symbol('borderSide')];
+    if (borderSideParsed != null) {
+      borderSide = borderSideParsed as BorderSide;
+    }
+    return UnderlineInputBorder(
+      borderRadius: borderRaidus,
+      borderSide: borderSide,
+    );
+  }
+
+  @override
+  int arity() => 0;
+}
+
+class IOutlineInputBorder implements LoxCallable {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    BorderSide borderSide = const BorderSide(); // default border side
+    var borderSideParsed = namedArguments[const Symbol('borderSide')];
+    if (borderSideParsed != null) {
+      borderSide = borderSideParsed as BorderSide;
+    }
+    BorderRadius borderRadius = BorderRadius.circular(4);
+    var borderRadiusParsed = namedArguments[const Symbol('borderRadius')];
+    if (borderRadiusParsed != null) {
+      borderRadius = borderRadiusParsed as BorderRadius;
+    }
+    double gapPadding =
+        parseDouble(namedArguments[const Symbol('gapPadding')]) ?? 4.0;
+    return OutlineInputBorder(
+      borderRadius: borderRadius,
+      borderSide: borderSide,
+      gapPadding: gapPadding,
+    );
+  }
+
+  @override
+  int arity() => 0;
+}
+
+class IBorderSide implements LoxCallable {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    Color color = Colors.black;
+    var colorParsed = namedArguments[const Symbol('color')];
+    if (colorParsed != null) {
+      color = colorParsed as Color;
+    }
+    double width = parseDouble(namedArguments[const Symbol('width')]) ?? 1.0;
+    BorderStyle style = BorderStyle.solid;
+    var styleParsed = namedArguments[const Symbol('style')];
+    if (styleParsed != null) {
+      style = styleParsed as BorderStyle;
+    }
+    return BorderSide(color: color, width: width, style: style);
   }
 
   @override

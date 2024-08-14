@@ -146,9 +146,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       // arguments.add(evaluate(argument));
     }
     if (callee is Function) {
-      // print('call function');
-      // print(arguments);
-      // print(namedArguments);
       return Function.apply(callee, arguments, namedArguments);
     }
     if (callee is! LoxCallable) {

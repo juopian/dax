@@ -69,3 +69,58 @@ final fontWeightMap = {
   "w800": FontWeight.w800,
   "w900": FontWeight.w900,
 };
+
+final mainAxisAlignmentMap = {
+  "start": MainAxisAlignment.start, 
+  "end": MainAxisAlignment.end, 
+  "spaceAround": MainAxisAlignment.spaceAround, 
+  "spaceBetween": MainAxisAlignment.spaceBetween, 
+  "spaceEvenly": MainAxisAlignment.spaceEvenly
+};
+
+final crossAxisAlignmentMap = {
+  "start": CrossAxisAlignment.start,
+  "end": CrossAxisAlignment.end,
+  "center": CrossAxisAlignment.center,
+  "baseline": CrossAxisAlignment.baseline,
+  "stretch": CrossAxisAlignment.stretch,
+};
+
+final textAlignMap = {
+  "start": TextAlign.start,
+  "center": TextAlign.center,
+  "end": TextAlign.end,
+  "left": TextAlign.left,
+  "right": TextAlign.right,
+  "jusitfy": TextAlign.justify,
+};
+
+final boxFitMap = {
+  "contain": BoxFit.contain,
+  "cover": BoxFit.cover,
+  "fill": BoxFit.fill,
+  "fitHeight": BoxFit.fitHeight,
+  "fitWidth": BoxFit.fitWidth,
+  "scaleDown": BoxFit.scaleDown,
+  "none": BoxFit.none,
+};
+
+final textInputTypeMap = {
+  "emailAddress": TextInputType.emailAddress,
+  "datetime": TextInputType.datetime,
+  "multiline": TextInputType.multiline,
+  "name": TextInputType.name,
+  "number": TextInputType.number,
+  "phone": TextInputType.phone,
+  "text": TextInputType.text,
+  "url": TextInputType.url,
+  "values": TextInputType.values,
+  "visiblePassword": TextInputType.visiblePassword,
+  "streetAddress": TextInputType.streetAddress,
+  "none": TextInputType.none,
+};
+
+final borderStyleMap = {
+  "solid": BorderStyle.solid,
+  "none": BorderStyle.none,
+};
