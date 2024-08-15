@@ -259,9 +259,9 @@ class ITextField implements LoxCallable {
     if (decorationParsed != null) {
       decoration = decorationParsed as InputDecoration;
     }
-    int maxLines = 1; 
+    int maxLines = 1;
     var maxLinesParsed = namedArguments[const Symbol('maxLines')];
-    if(maxLinesParsed != null){
+    if (maxLinesParsed != null) {
       maxLines = maxLinesParsed as int;
     }
     TextStyle? style;
@@ -281,5 +281,33 @@ class ITextField implements LoxCallable {
   @override
   int arity() {
     return 2;
+  }
+}
+
+class IDivider implements LoxCallable {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    double? height = parseDouble(namedArguments[const Symbol('height')]);
+    double? thickness = parseDouble(namedArguments[const Symbol('thickness')]);
+    double? indent = parseDouble(namedArguments[const Symbol('indent')]);
+    double? endIndent = parseDouble(namedArguments[const Symbol('endIndent')]);
+    Color? color;
+    var colorParsed = namedArguments[const Symbol('color')];
+    if (colorParsed != null) {
+      color = colorParsed as Color;
+    }
+    return Divider(
+      height: height,
+      thickness: thickness,
+      indent: indent,
+      endIndent: endIndent,
+      color: color,
+    );
+  }
+
+  @override
+  int arity() {
+    return 0;
   }
 }

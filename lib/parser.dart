@@ -70,6 +70,7 @@ class Parser {
     List<Token> parameters = [];
     if (!check(TokenType.RIGHT_PAREN)) {
       do {
+        if(check(TokenType.RIGHT_PAREN)) break;
         if (parameters.length >= 255) {
           error(peek(), "Can't have more than 255 parameters.");
         }
@@ -274,7 +275,7 @@ class Parser {
 
   Expr factor() {
     Expr expr = unary();
-    while (match([TokenType.SLASH, TokenType.STAR])) {
+    while (match([TokenType.SLASH, TokenType.STAR, TokenType.MOD])) {
       Token operator = previous();
       Expr right = unary();
       expr = Binary(expr, operator, right);
@@ -288,12 +289,11 @@ class Parser {
       Expr right = unary();
       return Unary(operator, right);
     }
-    // return primary();
     return call();
   }
 
   Expr call() {
-    Expr expr = arrayOrMap(); //change to array
+    Expr expr = arrayOrMap();
     while (true) {
       if (match([TokenType.LEFT_PAREN])) {
         expr = finishCall(expr);
@@ -325,35 +325,13 @@ class Parser {
     Expr expr = expression();
     consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
     return Mapping(callee, name, expr);
-    // if (!check(TokenType.LEFT_PAREN)) {
-    //   Expr expr = expression();
-    //   consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
-    //   return Mapping(callee, name, expr);
-    // }
-    // consume(TokenType.LEFT_PAREN, "Expect '(' after map.");
-    // List<Token> parameters = [];
-    // if (!check(TokenType.RIGHT_PAREN)) {
-    //   do {
-    //     if (parameters.length >= 2) {
-    //       error(peek(), "Can't have more than 2 parameters.");
-    //     }
-    //     parameters.add(
-    //       consume(TokenType.IDENTIFIER, "Expect parameter name."),
-    //     );
-    //   } while (match([TokenType.COMMA]));
-    // }
-    // consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
-    // consume(TokenType.LEFT_BRACE, "Expect '{' before map body.");
-    // List<Stmt> body = block();
-    // consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
-    // Functional lambda = Functional(name, parameters, body);
-    // return Mapping(callee, name, lambda);
   }
 
   Expr finishCall(Expr callee) {
     List<Expr> arguments = [];
     if (!check(TokenType.RIGHT_PAREN)) {
       do {
+        if(check(TokenType.RIGHT_PAREN)) break;
         if (arguments.length >= 255) {
           error(peek(), "Can't have more than 255 arguments.");
         }
@@ -380,6 +358,7 @@ class Parser {
       List<Expr> elements = [];
       if (!check(TokenType.RIGHT_BRACKET)) {
         do {
+          if (check(TokenType.RIGHT_BRACKET)) break;
           elements.add(expression());
         } while (match([TokenType.COMMA]));
       }
@@ -389,6 +368,7 @@ class Parser {
       Map<String, Expr> entries = {};
       if (!check(TokenType.RIGHT_BRACE)) {
         do {
+          if(check(TokenType.RIGHT_BRACE)) break;
           Token key = consume(TokenType.STRING, 'Expect key.');
           consume(TokenType.COLON, "Expect ':' after dictionary key.");
           entries['${key.literal}'] = expression();
@@ -426,6 +406,7 @@ class Parser {
     if (match([TokenType.LEFT_PAREN])) {
       if (!check(TokenType.RIGHT_PAREN)) {
         do {
+          if(check(TokenType.RIGHT_PAREN)) break;
           expression();
         } while (match([TokenType.COMMA]));
       }
@@ -436,12 +417,12 @@ class Parser {
       current = currentSnap;
     }
 
-    // print("isAnonymous: $isAnonymous");
     if (isAnonymous) {
       consume(TokenType.LEFT_PAREN, "Expect '(' after map.");
       List<Token> parameters = [];
       if (!check(TokenType.RIGHT_PAREN)) {
         do {
+          if(check(TokenType.RIGHT_PAREN)) break;
           parameters.add(
             consume(TokenType.IDENTIFIER, "Expect parameter name."),
           );

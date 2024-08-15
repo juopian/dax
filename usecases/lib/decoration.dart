@@ -257,6 +257,16 @@ class IInputDecoration implements LoxCallable {
     if (errorBorderParsed != null) {
       errorBorder = errorBorderParsed as InputBorder;
     }
+    Widget? suffix;
+    var suffixParsed = namedArguments[const Symbol('suffix')];
+    if (suffixParsed != null) {
+      suffix = suffixParsed as Widget;
+    }
+    Widget? prefix;
+    var prefixParsed = namedArguments[const Symbol('prefix')];
+    if (prefixParsed != null) {
+      prefix = prefixParsed as Widget;
+    }
     return InputDecoration(
         contentPadding: contentPadding,
         isCollapsed: isCollapsed,
@@ -279,6 +289,8 @@ class IInputDecoration implements LoxCallable {
         labelText: labelText,
         hintText: hintText,
         icon: icon,
+        suffix: suffix,
+        prefix: prefix,
         prefixIcon: prefixIcon,
         suffixIcon: suffixIcon,
         prefixText: prefixText,
@@ -321,7 +333,7 @@ class IOutlineInputBorder implements LoxCallable {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
-    BorderSide borderSide = const BorderSide(); // default border side
+    BorderSide borderSide = const BorderSide(); 
     var borderSideParsed = namedArguments[const Symbol('borderSide')];
     if (borderSideParsed != null) {
       borderSide = borderSideParsed as BorderSide;

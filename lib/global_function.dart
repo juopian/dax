@@ -34,7 +34,8 @@ class StringFunction implements LoxCallable {
 
 class GenericLoxCallable implements LoxCallable {
   final int Function() _arity;
-  final Object? Function(Interpreter, List<Object?>) _call;
+  final Object? Function(
+      Interpreter, List<Object?>, Map<Symbol, Object?> namedArguments) _call;
 
   GenericLoxCallable(this._arity, this._call);
 
@@ -44,5 +45,5 @@ class GenericLoxCallable implements LoxCallable {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
           Map<Symbol, Object?> namedArguments) =>
-      _call(interpreter, arguments);
+      _call(interpreter, arguments, namedArguments);
 }

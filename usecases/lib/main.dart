@@ -53,9 +53,10 @@ class _MyHomePageState extends State<MyHomePage> {
     registerGlobalFunctions();
     Scanner scanner = Scanner('''
   var i = 0;
-  var arr = [{"x":1}, {"x":2}, {"x":3}];
+  var arr = [{"x":1}, {"x":2}, {"x":3,}];
   var radius = 5;
   var isChecked = true;
+  var textEditingController = TextEditingController();
   fun increase(){
      i = i + 1;
      update();
@@ -66,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
     update();
   }
 
-  fun item(i) {
+  fun item(i,) {
     return Text("位置: \${i["x"]}", 
       style: TextStyle(
         color: Colors.blue, 
@@ -119,12 +120,16 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               TextButton(
-              child:Text("click me"), 
-              onPressed: increase
+              child:Text("print clientwidth"), 
+              onPressed: (){
+                print DeviceWidth();
+              } 
             ),
             OutlinedButton(
-              child:Text("click me"), 
-              onPressed: increase
+              child:Text("show snackbar"), 
+              onPressed: (){
+                ShowSnackBar(content: Text("Hi"));
+              } 
             ), 
             ElevatedButton(
               child:Text("click me"), 
@@ -140,7 +145,7 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Container(
             padding: EdgeInsets.symmetric(horizontal: 20.0, vertical: 20.0),
-            margin: EdgeInsets.all(20.0),
+            margin: EdgeInsets.all(2.0),
             decoration: BoxDecoration(
               color: Colors.blue,
               border: Border.all(
@@ -149,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ),
               gradient: LinearGradient(
                 colors: [Color(0xff66bb6a), Color(0xff43a047)],
-                begin: Alignment(-1, -1),
+                begin: Alignment.centerLeft,
                 end: Alignment(1,1)
               ),
               boxShadow: [
@@ -162,6 +167,7 @@ class _MyHomePageState extends State<MyHomePage> {
               ],
               borderRadius: BorderRadius.vertical(top: Radius.circular(radius))
             ),
+            transform: Matrix4.rotationZ(0.2),
             child: Text("This is a container", 
               style: TextStyle(
                 fontSize: 20, 
@@ -169,9 +175,48 @@ class _MyHomePageState extends State<MyHomePage> {
               )
             )
           ),
-          Image(
-            height: 60,
-            image: NetworkImage("https://avatars2.githubusercontent.com/u/20411648?s=460&v=4")
+          Wrap(
+            spacing: 10,
+            children: [
+              Align(child: Text("Hello world!")),
+              Image(
+                height: 60,
+                image: NetworkImage("https://pics6.baidu.com/feed/a8ec8a13632762d0a458dd54b4ab71f4503dc648.jpeg@f_auto?token=4246c989393b6ad6b32441a482158ae8")
+              ),
+              Image(
+                height: 60,
+                image: NetworkImage("https://pics6.baidu.com/feed/a8ec8a13632762d0a458dd54b4ab71f4503dc648.jpeg@f_auto?token=4246c989393b6ad6b32441a482158ae8")
+              ),
+              Image(
+                height: 60,
+                image: NetworkImage("https://pics6.baidu.com/feed/a8ec8a13632762d0a458dd54b4ab71f4503dc648.jpeg@f_auto?token=4246c989393b6ad6b32441a482158ae8")
+              ),
+            ]
+          ),
+          Container(
+            width: 200,
+            height: 50,
+            decoration: BoxDecoration(
+              border: Border.all(
+                width: 2,
+                color: Colors.blue
+              ) 
+            ),
+            child: Stack(
+              children: [
+                Positioned(
+                  top: 0,
+                  left: 0,
+                  child: Padding(
+                    padding: EdgeInsets.all(10),
+                    child: Transform.rotate(
+                      angle: 1.2,
+                      child: Text("Hello world!")
+                    )
+                  )
+                )
+              ] 
+            ),
           ),
           Row(
             children: [
@@ -187,13 +232,20 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           TextField(
             maxLines: 1,
+            controller: textEditingController,
             style: TextStyle(fontSize: 20),
             onChanged: (value) {
               print value;
             },
             decoration: InputDecoration(
-              contentPadding: EdgeInsets.all(10),
+              contentPadding: EdgeInsets.all(1),
               prefixIcon: Icon(Icons.star),
+              suffixIcon: IconButton(
+                icon: Icon(Icons.close, color: Colors.cyan),
+                onPressed: (){
+
+                } 
+              ),
               enabledBorder: OutlineInputBorder(
                  borderRadius: BorderRadius.circular(1),
                  borderSide: BorderSide(
@@ -218,15 +270,32 @@ class _MyHomePageState extends State<MyHomePage> {
               )
             ]
           ),
-          Expanded( 
-            child: ListView(
-              children: getItems().map((i){ 
-                return Text("位置: \${i}", 
-                  style: TextStyle(fontSize: 20, color: Colors.cyan)
-                ); 
-              })
-            ) 
+          Expanded(
+            child: ListView.separated(
+              itemCount: 10,
+              prototypeItem: ListTile(title: Text("1")),
+              separatorBuilder: (context, index) {
+                if(index % 2 == 0) 
+                  return Divider(color: Colors.red);
+                 else 
+                  return Divider(color: Colors.green);
+              },
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text("item \${index}"),
+                );
+              }
+            )
           )
+          // Expanded( 
+          //   child: ListView(
+          //     children: getItems().map((i){ 
+          //       return Text("位置: \${i}", 
+          //         style: TextStyle(fontSize: 20, color: Colors.cyan)
+          //       ); 
+          //     })
+          //   ) 
+          // )
         ]
       )
     );
@@ -274,6 +343,8 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("Icons", iconMap);
     interpreter.registerGlobal("Border", borderMap);
     interpreter.registerGlobal("BorderRadius", borderRadiusMap);
+    interpreter.registerGlobal("Transform", transformMap);
+    interpreter.registerGlobal("Matrix4", matrix4Map);
     interpreter.registerGlobal("MainAxisAlignment", mainAxisAlignmentMap);
     interpreter.registerGlobal("CrossAxisAlignment", crossAxisAlignmentMap);
     interpreter.registerGlobal("TextAlign", textAlignMap);
@@ -281,6 +352,10 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("Radius", radiusMap);
     interpreter.registerGlobal("TextInputType", textInputTypeMap);
     interpreter.registerGlobal("BorderStyle", borderStyleMap);
+    interpreter.registerGlobal("AxisDirection", axisDirectionMap);
+    interpreter.registerGlobal("WrapAlignment", wrapAlignmentMap);
+    interpreter.registerGlobal("TextDirection", textDirectionMap);
+    interpreter.registerGlobal("StackFix", stackFitMap);
     interpreter.registerGlobal("Offset", IOffset());
     interpreter.registerGlobal("Image", IImage());
     interpreter.registerGlobal("AssetImage", IAssetImage());
@@ -288,8 +363,16 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("Alignment", IAlignment());
     interpreter.registerGlobal("Color", IColor());
     interpreter.registerGlobal("Expanded", IExpanded());
+    interpreter.registerGlobal("Stack", IStack());
+    interpreter.registerGlobal("Positioned", IPositioned());
+    interpreter.registerGlobal("ClipOval", IClipOval());
+    interpreter.registerGlobal("ClipRRect", IClipRRect());
+    interpreter.registerGlobal("ClipRect", IClipRect());
+    interpreter.registerGlobal("Align", IAlign());
+    interpreter.registerGlobal("Wrap", IWrap());
     interpreter.registerGlobal("TextStyle", ITextStyle());
     interpreter.registerGlobal("Text", IText());
+    interpreter.registerGlobal("Divider", IDivider());
     interpreter.registerGlobal("Row", IRow());
     interpreter.registerGlobal("Column", IColumn());
     interpreter.registerGlobal("ListView", IListView());
@@ -298,8 +381,12 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("ElevatedButton", IElevatedButton());
     interpreter.registerGlobal("OutlinedButton", IOutlinedButton());
     interpreter.registerGlobal("LinearGradient", ILinearGradient());
-    interpreter.registerGlobal("CircularProgressIndicator", ICircularProgressIndicator());
+    interpreter.registerGlobal(
+        "TextEditingController", ITextEditingController());
+    interpreter.registerGlobal(
+        "CircularProgressIndicator", ICircularProgressIndicator());
     interpreter.registerGlobal("Container", IContainer());
+    interpreter.registerGlobal("Padding", IPadding());
     interpreter.registerGlobal("BoxShadow", IBoxShadow());
     interpreter.registerGlobal("InputDecoration", IInputDecoration());
     interpreter.registerGlobal("UnderlineInputBorder", IUnderlineInputBorder());
@@ -310,11 +397,26 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("TextField", ITextField());
     interpreter.registerGlobal("AppBar", IAppBar());
     interpreter.registerGlobal("Scaffold", IScaffold());
+    interpreter.registerGlobal("ListTile", IListTile());
     interpreter.registerGlobal("BoxDecoration", IBoxDecoration());
     interpreter.registerGlobal(
+        "DeviceWidth",
+        GenericLoxCallable(() => 0, (Interpreter interpreter,
+            List<Object?> arguments, Map<Symbol, Object?> namedArguments) {
+          return MediaQuery.of(context).size.width;
+        }));
+    interpreter.registerGlobal(
+        "ShowSnackBar",
+        GenericLoxCallable(() => 0, (Interpreter interpreter,
+            List<Object?> arguments, Map<Symbol, Object?> namedArguments) {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: namedArguments[const Symbol('content')] as Widget,
+          ));
+        }));
+    interpreter.registerGlobal(
         "update",
-        GenericLoxCallable(() => 0,
-            (Interpreter interpreter, List<Object?> arguments) {
+        GenericLoxCallable(() => 0, (Interpreter interpreter,
+            List<Object?> arguments, Map<Symbol, Object?> namedArguments) {
           updateUI();
         }));
   }

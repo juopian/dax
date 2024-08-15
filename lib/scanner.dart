@@ -86,6 +86,9 @@ class Scanner {
       case '*':
         addToken(TokenType.STAR);
         break;
+      case '%':
+        addToken(TokenType.MOD);
+        break;
       case '!':
         if (match('=')) {
           addToken(TokenType.BANG_EQUAL);

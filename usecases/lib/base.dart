@@ -22,8 +22,33 @@ class IOffset implements LoxCallable {
   }
 }
 
-class IAlignment implements LoxCallable {
+class IAlignment implements LoxCallable, LoxNamedCallable {
 
+  @override
+  Object? get(Token name) {
+    switch (name.lexeme) {
+      case 'topLeft':
+        return Alignment.topLeft;
+      case 'topCenter':
+        return Alignment.topCenter;
+      case 'topRight':
+        return Alignment.topRight;
+      case 'centerLeft':
+        return Alignment.centerLeft;
+      case 'center':
+        return Alignment.center;
+      case 'centerRight':
+        return Alignment.centerRight;
+      case 'bottomLeft':
+        return Alignment.bottomLeft;
+      case 'bottomCenter':
+        return Alignment.bottomCenter;
+      case 'bottomRight':
+        return Alignment.bottomRight;
+      default:
+        return null;
+    }
+  }
 
   @override
   int arity() {
@@ -82,3 +107,17 @@ class INetworkImage implements LoxCallable {
     return NetworkImage(arguments[0] as String);
   }
 }
+
+class ITextEditingController implements LoxCallable {
+  @override
+  int arity() {
+    return 0;
+  }
+
+  @override
+  Object call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    return TextEditingController();
+  }
+}
+

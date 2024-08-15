@@ -94,7 +94,6 @@ class IColumn implements LoxCallable {
   }
 }
 
-
 class ICenter implements LoxCallable {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
@@ -120,23 +119,135 @@ class ICenter implements LoxCallable {
   }
 }
 
-
 class IWrap implements LoxCallable {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
+    List<Widget> children = [];
     var childrenParsed = namedArguments[const Symbol('children')];
-    if (childrenParsed == null) {
-      throw "children required in Wrap";
+    if (childrenParsed != null) {
+      children = (childrenParsed as List).cast<Widget>();
     }
-    List<Widget> children = (childrenParsed as List).cast<Widget>();
+    double spacing = parseDouble(namedArguments[const Symbol('spacing')]) ?? 0;
+    double runSpacing =
+        parseDouble(namedArguments[const Symbol('runSpacing')]) ?? 0;
+    WrapAlignment alignment = WrapAlignment.start;
+    var alignmentParsed = namedArguments[const Symbol('alignment')];
+    if (alignmentParsed != null) {
+      alignment = alignmentParsed as WrapAlignment;
+    }
+    WrapAlignment runAlignment = WrapAlignment.start;
+    var runAlignmentParsed = namedArguments[const Symbol('runAlignment')];
+    if (runAlignmentParsed != null) {
+      runAlignment = runAlignmentParsed as WrapAlignment;
+    }
     return Wrap(
       children: children,
+      spacing: spacing,
+      runSpacing: runSpacing,
+      alignment: alignment,
+      runAlignment: runAlignment,
     );
   }
 
   @override
   int arity() {
     return 1;
+  }
+}
+
+class IAlign implements LoxCallable {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    Alignment alignment = Alignment.center;
+    var alignmentParsed = namedArguments[const Symbol('alignment')];
+    if (alignmentParsed != null) {
+      alignment = alignmentParsed as Alignment;
+    }
+    Widget? child;
+    var childParsed = namedArguments[const Symbol('child')];
+    if (childParsed != null) {
+      child = childParsed as Widget;
+    }
+    double? heightFactor =
+        parseDouble(namedArguments[const Symbol('heightFactor')]);
+    double? widthFactor =
+        parseDouble(namedArguments[const Symbol('widthFactor')]);
+    return Align(
+      child: child,
+      alignment: alignment,
+      heightFactor: heightFactor,
+      widthFactor: widthFactor,
+    );
+  }
+
+  @override
+  int arity() {
+    return 1;
+  }
+}
+
+
+class IStack implements LoxCallable {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    List<Widget> children = [];
+    var childrenParsed = namedArguments[const Symbol('children')];
+    if (childrenParsed != null) {
+      children = (childrenParsed as List).cast<Widget>();
+    }
+    TextDirection? textDirection;
+    var textDirectionParsed = namedArguments[const Symbol('textDirection')];
+    if (textDirectionParsed != null) {
+      textDirection = textDirectionParsed as TextDirection;
+    }
+    StackFit fit = StackFit.loose;
+    var fitParsed = namedArguments[const Symbol('fit')];
+    if (fitParsed != null) {
+      fit = fitParsed as StackFit;
+    }
+    return Stack(
+      children: children,
+      textDirection: textDirection,
+      fit: fit,
+    );
+  }
+
+  @override
+  int arity() {
+    return 1;
+  }
+}
+
+class IPositioned implements LoxCallable {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    double? left = parseDouble(namedArguments[const Symbol('left')]);
+    double? top = parseDouble(namedArguments[const Symbol('top')]);
+    double? right = parseDouble(namedArguments[const Symbol('right')]);
+    double? bottom = parseDouble(namedArguments[const Symbol('bottom')]);
+    double? width = parseDouble(namedArguments[const Symbol('width')]);
+    double? height = parseDouble(namedArguments[const Symbol('height')]);
+    var child = namedArguments[const Symbol('child')];
+    if (child == null) {
+      throw "child is required";
+    }
+    return Positioned(
+      left: left,
+      top: top,
+      right: right,
+      bottom: bottom,
+      width: width,
+      height: height,
+      child: child as Widget,
+    );
+  }
+
+  @override
+  int arity() {
+    return 1;    
   }
 }

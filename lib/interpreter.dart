@@ -113,6 +113,9 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       case TokenType.STAR:
         checkNumberOperands(expr.operator, right, left);
         return (left as num) * (right as num);
+      case TokenType.MOD:
+        checkNumberOperands(expr.operator, right, left);
+        return (left as num) % (right as num);
       case TokenType.PLUS:
         if (left is num && right is num) {
           return left + right;
@@ -212,6 +215,9 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     }
     if (object is LoxInstance) {
       return object.get(expr.name); // get方法绑定了实例
+    }
+    if (object is LoxNamedCallable) {
+      return object.get(expr.name); 
     }
     if (expr.name.lexeme == "toString") {
       return object.toString();

@@ -124,3 +124,31 @@ final borderStyleMap = {
   "solid": BorderStyle.solid,
   "none": BorderStyle.none,
 };
+
+final axisDirectionMap = {
+  "up": AxisDirection.up,
+  "down": AxisDirection.down,
+  "right": AxisDirection.right,
+  "left": AxisDirection.left,
+};
+
+final wrapAlignmentMap = {
+  "start": WrapAlignment.start,
+  "end": WrapAlignment.end,
+  "center": WrapAlignment.center,
+  "spaceBetween": WrapAlignment.spaceBetween,
+  "spaceAround": WrapAlignment.spaceAround,
+  "spaceEvenly": WrapAlignment.spaceEvenly,
+};
+
+final textDirectionMap = {
+  "ltr": TextDirection.ltr,
+  "rtl": TextDirection.rtl,
+};
+
+
+final stackFitMap = {
+  "loose": StackFit.loose,
+  "expand": StackFit.expand,
+  "passthrough": StackFit.passthrough,
+};
