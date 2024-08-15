@@ -7,6 +7,10 @@ abstract class LoxCallable {
 }
 
 
-abstract class LoxNamedCallable {
+abstract class LoxGetCallable {
   Object? get(Token name);
+}
+
+abstract class LoxSetCallable {
+  void set(Token name, Object? value);
 }

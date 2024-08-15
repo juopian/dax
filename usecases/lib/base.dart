@@ -22,7 +22,7 @@ class IOffset implements LoxCallable {
   }
 }
 
-class IAlignment implements LoxCallable, LoxNamedCallable {
+class IAlignment implements LoxCallable, LoxGetCallable {
 
   @override
   Object? get(Token name) {
@@ -108,7 +108,7 @@ class INetworkImage implements LoxCallable {
   }
 }
 
-class ITextEditingController implements LoxCallable {
+class ITextEditingController implements LoxCallable{
   @override
   int arity() {
     return 0;
@@ -117,7 +117,18 @@ class ITextEditingController implements LoxCallable {
   @override
   Object call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
-    return TextEditingController();
+    return TextEditingControllerIns();
   }
 }
 
+
+class TextEditingControllerIns extends TextEditingController implements LoxSetCallable {
+  @override
+  Object? set(Token name, Object? value) {
+    switch (name.lexeme) {
+      case 'text':
+        text = value as String;
+        break;
+    }
+  }
+}

@@ -53,10 +53,11 @@ class _MyHomePageState extends State<MyHomePage> {
     registerGlobalFunctions();
     Scanner scanner = Scanner('''
   var i = 0;
-  var arr = [{"x":1}, {"x":2}, {"x":3,}];
+  var arr = [{"x":1}, {"x":2}];
   var radius = 5;
   var isChecked = true;
   var textEditingController = TextEditingController();
+  var textEditingController1 = TextEditingController();
   fun increase(){
      i = i + 1;
      update();
@@ -105,6 +106,13 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: (){} 
           )
         ]
+      ),
+      floatingActionButton: FloatingActionButton(
+          child: Icon(Icons.add),
+          mini: true,
+          onPressed: (){
+            print "click";
+          }
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
@@ -220,7 +228,8 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           Row(
             children: [
-              CircularProgressIndicator(),
+              CircularProgressIndicator(color: Colors.red),
+              CupertinoActivityIndicator(),
               Checkbox(
                 value: isChecked,
                 onChanged: (value) {
@@ -243,7 +252,7 @@ class _MyHomePageState extends State<MyHomePage> {
               suffixIcon: IconButton(
                 icon: Icon(Icons.close, color: Colors.cyan),
                 onPressed: (){
-
+                  textEditingController.text = "";
                 } 
               ),
               enabledBorder: OutlineInputBorder(
@@ -376,6 +385,8 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("Row", IRow());
     interpreter.registerGlobal("Column", IColumn());
     interpreter.registerGlobal("ListView", IListView());
+    interpreter.registerGlobal(
+        "SingleChildScrollView", ISingleChildScrollView());
     interpreter.registerGlobal("TextButton", ITextButton());
     interpreter.registerGlobal("BorderSide", IBorderSide());
     interpreter.registerGlobal("ElevatedButton", IElevatedButton());
@@ -383,6 +394,8 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("LinearGradient", ILinearGradient());
     interpreter.registerGlobal(
         "TextEditingController", ITextEditingController());
+    interpreter.registerGlobal(
+        "CupertinoActivityIndicator", ICupertinoActivityIndicator());
     interpreter.registerGlobal(
         "CircularProgressIndicator", ICircularProgressIndicator());
     interpreter.registerGlobal("Container", IContainer());
@@ -397,6 +410,7 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("TextField", ITextField());
     interpreter.registerGlobal("AppBar", IAppBar());
     interpreter.registerGlobal("Scaffold", IScaffold());
+    interpreter.registerGlobal("FloatingActionButton", IFloatingActionButton());
     interpreter.registerGlobal("ListTile", IListTile());
     interpreter.registerGlobal("BoxDecoration", IBoxDecoration());
     interpreter.registerGlobal(

@@ -219,12 +219,10 @@ class Scanner {
 
     advance();
 
-    if (current - start > 2) {
-      if (interplote) {
-        addToken(TokenType.PLUS);
-      }
-      addToken1(TokenType.STRING, source.substring(start + 1, current - 1));
+    if (interplote) {
+      addToken(TokenType.PLUS);
     }
+    addToken1(TokenType.STRING, source.substring(start + 1, current - 1));
   }
 
   void number(String c) {

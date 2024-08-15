@@ -1,5 +1,6 @@
 import 'package:dax/dax.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:usecases/utils.dart';
 
 class IText implements LoxCallable {
@@ -178,6 +179,19 @@ class IImage implements LoxCallable {
   @override
   int arity() {
     return 1;
+  }
+}
+
+class ICupertinoActivityIndicator implements LoxCallable {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    return const CupertinoActivityIndicator();
+  }
+
+  @override
+  int arity() {
+    return 0;
   }
 }
 

@@ -16,9 +16,16 @@ class IScaffold implements LoxCallable {
     if (appBarParsed != null) {
       appBar = appBarParsed as PreferredSizeWidget;
     }
+    Widget? floatingActionButton;
+    var floatingActionButtonParsed =
+        namedArguments[const Symbol('floatingActionButton')];
+    if (floatingActionButtonParsed != null) {
+      floatingActionButton = floatingActionButtonParsed as Widget;
+    }
     return Scaffold(
       appBar: appBar,
       body: body,
+      floatingActionButton: floatingActionButton,
     );
   }
 
@@ -32,18 +39,43 @@ class IAppBar implements LoxCallable {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
-    var title = namedArguments[const Symbol('title')];
-    if (title == null) {
-      throw "title required in AppBar";
+    Widget? title;
+    var titleParsed = namedArguments[const Symbol('title')];
+    if (titleParsed != null) {
+      title = titleParsed as Widget;
     }
     List<Widget> actions = [];
     var actionsParsed = namedArguments[const Symbol('actions')];
     if (actionsParsed != null) {
       actions = (actionsParsed as List).cast<Widget>();
     }
+    Color? backgroundColor;
+    var backgroundColorParsed = namedArguments[const Symbol('backgroundColor')];
+    if (backgroundColorParsed != null) {
+      backgroundColor = backgroundColorParsed as Color;
+    }
+    Color? foregroundColor;
+    var foregroundColorParsed = namedArguments[const Symbol('forgroundColor')];
+    if (foregroundColorParsed != null) {
+      foregroundColor = foregroundColorParsed as Color;
+    }
+    double? elevation;
+    var elevationParsed = namedArguments[const Symbol('elevation')];
+    if (elevationParsed != null) {
+      elevation = elevationParsed as double;
+    }
+    bool? centerTitle; 
+    var centerTitleParsed = namedArguments[const Symbol('centerTitle')];
+    if (centerTitleParsed != null) {
+      centerTitle = centerTitleParsed as bool;
+    }
     return AppBar(
-      title: title as Widget,
+      title: title,
       actions: actions,
+      elevation: elevation,
+      centerTitle: centerTitle,
+      backgroundColor: backgroundColor,
+      foregroundColor: foregroundColor,
     );
   }
 
@@ -251,15 +283,67 @@ class IListTile implements LoxCallable {
       contentPadding = contentPaddingParsed as EdgeInsetsGeometry;
     }
     return ListTile(
-      leading: leading,
-      title: title,
-      subtitle: subtitle,
-      trailing: trailing,
-      dense: dense,
-      selected: selected,
-      onTap: onTap,
-      onLongPress: onLongPress,
-      contentPadding: contentPadding
+        leading: leading,
+        title: title,
+        subtitle: subtitle,
+        trailing: trailing,
+        dense: dense,
+        selected: selected,
+        onTap: onTap,
+        onLongPress: onLongPress,
+        contentPadding: contentPadding);
+  }
+
+  @override
+  int arity() {
+    return 1;
+  }
+}
+
+class IFloatingActionButton implements LoxCallable {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    Widget? child;
+    var childParsed = namedArguments[const Symbol('child')];
+    if (childParsed != null) {
+      child = childParsed as Widget;
+    }
+    var onPressed = namedArguments[const Symbol('onPressed')];
+    if (onPressed == null) {
+      throw "onPressed required in ElevatedButton";
+    }
+    Color? backgroundColor;
+    var backgroundColorParsed = namedArguments[const Symbol('backgroundColor')];
+    if (backgroundColorParsed != null) {
+      backgroundColor = backgroundColorParsed as Color;
+    }
+    Color? forgroundColor;
+    var forgroundColorParsed = namedArguments[const Symbol('forgroundColor')];
+    if (forgroundColorParsed != null) {
+      forgroundColor = forgroundColorParsed as Color;
+    }
+    bool mini = false;
+    var miniParsed = namedArguments[const Symbol('mini')];
+    if (miniParsed != null) {
+      mini = miniParsed as bool;
+    }
+    bool isExtended = false;
+    var isExtendedParsed = namedArguments[const Symbol('isExtend')];
+    if (isExtendedParsed != null) {
+      isExtended = isExtendedParsed as bool;
+    }
+    double? elevation = parseDouble(namedArguments[const Symbol('elevation')]);
+    return FloatingActionButton(
+      backgroundColor: backgroundColor,
+      foregroundColor: forgroundColor ,
+      child: child,
+      mini: mini,
+      elevation: elevation,
+      isExtended: isExtended,
+      onPressed: () {
+        (onPressed as LoxFunction).call(interpreter, [], {});
+      },
     );
   }
 

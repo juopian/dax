@@ -216,7 +216,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     if (object is LoxInstance) {
       return object.get(expr.name); // get方法绑定了实例
     }
-    if (object is LoxNamedCallable) {
+    if (object is LoxGetCallable) {
       return object.get(expr.name); 
     }
     if (expr.name.lexeme == "toString") {
@@ -244,6 +244,11 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   Object? visitSetExpr(Expr.Set expr) {
     Object? object = evaluate(expr.object);
     if (object is LoxInstance) {
+      Object? value = evaluate(expr.value);
+      object.set(expr.name, value);
+      return value;
+    }
+    if (object is LoxSetCallable) {
       Object? value = evaluate(expr.value);
       object.set(expr.name, value);
       return value;

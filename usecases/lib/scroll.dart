@@ -2,7 +2,7 @@ import 'package:dax/dax.dart';
 import 'package:flutter/material.dart';
 import 'package:usecases/utils.dart';
 
-class IListView implements LoxCallable, LoxNamedCallable {
+class IListView implements LoxCallable, LoxGetCallable {
   final builder = ListViewBuilder();
   final separated = ListViewSeparated();
   @override
@@ -143,6 +143,38 @@ class ListViewSeparated implements LoxCallable {
           return (separatorBuilder as LoxCallable)
               .call(interpreter, [context, index], {}) as Widget;
         });
+  }
+
+  @override
+  int arity() {
+    return 1;
+  }
+}
+
+class ISingleChildScrollView implements LoxCallable {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    Widget? child;
+    var childParsed = namedArguments[const Symbol('child')];
+    if (childParsed != null) {
+      child = childParsed as Widget;
+    }
+    bool reverse = false;
+    var reverseParsed = namedArguments[const Symbol('reverse')];
+    if (reverseParsed != null) {
+      reverse = reverseParsed as bool;
+    }
+    bool primary = true;
+    var primaryParsed = namedArguments[const Symbol('primary')];
+    if (primaryParsed != null) {
+      primary = primaryParsed as bool;
+    }
+    return SingleChildScrollView(
+      reverse: reverse,
+      primary: primary,
+      child: child,
+    );
   }
 
   @override
