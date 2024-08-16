@@ -77,6 +77,10 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  fun getData() {
+    var result = [];
+  }
+
   fun mp(i) {
     return i.x;
   }

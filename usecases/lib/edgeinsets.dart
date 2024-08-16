@@ -168,3 +168,13 @@ final navigatorMap = {
     Navigator.pop(context as BuildContext);
   }
 };
+
+
+final apiMap = {
+  "get": (Object? url) {
+
+  },
+  "post": (Object? url) {
+
+  }
+};
