@@ -1,9 +1,11 @@
+import 'error.dart';
 import 'lox_instance.dart';
 
 import 'environment.dart';
 import 'interpreter.dart';
 import 'lox_callable.dart';
 import 'return.dart';
+import 'runtime_error.dart';
 import 'stmt.dart';
 
 class LoxFunction implements LoxCallable {
@@ -44,6 +46,8 @@ class LoxFunction implements LoxCallable {
         return closure.getAt(0, "this");
       }
       return returnValue.value;
+    } on RuntimeError catch (error) {
+      runtimeError(error);
     }
     if (isInitializer) {
       return closure.getAt(0, "this");

@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:usecases/utils.dart';
 
-class IText implements LoxCallable {
+class IText implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -17,14 +17,9 @@ class IText implements LoxCallable {
       style: style,
     );
   }
-
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class IElevatedButton implements LoxCallable {
+class IElevatedButton implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -39,18 +34,12 @@ class IElevatedButton implements LoxCallable {
     return ElevatedButton(
         child: child as Widget,
         onPressed: () {
-          (onPressed as LoxFunction)
-              .call(interpreter, arguments, namedArguments);
+          (onPressed as LoxFunction).call(interpreter, [], {});
         });
-  }
-
-  @override
-  int arity() {
-    return 2;
   }
 }
 
-class IOutlinedButton implements LoxCallable {
+class IOutlinedButton implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -65,18 +54,12 @@ class IOutlinedButton implements LoxCallable {
     return OutlinedButton(
         child: child as Widget,
         onPressed: () {
-          (onPressed as LoxFunction)
-              .call(interpreter, arguments, namedArguments);
+          (onPressed as LoxFunction).call(interpreter, [], {});
         });
-  }
-
-  @override
-  int arity() {
-    return 2;
   }
 }
 
-class ITextButton implements LoxCallable {
+class ITextButton implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -91,18 +74,12 @@ class ITextButton implements LoxCallable {
     return TextButton(
         child: child as Widget,
         onPressed: () {
-          (onPressed as LoxFunction)
-              .call(interpreter, arguments, namedArguments);
+          (onPressed as LoxFunction).call(interpreter, [], {});
         });
-  }
-
-  @override
-  int arity() {
-    return 2;
   }
 }
 
-class IIcon implements LoxCallable {
+class IIcon implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -119,14 +96,9 @@ class IIcon implements LoxCallable {
     }
     return Icon(icon as IconData, size: size, color: color);
   }
-
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class IIconButton implements LoxCallable {
+class IIconButton implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -141,18 +113,12 @@ class IIconButton implements LoxCallable {
     return IconButton(
         icon: icon as Widget,
         onPressed: () {
-          (onPressed as LoxFunction)
-              .call(interpreter, arguments, namedArguments);
+          (onPressed as LoxFunction).call(interpreter, [], {});
         });
-  }
-
-  @override
-  int arity() {
-    return 2;
   }
 }
 
-class IImage implements LoxCallable {
+class IImage implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -175,27 +141,17 @@ class IImage implements LoxCallable {
       fit: fit,
     );
   }
-
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class ICupertinoActivityIndicator implements LoxCallable {
+class ICupertinoActivityIndicator implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
     return const CupertinoActivityIndicator();
   }
-
-  @override
-  int arity() {
-    return 0;
-  }
 }
 
-class ICircularProgressIndicator implements LoxCallable {
+class ICircularProgressIndicator implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -219,14 +175,9 @@ class ICircularProgressIndicator implements LoxCallable {
       backgroundColor: backgroundColor,
     );
   }
-
-  @override
-  int arity() {
-    return 0;
-  }
 }
 
-class ICheckbox implements LoxCallable {
+class ICheckbox implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -245,14 +196,9 @@ class ICheckbox implements LoxCallable {
       },
     );
   }
-
-  @override
-  int arity() {
-    return 2;
-  }
 }
 
-class ITextField implements LoxCallable {
+class ITextField implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -291,14 +237,9 @@ class ITextField implements LoxCallable {
       style: style,
     );
   }
-
-  @override
-  int arity() {
-    return 2;
-  }
 }
 
-class IDivider implements LoxCallable {
+class IDivider implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -319,9 +260,144 @@ class IDivider implements LoxCallable {
       color: color,
     );
   }
+}
 
+class IBottomNavigationBarItem implements LoxFlutterFunction {
   @override
-  int arity() {
-    return 0;
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    var icon = namedArguments[const Symbol('icon')];
+    if (icon == null) {
+      throw "icon required in BottomNavigationBarItem";
+    }
+    String? label;
+    var labelParsed = namedArguments[const Symbol('label')];
+    if (labelParsed != null) {
+      label = labelParsed as String;
+    }
+    String? tooltip;
+    var tooltipParsed = namedArguments[const Symbol('tooltip')];
+    if (tooltipParsed != null) {
+      tooltip = tooltipParsed as String;
+    }
+    Color? backgroundColor;
+    var backgroundColorParsed = namedArguments[const Symbol('backgroundColor')];
+    if (backgroundColorParsed != null) {
+      backgroundColor = backgroundColorParsed as Color;
+    }
+    Widget? activeIcon;
+    var activeIconParsed = namedArguments[const Symbol('activeIcon')];
+    if (activeIconParsed != null) {
+      activeIcon = activeIconParsed as Widget;
+    }
+    return BottomNavigationBarItem(
+      icon: icon as Widget,
+      label: label,
+      activeIcon: activeIcon,
+      tooltip: tooltip,
+      backgroundColor: backgroundColor,
+    );
+  }
+}
+
+class IAlertDialog implements LoxFlutterFunction {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    Widget? title;
+    var titleParsed = namedArguments[const Symbol('title')];
+    if (titleParsed != null) {
+      title = titleParsed as Widget;
+    }
+    Widget? content;
+    var contentParsed = namedArguments[const Symbol('content')];
+    if (contentParsed != null) {
+      content = contentParsed as Widget;
+    }
+    TextStyle? titleTextStyle;
+    var titleTextStyleParsed = namedArguments[const Symbol('titleTextStyle')];
+    if (titleTextStyleParsed != null) {
+      titleTextStyle = titleTextStyleParsed as TextStyle;
+    }
+    TextStyle? contentTextStyle;
+    var contentTextStyleParsed =
+        namedArguments[const Symbol('contentTextStyle')];
+    if (contentTextStyleParsed != null) {
+      contentTextStyle = contentTextStyleParsed as TextStyle;
+    }
+    List<Widget>? actions;
+    var actionsParsed = namedArguments[const Symbol('actions')];
+    if (actionsParsed != null) {
+      actions = (actionsParsed as List).cast<Widget>();
+    }
+    Color? backgroundColor;
+    var backgroundColorParsed = namedArguments[const Symbol('backgroundColor')];
+    if (backgroundColorParsed != null) {
+      backgroundColor = backgroundColorParsed as Color;
+    }
+    double? elevation = parseDouble(namedArguments[const Symbol('elevation')]);
+    EdgeInsetsGeometry? titlePadding;
+    var titlePaddingParsed = namedArguments[const Symbol('titlePadding')];
+    if (titlePaddingParsed != null) {
+      titlePadding = titlePaddingParsed as EdgeInsetsGeometry;
+    }
+    EdgeInsetsGeometry contentPadding = const EdgeInsets.fromLTRB(24, 24, 24, 24);
+    var contentPaddingParsed = namedArguments[const Symbol('contentPadding')];
+    if (contentPaddingParsed != null) {
+      contentPadding = contentPaddingParsed as EdgeInsetsGeometry;
+    }
+    return AlertDialog(
+      title: title,
+      content: content,
+      titleTextStyle: titleTextStyle,
+      contentTextStyle: contentTextStyle,
+      actions: actions,
+      backgroundColor: backgroundColor,
+      elevation: elevation,
+      titlePadding: titlePadding,
+      contentPadding: contentPadding,
+    );
+  }
+}
+
+class ISnackBar implements LoxFlutterFunction {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    var content = namedArguments[const Symbol('content')];
+    if (content == null) {
+      throw "content required in SnackBar";
+    }
+    Color? backgroundColor;
+    var backgroundColorParsed = namedArguments[const Symbol('backgroundColor')];
+    if (backgroundColorParsed != null) {
+      backgroundColor = backgroundColorParsed as Color;
+    }
+    double? elevation = parseDouble(namedArguments[const Symbol('elevation')]);
+    double? width = parseDouble(namedArguments[const Symbol('width')]);
+    SnackBarBehavior? snackBarBehavior;
+    var snackBarBehaviorParsed = namedArguments[const Symbol('behavior')];
+    if (snackBarBehaviorParsed != null) {
+      snackBarBehavior = snackBarBehaviorParsed as SnackBarBehavior;
+    }
+    EdgeInsetsGeometry? padding;
+    var paddingParsed = namedArguments[const Symbol('padding')];
+    if (paddingParsed != null) {
+      padding = paddingParsed as EdgeInsetsGeometry;
+    }
+    EdgeInsetsGeometry? margin;
+    var marginParsed = namedArguments[const Symbol('margin')];
+    if (marginParsed != null) {
+      margin = marginParsed as EdgeInsetsGeometry;
+    }
+    return SnackBar(
+      content: content as Widget,
+      elevation: elevation,
+      width: width,
+      margin: margin,
+      padding: padding,
+      behavior: snackBarBehavior,
+      backgroundColor: backgroundColor,
+    );
   }
 }

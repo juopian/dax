@@ -27,7 +27,7 @@ class MyApp extends StatelessWidget {
           appBarTheme: const AppBarTheme(
               elevation: 3,
               centerTitle: true,
-              color: Colors.white,
+              backgroundColor: Colors.white,
               foregroundColor: Colors.black87)),
       home: const MyHomePage(title: 'Dax Demo'),
     );
@@ -46,7 +46,6 @@ class _MyHomePageState extends State<MyHomePage> {
   bool loaded = false;
   final Interpreter interpreter = Interpreter();
   late Widget renderedWidget;
-
   @override
   void initState() {
     super.initState();
@@ -56,6 +55,7 @@ class _MyHomePageState extends State<MyHomePage> {
   var arr = [{"x":1}, {"x":2}];
   var radius = 5;
   var isChecked = true;
+  var selectedIndex = 0;
   var textEditingController = TextEditingController();
   var textEditingController1 = TextEditingController();
   fun increase(){
@@ -93,9 +93,21 @@ class _MyHomePageState extends State<MyHomePage> {
 
 
   fun build() {
-    return Scaffold(
+    return DefaultTabController(
+    length: 3,
+    child: Scaffold(
       appBar: AppBar(
         title: Text("title"),
+        bottom: TabBar(
+          labelColor: Colors.black,
+          indicatorSize: TabBarIndicatorSize.label,
+          indicatorColor: Colors.red,
+          tabs: [
+            Tab(text: "Home"),
+            Tab(text: "User"),
+            Tab(text: "More"),
+          ] 
+        ),
         actions: [
           IconButton(
             icon: Icon(Icons.add, color: Colors.cyan),
@@ -106,6 +118,20 @@ class _MyHomePageState extends State<MyHomePage> {
             onPressed: (){} 
           )
         ]
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        items: [
+          BottomNavigationBarItem(backgroundColor: Colors.red, icon: Icon(Icons.home), label: "Home"),
+          BottomNavigationBarItem(backgroundColor: Colors.red, icon: Icon(Icons.business), label: "Business"),
+          BottomNavigationBarItem(backgroundColor: Colors.red, icon: Icon(Icons.school), label: "School"),
+        ],
+        currentIndex: selectedIndex,
+        selectedItemColor: Colors.green,
+        onTap: (i){
+          print "click \${i}";
+          selectedIndex = i;
+          update();
+        },
       ),
       floatingActionButton: FloatingActionButton(
           child: Icon(Icons.add),
@@ -128,19 +154,69 @@ class _MyHomePageState extends State<MyHomePage> {
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               TextButton(
-              child:Text("print clientwidth"), 
+              child:Text("btn1"), 
               onPressed: (){
-                print DeviceWidth();
+                print getDeviceWidth();
               } 
             ),
             OutlinedButton(
-              child:Text("show snackbar"), 
+              child:Text("btn2"), 
               onPressed: (){
-                ShowSnackBar(content: Text("Hi"));
+                showSnackBar(SnackBar(
+                  width: 100,
+                  backgroundColor: Colors.red,
+                  behavior: SnackBarBehavior.floating,
+                  content: Text("snackbar")));
+              } 
+            ), 
+            OutlinedButton(
+              child:Text("btn3"), 
+              onPressed: (){
+                showModalBottomSheet(
+                  context: context, 
+                  isDismissible: false,
+                  builder: (context){
+                  return Container(
+                    child: Column(
+                      children: [
+                        Text("Sheet"),
+                        TextButton(
+                          child: Text("Close"),
+                          onPressed: () {
+                            Navigator.pop(context);
+                          }
+                        ) 
+                      ]
+                    ),
+                    height: 100,
+                  );
+                });
+              } 
+            ), 
+             OutlinedButton(
+              child:Text("btn4"), 
+              onPressed: (){
+                showDialog(
+                  context: context, 
+                  barrierDismissible: false,
+                  builder: (context){
+                  return AlertDialog(
+                    title:  Text("Basic dialog title"),
+                    content: Text("This is my content"),
+                    actions: [
+                      TextButton(
+                        child: Text("Close"),
+                        onPressed: () {
+                          Navigator.pop(context);
+                        }
+                      )
+                    ] 
+                  );
+                });
               } 
             ), 
             ElevatedButton(
-              child:Text("click me"), 
+              child:Text("btn5"), 
               onPressed: increase
             )]
           ),
@@ -282,7 +358,6 @@ class _MyHomePageState extends State<MyHomePage> {
           Expanded(
             child: ListView.separated(
               itemCount: 10,
-              prototypeItem: ListTile(title: Text("1")),
               separatorBuilder: (context, index) {
                 if(index % 2 == 0) 
                   return Divider(color: Colors.red);
@@ -290,9 +365,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   return Divider(color: Colors.green);
               },
               itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text("item \${index}"),
-                );
+                return Text("item \${index}");
               }
             )
           )
@@ -307,14 +380,9 @@ class _MyHomePageState extends State<MyHomePage> {
           // )
         ]
       )
+    )
     );
   }
-
-  // fun build() {
-  //   return Expanded(
-  //     child: Text("Hello world", style: TextStyle(fontSize: 20))
-  //   );
-  // }
 
   build();
 ''');
@@ -335,23 +403,16 @@ class _MyHomePageState extends State<MyHomePage> {
     });
   }
 
-  Object? parseArguments(List<Object?> arguments, String name) {
-    for (Object? argument in arguments) {
-      if (argument is Map && argument.containsKey(name)) {
-        return argument[name];
-      }
-    }
-    // throw "Argument not found: $name";
-    return null;
-  }
-
   void registerGlobalFunctions() {
+    interpreter.registerGlobal("context", context);
     interpreter.registerGlobal("Colors", colorMap);
     interpreter.registerGlobal("FontWeight", fontWeightMap);
     interpreter.registerGlobal("EdgeInsets", edgeInsetsMap);
     interpreter.registerGlobal("Icons", iconMap);
     interpreter.registerGlobal("Border", borderMap);
+    interpreter.registerGlobal("Navigator", navigatorMap);
     interpreter.registerGlobal("BorderRadius", borderRadiusMap);
+    interpreter.registerGlobal("SnackBarBehavior", snackBarBehaviorMap);
     interpreter.registerGlobal("Transform", transformMap);
     interpreter.registerGlobal("Matrix4", matrix4Map);
     interpreter.registerGlobal("MainAxisAlignment", mainAxisAlignmentMap);
@@ -364,6 +425,7 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("AxisDirection", axisDirectionMap);
     interpreter.registerGlobal("WrapAlignment", wrapAlignmentMap);
     interpreter.registerGlobal("TextDirection", textDirectionMap);
+    interpreter.registerGlobal("TabBarIndicatorSize", tabBarIndicatorSizeMap);
     interpreter.registerGlobal("StackFix", stackFitMap);
     interpreter.registerGlobal("Offset", IOffset());
     interpreter.registerGlobal("Image", IImage());
@@ -382,6 +444,7 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("TextStyle", ITextStyle());
     interpreter.registerGlobal("Text", IText());
     interpreter.registerGlobal("Divider", IDivider());
+    interpreter.registerGlobal("SnackBar", ISnackBar());
     interpreter.registerGlobal("Row", IRow());
     interpreter.registerGlobal("Column", IColumn());
     interpreter.registerGlobal("ListView", IListView());
@@ -392,6 +455,7 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("ElevatedButton", IElevatedButton());
     interpreter.registerGlobal("OutlinedButton", IOutlinedButton());
     interpreter.registerGlobal("LinearGradient", ILinearGradient());
+    interpreter.registerGlobal("AlertDialog", IAlertDialog());
     interpreter.registerGlobal(
         "TextEditingController", ITextEditingController());
     interpreter.registerGlobal(
@@ -410,22 +474,29 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("TextField", ITextField());
     interpreter.registerGlobal("AppBar", IAppBar());
     interpreter.registerGlobal("Scaffold", IScaffold());
+    interpreter.registerGlobal("TabBar", ITabBar());
+    interpreter.registerGlobal("TabBarView", ITabBarView());
+    interpreter.registerGlobal("DefaultTabController", IDefaultTabController());
+    interpreter.registerGlobal("Tab", ITab());
     interpreter.registerGlobal("FloatingActionButton", IFloatingActionButton());
+    interpreter.registerGlobal(
+        "BottomNavigationBarItem", IBottomNavigationBarItem());
+    interpreter.registerGlobal("BottomNavigationBar", IBottomNavigationBar());
     interpreter.registerGlobal("ListTile", IListTile());
     interpreter.registerGlobal("BoxDecoration", IBoxDecoration());
+    interpreter.registerGlobal("showDialog", IShowDialog());
+    interpreter.registerGlobal("showModalBottomSheet", IShowModalBottomSheet());
     interpreter.registerGlobal(
-        "DeviceWidth",
+        "getDeviceWidth",
         GenericLoxCallable(() => 0, (Interpreter interpreter,
             List<Object?> arguments, Map<Symbol, Object?> namedArguments) {
           return MediaQuery.of(context).size.width;
         }));
     interpreter.registerGlobal(
-        "ShowSnackBar",
-        GenericLoxCallable(() => 0, (Interpreter interpreter,
+        "showSnackBar",
+        GenericLoxCallable(() => 1, (Interpreter interpreter,
             List<Object?> arguments, Map<Symbol, Object?> namedArguments) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: namedArguments[const Symbol('content')] as Widget,
-          ));
+          ScaffoldMessenger.of(context).showSnackBar(arguments.first as SnackBar);
         }));
     interpreter.registerGlobal(
         "update",
@@ -433,23 +504,11 @@ class _MyHomePageState extends State<MyHomePage> {
             List<Object?> arguments, Map<Symbol, Object?> namedArguments) {
           updateUI();
         }));
+    WidgetsBinding.instance!.addPostFrameCallback((_) {});
   }
 
   @override
   Widget build(BuildContext context) {
     return renderedWidget;
-    // return Scaffold(
-    //   appBar: AppBar(
-    //     title: Text(widget.title),
-    //   ),
-    //   body: Center(
-    //     child: Column(
-    //       mainAxisAlignment: MainAxisAlignment.center,
-    //       children: <Widget>[
-    //         renderedWidget,
-    //       ],
-    //     ),
-    //   ),
-    // );
   }
 }

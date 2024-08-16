@@ -162,3 +162,9 @@ final matrix4Map = {
         parseDouble(x) ?? 1, parseDouble(y) ?? 1, parseDouble(z) ?? 1);
   },
 };
+
+final navigatorMap = {
+  "pop": (Object? context) {
+    Navigator.pop(context as BuildContext);
+  }
+};

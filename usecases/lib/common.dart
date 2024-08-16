@@ -152,3 +152,13 @@ final stackFitMap = {
   "expand": StackFit.expand,
   "passthrough": StackFit.passthrough,
 };
+
+final tabBarIndicatorSizeMap = {
+  "tab": TabBarIndicatorSize.tab,
+  "label": TabBarIndicatorSize.label,
+};
+
+final snackBarBehaviorMap = {
+  "fixed": SnackBarBehavior.fixed,
+  "floating": SnackBarBehavior.floating,
+};

@@ -2,7 +2,7 @@ import 'package:dax/dax.dart';
 import 'package:flutter/material.dart';
 import 'package:usecases/utils.dart';
 
-class IScaffold implements LoxCallable {
+class IScaffold implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -22,20 +22,117 @@ class IScaffold implements LoxCallable {
     if (floatingActionButtonParsed != null) {
       floatingActionButton = floatingActionButtonParsed as Widget;
     }
+    Widget? bottomNavigationBar;
+    var bottomNavigationBarParsed =
+        namedArguments[const Symbol('bottomNavigationBar')];
+    if (bottomNavigationBarParsed != null) {
+      bottomNavigationBar = bottomNavigationBarParsed as Widget;
+    }
     return Scaffold(
       appBar: appBar,
       body: body,
+      bottomNavigationBar: bottomNavigationBar,
       floatingActionButton: floatingActionButton,
     );
   }
 
+}
+
+class IBottomNavigationBar implements LoxFlutterFunction {
   @override
-  int arity() {
-    return 1;
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    List<BottomNavigationBarItem> items = [];
+    var itemsParsed = namedArguments[const Symbol('items')];
+    if (itemsParsed != null) {
+      items = (itemsParsed as List).cast<BottomNavigationBarItem>();
+    }
+    int currentIndex = 0;
+    var currentIndexParsed = namedArguments[const Symbol('currentIndex')];
+    if (currentIndexParsed != null) {
+      currentIndex = currentIndexParsed as int;
+    }
+    double? elevation = parseDouble(namedArguments[const Symbol('elevation')]);
+    double iconSize =
+        parseDouble(namedArguments[const Symbol('fontSize')]) ?? 22.0;
+    Color? selectedItemColor;
+    var selectedItemColorParsed =
+        namedArguments[const Symbol('selectedItemColor')];
+    if (selectedItemColorParsed != null) {
+      selectedItemColor = selectedItemColorParsed as Color;
+    }
+    Color? unselectedItemColor;
+    var unselectedItemColorParsed =
+        namedArguments[const Symbol('unselectedItemColor')];
+    if (unselectedItemColorParsed != null) {
+      unselectedItemColor = unselectedItemColorParsed as Color;
+    }
+    double selectedFontSize =
+        parseDouble(namedArguments[const Symbol('selectedFontSize')]) ?? 14.0;
+    double unselectedFontSize =
+        parseDouble(namedArguments[const Symbol('unselectedFontSize')]) ?? 12.0;
+    bool? showSelectedLabels;
+    var showSelectedLabelsParsed =
+        namedArguments[const Symbol('showSelectedLabels')];
+    if (showSelectedLabelsParsed != null) {
+      showSelectedLabels = showSelectedLabelsParsed as bool;
+    }
+    bool? showUnselectedLabels;
+    var showUnselectedLabelsParsed =
+        namedArguments[const Symbol('showUnselectedLabels')];
+    if (showUnselectedLabelsParsed != null) {
+      showUnselectedLabels = showUnselectedLabelsParsed as bool;
+    }
+    Function(int)? onTap;
+    var onTapParsed = namedArguments[const Symbol('onTap')];
+    if (onTapParsed != null) {
+      onTap = (int i) {
+        (onTapParsed as LoxFunction).call(interpreter, [i], {});
+      };
+    }
+    Color? fixedColor;
+    var fixedColorParsed = namedArguments[const Symbol('fixedColor')];
+    if (fixedColorParsed != null) {
+      fixedColor = fixedColorParsed as Color;
+    }
+    Color? backgroundColor;
+    var backgroundColorParsed = namedArguments[const Symbol('backgroundColor')];
+    if (backgroundColorParsed != null) {
+      backgroundColor = backgroundColorParsed as Color;
+    }
+    TextStyle? selectedLabelStyle;
+    var selectedLabelStyleParsed =
+        namedArguments[const Symbol('selectedLabelStyle')];
+    if (selectedLabelStyleParsed != null) {
+      selectedLabelStyle = selectedLabelStyleParsed as TextStyle;
+    }
+    TextStyle? unselectedLabelStyle;
+    var unselectedLabelStyleParsed =
+        namedArguments[const Symbol('unselectedLabelStyle')];
+    if (unselectedLabelStyleParsed != null) {
+      unselectedLabelStyle = unselectedLabelStyleParsed as TextStyle;
+    }
+    return BottomNavigationBar(
+      items: items,
+      onTap: onTap,
+      iconSize: iconSize,
+      elevation: elevation,
+      fixedColor: fixedColor,
+      backgroundColor: backgroundColor,
+      selectedItemColor: selectedItemColor,
+      unselectedItemColor: unselectedItemColor,
+      selectedFontSize: selectedFontSize,
+      unselectedFontSize: unselectedFontSize,
+      selectedLabelStyle: selectedLabelStyle,
+      unselectedLabelStyle: unselectedLabelStyle,
+      showSelectedLabels: showSelectedLabels,
+      showUnselectedLabels: showUnselectedLabels,
+      currentIndex: currentIndex,
+    );
   }
 }
 
-class IAppBar implements LoxCallable {
+class IAppBar implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -64,14 +161,20 @@ class IAppBar implements LoxCallable {
     if (elevationParsed != null) {
       elevation = elevationParsed as double;
     }
-    bool? centerTitle; 
+    bool? centerTitle;
     var centerTitleParsed = namedArguments[const Symbol('centerTitle')];
     if (centerTitleParsed != null) {
       centerTitle = centerTitleParsed as bool;
     }
+    PreferredSizeWidget? bottom;
+    var bottomParsed = namedArguments[const Symbol('bottom')];
+    if (bottomParsed != null) {
+      bottom = bottomParsed as PreferredSizeWidget;
+    }
     return AppBar(
       title: title,
       actions: actions,
+      bottom: bottom,
       elevation: elevation,
       centerTitle: centerTitle,
       backgroundColor: backgroundColor,
@@ -79,13 +182,9 @@ class IAppBar implements LoxCallable {
     );
   }
 
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class IContainer implements LoxCallable {
+class IContainer implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -132,13 +231,9 @@ class IContainer implements LoxCallable {
         width: width);
   }
 
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class IPadding implements LoxCallable {
+class IPadding implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -157,13 +252,9 @@ class IPadding implements LoxCallable {
     );
   }
 
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class IClipOval implements LoxCallable {
+class IClipOval implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -177,13 +268,9 @@ class IClipOval implements LoxCallable {
     );
   }
 
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class IClipRRect implements LoxCallable {
+class IClipRRect implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -203,13 +290,9 @@ class IClipRRect implements LoxCallable {
     );
   }
 
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class IClipRect implements LoxCallable {
+class IClipRect implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -223,13 +306,9 @@ class IClipRect implements LoxCallable {
     );
   }
 
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class IListTile implements LoxCallable {
+class IListTile implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -294,13 +373,9 @@ class IListTile implements LoxCallable {
         contentPadding: contentPadding);
   }
 
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class IFloatingActionButton implements LoxCallable {
+class IFloatingActionButton implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -336,7 +411,7 @@ class IFloatingActionButton implements LoxCallable {
     double? elevation = parseDouble(namedArguments[const Symbol('elevation')]);
     return FloatingActionButton(
       backgroundColor: backgroundColor,
-      foregroundColor: forgroundColor ,
+      foregroundColor: forgroundColor,
       child: child,
       mini: mini,
       elevation: elevation,
@@ -347,8 +422,4 @@ class IFloatingActionButton implements LoxCallable {
     );
   }
 
-  @override
-  int arity() {
-    return 1;
-  }
 }

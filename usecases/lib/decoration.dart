@@ -2,7 +2,7 @@ import 'package:dax/dax.dart';
 import 'package:flutter/material.dart';
 import 'package:usecases/utils.dart';
 
-class IBoxDecoration implements LoxCallable {
+class IBoxDecoration implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -39,11 +39,9 @@ class IBoxDecoration implements LoxCallable {
         boxShadow: boxShadow);
   }
 
-  @override
-  int arity() => 0;
 }
 
-class ILinearGradient implements LoxCallable {
+class ILinearGradient implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -65,11 +63,9 @@ class ILinearGradient implements LoxCallable {
     return LinearGradient(begin: begin, end: end, colors: colors);
   }
 
-  @override
-  int arity() => 0;
 }
 
-class ITextStyle implements LoxCallable {
+class ITextStyle implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -90,13 +86,9 @@ class ITextStyle implements LoxCallable {
     return TextStyle(fontWeight: fontWeight, fontSize: fontSize, color: color);
   }
 
-  @override
-  int arity() {
-    return 3;
-  }
 }
 
-class IBoxShadow implements LoxCallable {
+class IBoxShadow implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -119,11 +111,9 @@ class IBoxShadow implements LoxCallable {
         spreadRadius: spreadRadius);
   }
 
-  @override
-  int arity() => 0;
 }
 
-class IInputDecoration implements LoxCallable {
+class IInputDecoration implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -271,7 +261,7 @@ class IInputDecoration implements LoxCallable {
         contentPadding: contentPadding,
         isCollapsed: isCollapsed,
         enabled: enabled,
-        filled: true,
+        filled: filled,
         isDense: isDense,
         border: border,
         focusedBorder: focusedBorder,
@@ -298,11 +288,9 @@ class IInputDecoration implements LoxCallable {
         errorText: errorText);
   }
 
-  @override
-  int arity() => 0;
 }
 
-class IUnderlineInputBorder implements LoxCallable {
+class IUnderlineInputBorder implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -325,11 +313,9 @@ class IUnderlineInputBorder implements LoxCallable {
     );
   }
 
-  @override
-  int arity() => 0;
 }
 
-class IOutlineInputBorder implements LoxCallable {
+class IOutlineInputBorder implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -352,11 +338,9 @@ class IOutlineInputBorder implements LoxCallable {
     );
   }
 
-  @override
-  int arity() => 0;
 }
 
-class IBorderSide implements LoxCallable {
+class IBorderSide implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -374,6 +358,4 @@ class IBorderSide implements LoxCallable {
     return BorderSide(color: color, width: width, style: style);
   }
 
-  @override
-  int arity() => 0;
 }

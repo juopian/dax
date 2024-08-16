@@ -2,7 +2,7 @@ import 'package:dax/dax.dart';
 import 'package:flutter/material.dart';
 import 'package:usecases/utils.dart';
 
-class IListView implements LoxCallable, LoxGetCallable {
+class IListView implements LoxFlutterFunction, LoxGetCallable {
   final builder = ListViewBuilder();
   final separated = ListViewSeparated();
   @override
@@ -25,14 +25,9 @@ class IListView implements LoxCallable, LoxGetCallable {
     List<Widget> children = (childrenParsed as List).cast<Widget>();
     return ListView(children: children);
   }
-
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class ListViewBuilder implements LoxCallable {
+class ListViewBuilder implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -86,14 +81,9 @@ class ListViewBuilder implements LoxCallable {
       },
     );
   }
-
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class ListViewSeparated implements LoxCallable {
+class ListViewSeparated implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -144,14 +134,9 @@ class ListViewSeparated implements LoxCallable {
               .call(interpreter, [context, index], {}) as Widget;
         });
   }
-
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class ISingleChildScrollView implements LoxCallable {
+class ISingleChildScrollView implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -176,9 +161,180 @@ class ISingleChildScrollView implements LoxCallable {
       child: child,
     );
   }
+}
 
+class ITabBar implements LoxFlutterFunction {
   @override
-  int arity() {
-    return 1;
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    List<Widget> tabs = [];
+    var tabsParsed = namedArguments[const Symbol('tabs')];
+    if (tabsParsed != null) {
+      tabs = (tabsParsed as List).cast<Widget>();
+    }
+    bool isScrollable = false;
+    var isScrollableParsed = namedArguments[const Symbol('isScrollable')];
+    if (isScrollableParsed != null) {
+      isScrollable = isScrollableParsed as bool;
+    }
+    EdgeInsetsGeometry? padding;
+    var paddingParsed = namedArguments[const Symbol('padding')];
+    if (paddingParsed != null) {
+      padding = paddingParsed as EdgeInsetsGeometry;
+    }
+    Color? labelColor;
+    var labelColorParsed = namedArguments[const Symbol('labelColor')];
+    if (labelColorParsed != null) {
+      labelColor = labelColorParsed as Color;
+    }
+    Color? unselectedLabelColor;
+    var unselectedLabelColorParsed =
+        namedArguments[const Symbol('unselectedLabelColor')];
+    if (unselectedLabelColorParsed != null) {
+      unselectedLabelColor = unselectedLabelColorParsed as Color;
+    }
+    TextStyle? labelStyle;
+    var labelStyleParsed = namedArguments[const Symbol('labelStyle')];
+    if (labelStyleParsed != null) {
+      labelStyle = labelStyleParsed as TextStyle;
+    }
+    TextStyle? unselectedLabelStyle;
+    var unselectedLabelStyleParsed =
+        namedArguments[const Symbol('unselectedLabelStyle')];
+    if (unselectedLabelStyleParsed != null) {
+      unselectedLabelStyle = unselectedLabelStyleParsed as TextStyle;
+    }
+    EdgeInsetsGeometry? labelPadding;
+    var labelPaddingParsed = namedArguments[const Symbol('padding')];
+    if (labelPaddingParsed != null) {
+      labelPadding = labelPaddingParsed as EdgeInsetsGeometry;
+    }
+    Color? indicatorColor;
+    var indicatorColorParsed = namedArguments[const Symbol('indicatorColor')];
+    if (indicatorColorParsed != null) {
+      indicatorColor = indicatorColorParsed as Color;
+    }
+    double indicatorWeight =
+        parseDouble(namedArguments[const Symbol('indicatorWeight')]) ?? 2.0;
+    TabBarIndicatorSize? indicatorSize;
+    var indicatorSizeParsed = namedArguments[const Symbol('indicatorSize')];
+    if (indicatorSizeParsed != null) {
+      indicatorSize = indicatorSizeParsed as TabBarIndicatorSize;
+    }
+    EdgeInsetsGeometry indicatorPadding = EdgeInsets.zero;
+    var indicatorPaddingParsed =
+        namedArguments[const Symbol('indicatorPadding')];
+    if (indicatorPaddingParsed != null) {
+      indicatorPadding = indicatorPaddingParsed as EdgeInsetsGeometry;
+    }
+    Function(int)? onTap;
+    var onTapParsed = namedArguments[const Symbol('onTap')];
+    if (onTapParsed != null) {
+      onTap = (int i) {
+        (onTapParsed as LoxFunction).call(interpreter, [i], {});
+      };
+    }
+    TabController? controller;
+    var controllerParsed = namedArguments[const Symbol('controller')];
+    if (controllerParsed != null) {
+      controller = controllerParsed as TabController;
+    }
+    return TabBar(
+      controller: controller,
+      tabs: tabs,
+      onTap: onTap,
+      padding: padding,
+      labelPadding: labelPadding,
+      labelColor: labelColor,
+      labelStyle: labelStyle,
+      unselectedLabelColor: unselectedLabelColor,
+      unselectedLabelStyle: unselectedLabelStyle,
+      indicatorColor: indicatorColor,
+      indicatorWeight: indicatorWeight,
+      indicatorPadding: indicatorPadding,
+      isScrollable: isScrollable,
+      indicatorSize: indicatorSize,
+    );
+  }
+}
+
+class ITab implements LoxFlutterFunction {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    Widget? child;
+    var childParsed = namedArguments[const Symbol('child')];
+    if (childParsed != null) {
+      child = childParsed as Widget;
+    }
+    String? text;
+    var textParsed = namedArguments[const Symbol('text')];
+    if (textParsed != null) {
+      text = textParsed as String;
+    }
+    Widget? icon;
+    var iconParsed = namedArguments[const Symbol('icon')];
+    if (iconParsed != null) {
+      icon = iconParsed as Widget;
+    }
+    double? height = parseDouble(namedArguments[const Symbol('height')]);
+    EdgeInsetsGeometry iconMargin = const EdgeInsets.only(bottom: 10);
+    var iconMarginParsed = namedArguments[const Symbol('iconMargin')];
+    if (iconMarginParsed != null) {
+      iconMargin = iconMarginParsed as EdgeInsetsGeometry;
+    }
+    return Tab(
+      text: text,
+      icon: icon,
+      height: height,
+      child: child,
+      iconMargin: iconMargin,
+    );
+  }
+}
+
+class IDefaultTabController implements LoxFlutterFunction {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    var length = namedArguments[const Symbol('length')];
+    if (length == null) {
+      throw "length required in DefaultTabController";
+    }
+    int initialIndex = 0;
+    var initialIndexParsed = namedArguments[const Symbol('initialIndex')];
+    if (initialIndexParsed != null) {
+      initialIndex = initialIndexParsed as int;
+    }
+    var child = namedArguments[const Symbol('child')];
+    if (child == null) {
+      throw "child required in DefaultTabController";
+    }
+    return DefaultTabController(
+      length: length as int,
+      initialIndex: initialIndex,
+      child: child as Widget,
+    );
+  }
+}
+
+
+class ITabBarView implements LoxFlutterFunction {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    var children = namedArguments[const Symbol('children')];
+    if (children == null) {
+      throw "children required in TabBarView";
+    }
+    TabController? controller;
+    var controllerParsed = namedArguments[const Symbol('controller')];
+    if (controllerParsed != null) {
+      controller = controllerParsed as TabController;
+    }
+    return TabBarView(
+      children: children as List<Widget>,
+      controller: controller,
+    );
   }
 }

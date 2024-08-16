@@ -3,12 +3,7 @@ import 'package:dax/lox_callable.dart';
 import 'package:flutter/material.dart';
 import 'package:usecases/utils.dart';
 
-class IOffset implements LoxCallable {
-  @override
-  int arity() {
-    return 0;
-  }
-
+class IOffset implements LoxFlutterFunction {
   @override
   Object call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -22,8 +17,7 @@ class IOffset implements LoxCallable {
   }
 }
 
-class IAlignment implements LoxCallable, LoxGetCallable {
-
+class IAlignment implements LoxFlutterFunction, LoxGetCallable {
   @override
   Object? get(Token name) {
     switch (name.lexeme) {
@@ -51,11 +45,6 @@ class IAlignment implements LoxCallable, LoxGetCallable {
   }
 
   @override
-  int arity() {
-    return 0;
-  }
-  
-  @override
   Object call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
     double x = 0;
@@ -68,12 +57,7 @@ class IAlignment implements LoxCallable, LoxGetCallable {
   }
 }
 
-class IColor implements LoxCallable {
-  @override
-  int arity() {
-    return 0;
-  }
-
+class IColor implements LoxFlutterFunction {
   @override
   Object call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -81,12 +65,7 @@ class IColor implements LoxCallable {
   }
 }
 
-class IAssetImage implements LoxCallable {
-  @override
-  int arity() {
-    return 0;
-  }
-
+class IAssetImage implements LoxFlutterFunction {
   @override
   Object call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -94,13 +73,7 @@ class IAssetImage implements LoxCallable {
   }
 }
 
-
-class INetworkImage implements LoxCallable {
-  @override
-  int arity() {
-    return 0;
-  }
-
+class INetworkImage implements LoxFlutterFunction {
   @override
   Object call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -108,12 +81,7 @@ class INetworkImage implements LoxCallable {
   }
 }
 
-class ITextEditingController implements LoxCallable{
-  @override
-  int arity() {
-    return 0;
-  }
-
+class ITextEditingController implements LoxFlutterFunction {
   @override
   Object call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -121,8 +89,8 @@ class ITextEditingController implements LoxCallable{
   }
 }
 
-
-class TextEditingControllerIns extends TextEditingController implements LoxSetCallable {
+class TextEditingControllerIns extends TextEditingController
+    implements LoxSetCallable {
   @override
   Object? set(Token name, Object? value) {
     switch (name.lexeme) {
@@ -132,3 +100,93 @@ class TextEditingControllerIns extends TextEditingController implements LoxSetCa
     }
   }
 }
+
+class IShowDialog implements LoxFlutterFunction {
+  @override
+  Object call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    var context = namedArguments[const Symbol('context')];
+    if (context == null) {
+      throw "context required in showDialog";
+    }
+    bool barrierDismissible = true;
+    var barrierDismissibleParsed =
+        namedArguments[const Symbol('barrierDismissible')];
+    if (barrierDismissibleParsed != null) {
+      barrierDismissible = barrierDismissibleParsed as bool;
+    }
+    Color? barrierColor = Colors.black54;
+    var barrierColorParsed = namedArguments[const Symbol('barrierColor')];
+    if (barrierColorParsed != null) {
+      barrierColor = barrierColorParsed as Color;
+    }
+    var builder = namedArguments[const Symbol('builder')];
+    if (builder == null) {
+      throw "builder required in showDialog";
+    }
+    return showDialog(
+        context: context as BuildContext,
+        barrierDismissible: barrierDismissible,
+        barrierColor: barrierColor,
+        builder: (context) {
+          return (builder as LoxFunction).call(interpreter, [context], {})
+              as Widget;
+        });
+  }
+}
+
+
+class IShowModalBottomSheet implements LoxFlutterFunction {
+  @override
+  Object call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    var context = namedArguments[const Symbol('context')];
+    if (context == null) {
+      throw "context required in showModalBottomSheet";
+    }
+    var builder = namedArguments[const Symbol('builder')];
+    if (builder == null) {
+      throw "builder required in showModalBottomSheet";
+    }
+    Color? backgroundColor;
+    var backgroundColorParsed = namedArguments[const Symbol('backgroundColor')];
+    if (backgroundColorParsed != null) {
+      backgroundColor = backgroundColorParsed as Color;
+    }
+    double? elevation = parseDouble(namedArguments[const Symbol('elevation')]);
+    Color? barrierColor;
+    var barrierColorParsed = namedArguments[const Symbol('barrierColor')];
+    if (barrierColorParsed != null) {
+      barrierColor = barrierColorParsed as Color;
+    }
+    bool isDismissible = true;
+    var isDismissibleParsed = namedArguments[const Symbol('isDismissible')];
+    if (isDismissibleParsed != null) {
+      isDismissible = isDismissibleParsed as bool;
+    }
+    return showModalBottomSheet(
+        context: context as BuildContext,
+        backgroundColor: backgroundColor,
+        barrierColor: barrierColor,
+        isDismissible: isDismissible,
+        elevation: elevation,
+        builder: (context) {
+          return (builder as LoxFunction).call(interpreter, [context], {})
+              as Widget;
+        });
+  }
+}
+
+// class TabControllerIns extends TabController implements LoxSetCallable {
+//   TabControllerIns(initialIndex, self)
+//       : super(length: initialIndex, vsync: self);
+
+//   @override
+//   Object? set(Token name, Object? value) {
+//     switch (name.lexeme) {
+//       case 'text':
+//         text = value as String;
+//         break;
+//     }
+//   }
+// }

@@ -24,7 +24,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     globals.define("str", StringFunction());
   }
 
-  // void registerFunction(String name, LoxCallable function) {
   void registerGlobal(String name, Object obj) {
     globals.define(name, obj);
   }
@@ -151,14 +150,17 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     if (callee is Function) {
       return Function.apply(callee, arguments, namedArguments);
     }
+    if (callee is LoxFlutterFunction) {
+      return callee.call(this, arguments, namedArguments);
+    }
     if (callee is! LoxCallable) {
       throw RuntimeError(expr.paren, "Can only call functions and classes.");
     }
     LoxCallable function = callee;
-    // if (arguments.length != function.arity()) {
-    //   throw RuntimeError(expr.paren,
-    //       "Expected ${function.arity()} arguments but got ${arguments.length}.");
-    // }
+    if (arguments.length != function.arity()) {
+      throw RuntimeError(expr.paren,
+          "Expected ${function.arity()} arguments but got ${arguments.length}.");
+    }
     var result = function.call(this, arguments, namedArguments);
     if (function is LoxFunction) {
       if (function.declaration.name.lexeme == "build") {
@@ -217,7 +219,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       return object.get(expr.name); // get方法绑定了实例
     }
     if (object is LoxGetCallable) {
-      return object.get(expr.name); 
+      return object.get(expr.name);
     }
     if (expr.name.lexeme == "toString") {
       return object.toString();
@@ -323,7 +325,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   @override
   Object? visitAnonymousExpr(Expr.Anonymous expr) {
     var fun = Stmt.Functional(expr.name, expr.params, expr.body);
-    return LoxFunction(fun, environment, false); 
+    return LoxFunction(fun, environment, false);
   }
 
   @override

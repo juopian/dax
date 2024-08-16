@@ -2,7 +2,7 @@ import 'package:dax/dax.dart';
 import 'package:flutter/material.dart';
 import 'package:usecases/utils.dart';
 
-class IExpanded implements LoxCallable {
+class IExpanded implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -21,13 +21,9 @@ class IExpanded implements LoxCallable {
     );
   }
 
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class IRow implements LoxCallable {
+class IRow implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -54,13 +50,9 @@ class IRow implements LoxCallable {
         crossAxisAlignment: crossAxisAlignment);
   }
 
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class IColumn implements LoxCallable {
+class IColumn implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -88,13 +80,9 @@ class IColumn implements LoxCallable {
     );
   }
 
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class ICenter implements LoxCallable {
+class ICenter implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -113,13 +101,9 @@ class ICenter implements LoxCallable {
     );
   }
 
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class IWrap implements LoxCallable {
+class IWrap implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -150,13 +134,9 @@ class IWrap implements LoxCallable {
     );
   }
 
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class IAlign implements LoxCallable {
+class IAlign implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -182,14 +162,10 @@ class IAlign implements LoxCallable {
     );
   }
 
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
 
-class IStack implements LoxCallable {
+class IStack implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -215,13 +191,9 @@ class IStack implements LoxCallable {
     );
   }
 
-  @override
-  int arity() {
-    return 1;
-  }
 }
 
-class IPositioned implements LoxCallable {
+class IPositioned implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -246,8 +218,4 @@ class IPositioned implements LoxCallable {
     );
   }
 
-  @override
-  int arity() {
-    return 1;    
-  }
 }
