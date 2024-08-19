@@ -343,7 +343,8 @@ class IAlertDialog implements LoxFlutterFunction {
     if (titlePaddingParsed != null) {
       titlePadding = titlePaddingParsed as EdgeInsetsGeometry;
     }
-    EdgeInsetsGeometry contentPadding = const EdgeInsets.fromLTRB(24, 24, 24, 24);
+    EdgeInsetsGeometry contentPadding =
+        const EdgeInsets.fromLTRB(24, 24, 24, 24);
     var contentPaddingParsed = namedArguments[const Symbol('contentPadding')];
     if (contentPaddingParsed != null) {
       contentPadding = contentPaddingParsed as EdgeInsetsGeometry;
@@ -400,6 +401,46 @@ class ISnackBar implements LoxFlutterFunction {
       padding: padding,
       behavior: snackBarBehavior,
       backgroundColor: backgroundColor,
+    );
+  }
+}
+
+class IGestureDetector implements LoxFlutterFunction {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    Widget? child;
+    var childParsed = namedArguments[const Symbol('child')];
+    if (child != null) {
+      child = childParsed as Widget;
+    }
+    Function()? onTap;
+    var onTapParsed = namedArguments[const Symbol('onTap')];
+    if (onTapParsed != null) {
+      onTap = () {
+        (onTapParsed as LoxFunction).call(interpreter, [], {});
+      };
+    }
+    Function()? onDoubleTap;
+    var onDoubleTapParsed = namedArguments[const Symbol('onDoubleTap')];
+    if (onDoubleTapParsed != null) {
+      onDoubleTap = () {
+        (onDoubleTapParsed as LoxFunction).call(interpreter, [], {});
+      };
+    }
+    Function()? onLongPress;
+    var onLongPressParsed = namedArguments[const Symbol('onLongPress')];
+    if (onLongPressParsed != null) {
+      onLongPress = () {
+        (onLongPress as LoxFunction).call(interpreter, [], {});
+      };
+    }
+
+    return GestureDetector(
+      child: child,
+      onTap: onTap,
+      onDoubleTap: onDoubleTap,
+      onLongPress: onLongPress,
     );
   }
 }

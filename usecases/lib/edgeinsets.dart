@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:usecases/utils.dart';
 
+import 'api.dart';
+
 final edgeInsetsMap = {
   "all": (Object value) {
     return EdgeInsets.all(parseDouble(value) ?? 0);
@@ -169,12 +171,19 @@ final navigatorMap = {
   }
 };
 
-
 final apiMap = {
-  "get": (Object? url) {
-
+  "get": (Object? url, {Object? debug}) {
+    bool _debug = false;
+    if (debug != null) {
+      _debug = debug as bool;
+    }
+    return Api.get(url as String, debug: _debug);
   },
-  "post": (Object? url) {
-
+  "post": (Object? url, Object? body, {Object? debug}) {
+    bool _debug = false;
+    if (debug != null) {
+      _debug = debug as bool;
+    }
+    return Api.post(url as String, body, debug: _debug);
   }
 };

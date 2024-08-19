@@ -3,6 +3,7 @@ import 'package:dax/dax.dart';
 import 'package:flutter/services.dart';
 import 'package:usecases/base.dart';
 import 'package:usecases/icon.dart';
+import 'package:usecases/api.dart';
 import 'package:usecases/common.dart';
 import 'package:usecases/basic.dart';
 import 'package:usecases/decoration.dart';
@@ -12,6 +13,7 @@ import 'package:usecases/scroll.dart';
 import 'package:usecases/container.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(const MyApp());
 }
 
@@ -46,6 +48,11 @@ class _MyHomePageState extends State<MyHomePage> {
   bool loaded = false;
   final Interpreter interpreter = Interpreter();
   late Widget renderedWidget;
+  
+  void loadData()async {
+    var result = await Api.get('https://i-lambda.gzuni.com/sbox/com.test/fn/fn');
+  }
+
   @override
   void initState() {
     super.initState();
@@ -95,6 +102,14 @@ class _MyHomePageState extends State<MyHomePage> {
     return items; 
   }
 
+  fun loadData() async {
+    var result = await Api.get("https://i-lambda.gzuni.com/sbox/com.test/fn/fn");
+    print "result is \${result}";
+  }
+
+  fun initState() {
+    loadData();
+  }
 
   fun build() {
     return DefaultTabController(
@@ -397,6 +412,7 @@ class _MyHomePageState extends State<MyHomePage> {
     Resolver resolver = Resolver(interpreter);
     resolver.resolve(statements);
     interpreter.interpret(statements);
+    interpreter.invokeFunction('initState');
     renderedWidget = interpreter.getRenderedWidget() as Widget;
   }
 
@@ -424,6 +440,7 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("TextAlign", textAlignMap);
     interpreter.registerGlobal("BoxFit", boxFitMap);
     interpreter.registerGlobal("Radius", radiusMap);
+    interpreter.registerGlobal("Api", apiMap);
     interpreter.registerGlobal("TextInputType", textInputTypeMap);
     interpreter.registerGlobal("BorderStyle", borderStyleMap);
     interpreter.registerGlobal("AxisDirection", axisDirectionMap);
@@ -459,6 +476,7 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("ElevatedButton", IElevatedButton());
     interpreter.registerGlobal("OutlinedButton", IOutlinedButton());
     interpreter.registerGlobal("LinearGradient", ILinearGradient());
+    interpreter.registerGlobal("GestureDetector", IGestureDetector());
     interpreter.registerGlobal("AlertDialog", IAlertDialog());
     interpreter.registerGlobal(
         "TextEditingController", ITextEditingController());
