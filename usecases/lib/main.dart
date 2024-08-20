@@ -48,9 +48,10 @@ class _MyHomePageState extends State<MyHomePage> {
   bool loaded = false;
   final Interpreter interpreter = Interpreter();
   late Widget renderedWidget;
-  
-  void loadData()async {
-    var result = await Api.get('https://i-lambda.gzuni.com/sbox/com.test/fn/fn');
+
+  void loadData() async {
+    var result =
+        await Api.get('https://i-lambda.gzuni.com/sbox/com.test/fn/fn');
   }
 
   @override
@@ -65,14 +66,18 @@ class _MyHomePageState extends State<MyHomePage> {
   var selectedIndex = 0;
   var textEditingController = TextEditingController();
   var textEditingController1 = TextEditingController();
+  var loaded = false;
+  var valueLoaded;
   fun increase(){
+    setState((){
      i = i + 1;
-     update();
+    });
   }
 
   fun switchRadius() {
-    radius = radius + 3;
-    update();
+    setState((){
+      radius = radius + 3;
+    });
   }
 
   fun item(i,) {
@@ -102,9 +107,17 @@ class _MyHomePageState extends State<MyHomePage> {
     return items; 
   }
 
-  fun loadData() async {
-    var result = await Api.get("https://i-lambda.gzuni.com/sbox/com.test/fn/fn");
-    print "result is \${result}";
+  fun loadNext(value) {
+    print "value is \${value}";
+    setState((){
+      valueLoaded = value;
+      loaded = true;
+    });
+  }
+
+  fun loadData() {
+    var url = "https://i-lambda.gzuni.com/sbox/com.test/fn/fn";
+    Api.get(url, debug: false).then(loadNext);
   }
 
   fun initState() {
@@ -148,8 +161,9 @@ class _MyHomePageState extends State<MyHomePage> {
         selectedItemColor: Colors.green,
         onTap: (i){
           print "click \${i}";
-          selectedIndex = i;
-          update();
+          setState((){
+            selectedIndex = i;
+          });
         },
       ),
       floatingActionButton: FloatingActionButton(
@@ -162,7 +176,7 @@ class _MyHomePageState extends State<MyHomePage> {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text("Hello world!", 
+           Text("Hello world!", 
             style: TextStyle(color: Colors.red, fontSize: 20, fontWeight: FontWeight.bold)
           ),
           Column(
@@ -242,8 +256,9 @@ class _MyHomePageState extends State<MyHomePage> {
           TextButton(
             child:Text("switch radius"), 
             onPressed: () {
-              radius = radius + 3;
-              update();
+              setState((){
+                radius = radius + 3;
+              });
             } 
           ),
           Container(
@@ -321,19 +336,6 @@ class _MyHomePageState extends State<MyHomePage> {
               ] 
             ),
           ),
-          Row(
-            children: [
-              CircularProgressIndicator(color: Colors.red),
-              CupertinoActivityIndicator(),
-              Checkbox(
-                value: isChecked,
-                onChanged: (value) {
-                  isChecked = value;
-                  update();
-                }
-              )
-            ]
-          ),
           TextField(
             maxLines: 1,
             controller: textEditingController,
@@ -363,6 +365,21 @@ class _MyHomePageState extends State<MyHomePage> {
                  )
               )
             )),
+
+          Row(
+            children: [
+              CircularProgressIndicator(color: Colors.red),
+              !loaded ? CupertinoActivityIndicator(): Text("\${valueLoaded["data"]}"),
+              Checkbox(
+                value: isChecked,
+                onChanged: (value) {
+                  setState((){
+                    isChecked = value;
+                  });
+                }
+              )
+            ]
+          ),
           Row(
             children: [
               Expanded(
@@ -388,22 +405,15 @@ class _MyHomePageState extends State<MyHomePage> {
               }
             )
           )
-          // Expanded( 
-          //   child: ListView(
-          //     children: getItems().map((i){ 
-          //       return Text("位置: \${i}", 
-          //         style: TextStyle(fontSize: 20, color: Colors.cyan)
-          //       ); 
-          //     })
-          //   ) 
-          // )
+
         ]
       )
     )
     );
   }
 
-  build();
+  build(); 
+
 ''');
 
     List<Token> tokens = scanner.scanTokens();
@@ -518,12 +528,20 @@ class _MyHomePageState extends State<MyHomePage> {
         "showSnackBar",
         GenericLoxCallable(() => 1, (Interpreter interpreter,
             List<Object?> arguments, Map<Symbol, Object?> namedArguments) {
-          ScaffoldMessenger.of(context).showSnackBar(arguments.first as SnackBar);
+          ScaffoldMessenger.of(context)
+              .showSnackBar(arguments.first as SnackBar);
         }));
     interpreter.registerGlobal(
         "update",
         GenericLoxCallable(() => 0, (Interpreter interpreter,
             List<Object?> arguments, Map<Symbol, Object?> namedArguments) {
+          updateUI();
+        }));
+    interpreter.registerGlobal(
+        "setState",
+        GenericLoxCallable(() => 1, (Interpreter interpreter,
+            List<Object?> arguments, Map<Symbol, Object?> namedArguments) {
+          (arguments.first as LoxFunction).call(interpreter, [], {});
           updateUI();
         }));
     WidgetsBinding.instance!.addPostFrameCallback((_) {});

@@ -145,7 +145,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       } else {
         arguments.add(evaluate(argument));
       }
-      // arguments.add(evaluate(argument));
     }
     if (callee is Function) {
       return Function.apply(callee, arguments, namedArguments);
@@ -162,12 +161,20 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
           "Expected ${function.arity()} arguments but got ${arguments.length}.");
     }
     var result = function.call(this, arguments, namedArguments);
-    if (function is LoxFunction) {
-      if (function.declaration.name.lexeme == "build") {
-        renderWidget = result!;
-      }
+    if (function is LoxFunction &&
+        function.declaration.name.lexeme == "build") {
+      renderWidget = result!;
     }
     return result;
+  }
+
+  @override
+  Object? visitAwaitExpr(Expr.Await expr) {
+    Object? object = evaluate(expr.future);
+    if (object is Future) {
+      return object.then((value) => value);
+    }
+    throw RuntimeError(expr.name, "Only future can be used in await.");
   }
 
   @override
@@ -203,6 +210,9 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   @override
   Object? visitGetExpr(Expr.Get expr) {
     Object? object = evaluate(expr.object);
+    if (expr.name.lexeme == "toString") {
+      return object.toString();
+    }
     if (object is Map) {
       return object[expr.name.lexeme];
     }
@@ -220,9 +230,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     }
     if (object is LoxGetCallable) {
       return object.get(expr.name);
-    }
-    if (expr.name.lexeme == "toString") {
-      return object.toString();
     }
     throw RuntimeError(expr.name, "Only instances have properties.");
   }
@@ -307,6 +314,42 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   }
 
   @override
+  Object? visitConditionalExpr(Expr.Conditional expr) {
+    if (isTruthy(evaluate(expr.condition))) {
+      return evaluate(expr.thenBranch);
+    } else {
+      return evaluate(expr.elseBranch);
+    }
+  }
+
+  @override
+  Object? visitThenExpr(Expr.Then expr) {
+    Object? object = evaluate(expr.future);
+    if (object is Future) {
+      Stmt.Functional then;
+      if (expr.then is Stmt.Functional) {
+        then = expr.then as Stmt.Functional;
+      } else if (expr.then is Expr.Expr) {
+        var func = evaluate(expr.then as Expr.Expr);
+        if (func is! LoxFunction) {
+          throw RuntimeError(
+              expr.name, "Only func can be used as Mapping function");
+        } else {
+          then = func.declaration;
+        }
+      } else {
+        throw RuntimeError(
+            expr.name, "Only func can be used as Mapping function");
+      }
+      return object.then((value) {
+        LoxFunction thenFun = LoxFunction(then, environment, false);
+        return thenFun.call(this, [value], {});
+      });
+    }
+    throw RuntimeError(expr.name, "Only future can be used in then.");
+  }
+
+  @override
   Object? visitUnaryExpr(Expr.Unary expr) {
     Object? right = evaluate(expr.right);
 
@@ -324,7 +367,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
 
   @override
   Object? visitAnonymousExpr(Expr.Anonymous expr) {
-    var fun = Stmt.Functional(expr.name, expr.params, expr.body);
+    var fun = Stmt.Functional(expr.name, false, expr.params, expr.body);
     return LoxFunction(fun, environment, false);
   }
 
@@ -413,10 +456,13 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   }
 
   @override
-  void visitVarStmt(Stmt.Var stmt) {
+  void visitVarStmt(Stmt.Var stmt) async {
     Object? value;
     if (stmt.initializer != null) {
       value = evaluate(stmt.initializer!);
+      if (value is Future) {
+        value = await value;
+      }
     }
     // 如果初始化用到了自身，很明显environment 找不到这个值
     environment.define(stmt.name.lexeme, value);
@@ -499,4 +545,4 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       this.environment = previous;
     }
   }
-}//     
+}

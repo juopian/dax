@@ -60,18 +60,6 @@ class Api {
     return handleResponse(response);
   }
 
-   static dynamic getAsync(String url,
-      {Map<String, String>? headers, bool debug = false}) {
-    // var reqHeaders = await getHeaders(customHeaders: headers);
-    // if (debug) {
-    //   logger.d('Request headers: $reqHeaders');
-    // }
-    var p = http.get(Uri.parse(url), headers: {}).then((value) {
-
-    });
-    throw p;
-    // return handleResponse(response);
-  }
 
   static Future<dynamic> post(String url, dynamic body,
       {Map<String, String>? headers, bool debug = false}) async {

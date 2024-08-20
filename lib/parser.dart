@@ -70,7 +70,7 @@ class Parser {
     List<Token> parameters = [];
     if (!check(TokenType.RIGHT_PAREN)) {
       do {
-        if(check(TokenType.RIGHT_PAREN)) break;
+        if (check(TokenType.RIGHT_PAREN)) break;
         if (parameters.length >= 255) {
           error(peek(), "Can't have more than 255 parameters.");
         }
@@ -80,9 +80,13 @@ class Parser {
       } while (match([TokenType.COMMA]));
     }
     consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+    bool isAsync = false;
+    if (match([TokenType.ASYNC])) {
+      isAsync = true;
+    }
     consume(TokenType.LEFT_BRACE, "Expect '{' before $kind body.");
     List<Stmt> body = block();
-    return Functional(name, parameters, body);
+    return Functional(name, isAsync, parameters, body);
   }
 
   Stmt varDeclaration() {
@@ -202,7 +206,7 @@ class Parser {
 
   Expr assignment() {
     // Expr expr = equality();
-    Expr expr = or();
+    Expr expr = conditional();
     if (match([TokenType.EQUAL])) {
       Token equals = previous();
       Expr value = assignment();
@@ -214,6 +218,23 @@ class Parser {
         return Set(_get.object, _get.name, value);
       }
       throw error(equals, "Invalid assignment target.");
+    }
+    return expr;
+  }
+
+  Expr conditional() {
+    Expr expr = or();
+    Expr? thenExpr;
+    Expr? elseExpr;
+    while(match([TokenType.QUESTION, TokenType.COLON])){
+      if (previous().type == TokenType.QUESTION){
+        thenExpr = or();
+      } else if (previous().type == TokenType.COLON){
+        elseExpr = or();
+      }
+    }
+    if (thenExpr != null && elseExpr != null){
+      return Conditional(expr, thenExpr, elseExpr);
     }
     return expr;
   }
@@ -289,6 +310,16 @@ class Parser {
       Expr right = unary();
       return Unary(operator, right);
     }
+    // return call();
+    return wait();
+  }
+
+  Expr wait() {
+    if (match([TokenType.AWAIT])) {
+      Token operator = previous();
+      Expr right = call();
+      return Await(operator, right);
+    }
     return call();
   }
 
@@ -302,6 +333,8 @@ class Parser {
             consume(TokenType.IDENTIFIER, "Expect property name after '.'.");
         if (name.lexeme == 'map') {
           expr = mappingExpr(expr, name);
+        } else if (name.lexeme == 'then') {
+          expr = thenExpr(expr, name);
         } else {
           expr = Get(expr, name);
         }
@@ -327,11 +360,18 @@ class Parser {
     return Mapping(callee, name, expr);
   }
 
+  Expr thenExpr(Expr callee, Token name) {
+    consume(TokenType.LEFT_PAREN, "Expect '(' after 'then'.");
+    Expr expr = expression();
+    consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+    return Then(callee, name, expr);
+  }
+
   Expr finishCall(Expr callee) {
     List<Expr> arguments = [];
     if (!check(TokenType.RIGHT_PAREN)) {
       do {
-        if(check(TokenType.RIGHT_PAREN)) break;
+        if (check(TokenType.RIGHT_PAREN)) break;
         if (arguments.length >= 255) {
           error(peek(), "Can't have more than 255 arguments.");
         }
@@ -368,7 +408,7 @@ class Parser {
       Map<String, Expr> entries = {};
       if (!check(TokenType.RIGHT_BRACE)) {
         do {
-          if(check(TokenType.RIGHT_BRACE)) break;
+          if (check(TokenType.RIGHT_BRACE)) break;
           Token key = consume(TokenType.STRING, 'Expect key.');
           consume(TokenType.COLON, "Expect ':' after dictionary key.");
           entries['${key.literal}'] = expression();
@@ -401,12 +441,12 @@ class Parser {
     if (match([TokenType.IDENTIFIER])) {
       return Variable(previous());
     }
-    bool isAnonymous = false;
     var currentSnap = current;
+    bool isAnonymous = false;
     if (match([TokenType.LEFT_PAREN])) {
       if (!check(TokenType.RIGHT_PAREN)) {
         do {
-          if(check(TokenType.RIGHT_PAREN)) break;
+          if (check(TokenType.RIGHT_PAREN)) break;
           expression();
         } while (match([TokenType.COMMA]));
       }
@@ -422,7 +462,7 @@ class Parser {
       List<Token> parameters = [];
       if (!check(TokenType.RIGHT_PAREN)) {
         do {
-          if(check(TokenType.RIGHT_PAREN)) break;
+          if (check(TokenType.RIGHT_PAREN)) break;
           parameters.add(
             consume(TokenType.IDENTIFIER, "Expect parameter name."),
           );
@@ -432,8 +472,8 @@ class Parser {
           consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
       consume(TokenType.LEFT_BRACE, "Expect '{' before map body.");
       List<Stmt> body = block();
-      Expr anonymousFun = Anonymous(paren, parameters, body);
-      return anonymousFun;
+      Expr anony = Anonymous(paren, parameters, body);
+      return anony;
     }
     if (match([TokenType.LEFT_PAREN])) {
       Expr expr = expression();

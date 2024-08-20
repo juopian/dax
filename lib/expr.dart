@@ -45,6 +45,24 @@ class Dict extends Expr {
   T accept<T>(Visitor<T> visitor) => visitor.visitDictExpr(this);
 }
 
+class Then extends Expr {
+  final Expr future;
+  final Token name;
+  final Object then;
+  Then(this.future, this.name, this.then, );
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitThenExpr(this);
+}
+
+class Conditional extends Expr {
+  final Expr condition;
+  final Expr thenBranch;
+  final Expr elseBranch;
+  Conditional(this.condition, this.thenBranch, this.elseBranch, );
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitConditionalExpr(this);
+}
+
 class Anonymous extends Expr {
   final Token name;
   final List<Token> params;
@@ -70,6 +88,14 @@ class Indexing extends Expr {
   Indexing(this.callee, this.name, this.key, );
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitIndexingExpr(this);
+}
+
+class Await extends Expr {
+  final Token name;
+  final Expr future;
+  Await(this.name, this.future, );
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitAwaitExpr(this);
 }
 
 class Get extends Expr {
@@ -148,9 +174,12 @@ abstract class Visitor<T> {
   T visitCallExpr(Call expr);
   T visitArrayExpr(Array expr);
   T visitDictExpr(Dict expr);
+  T visitThenExpr(Then expr);
+  T visitConditionalExpr(Conditional expr);
   T visitAnonymousExpr(Anonymous expr);
   T visitMappingExpr(Mapping expr);
   T visitIndexingExpr(Indexing expr);
+  T visitAwaitExpr(Await expr);
   T visitGetExpr(Get expr);
   T visitGroupingExpr(Grouping expr);
   T visitLiteralExpr(Literal expr);

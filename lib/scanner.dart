@@ -26,6 +26,8 @@ class Scanner {
     "true": TokenType.TRUE,
     "var": TokenType.VAR,
     "while": TokenType.WHILE,
+    "await": TokenType.AWAIT,
+    "async": TokenType.ASYNC,
   };
 
   Scanner(this.source);
@@ -60,6 +62,9 @@ class Scanner {
         break;
       case '}':
         addToken(TokenType.RIGHT_BRACE);
+        break;
+      case '?':
+        addToken(TokenType.QUESTION);
         break;
       case ':':
         addToken(TokenType.COLON);

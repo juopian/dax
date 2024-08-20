@@ -30,9 +30,10 @@ class Expression extends Stmt {
 
 class Functional extends Stmt {
   final Token name;
+  final bool isAsync;
   final List<Token> params;
   final List<Stmt> body;
-  Functional(this.name, this.params, this.body, );
+  Functional(this.name, this.isAsync, this.params, this.body, );
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitFunctionalStmt(this);
 }

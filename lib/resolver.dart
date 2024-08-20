@@ -229,10 +229,34 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
   }
 
   @override
+  void visitThenExpr(Expr.Then expr) {
+    resolveExpr(expr.future);
+    if (expr.then is Stmt.Functional) {
+      resolveFunction(expr.then as Stmt.Functional, FunctionType.FUNCTION);
+    } else {
+      resolveExpr(expr.then as Expr.Expr);
+    }
+    return;
+  }
+
+  @override
+  void visitConditionalExpr(Expr.Conditional expr) {
+    resolveExpr(expr.condition);
+    resolveExpr(expr.thenBranch);
+    resolveExpr(expr.elseBranch);
+    return;
+  }
+
+  @override
   void visitIndexingExpr(Expr.Indexing expr) {
     resolveExpr(expr.callee);
     resolveExpr(expr.key);
     return;
+  }
+
+  @override
+  void visitAwaitExpr(Expr.Await expr) {
+    resolveExpr(expr.future);
   }
 
   @override

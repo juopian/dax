@@ -18,8 +18,23 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
   }
 
   @override
+  String visitAwaitExpr(Expr.Await expr) {
+    return parenthesize2("await", [expr.future]);
+  }
+
+  @override
   String visitMappingExpr(Expr.Mapping expr) {
     return parenthesize2("map", [expr.callee, expr.name, expr.lambda]);
+  }
+
+  @override
+  String visitThenExpr(Expr.Then expr) {
+    return parenthesize2("then", [expr.future, expr.name, expr.then]);
+  }
+
+  @override
+  String visitConditionalExpr(Expr.Conditional expr) {
+    return parenthesize("?", [expr.condition, expr.thenBranch, expr.elseBranch]);
   }
 
   @override
@@ -87,7 +102,7 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
       i++;
     }
     sb.write("}");
-    return sb.toString(); 
+    return sb.toString();
   }
 
   @override
@@ -183,7 +198,6 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     return sb.toString();
   }
 
-
   @override
   String visitReturnStmt(Stmt.Return stmt) {
     if (stmt.value == null) {
@@ -191,7 +205,6 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     }
     return parenthesize("return", [stmt.value!]);
   }
-
 
   String parenthesize(String name, List<Expr.Expr> exprs) {
     StringBuffer sb = StringBuffer();
