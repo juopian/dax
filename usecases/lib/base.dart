@@ -17,6 +17,20 @@ class IOffset implements LoxFlutterFunction {
   }
 }
 
+class ISize implements LoxFlutterFunction {
+  @override
+  Object call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    double width = 0;
+    double height = 0;
+    if (arguments.length == 2) {
+      width = parseDouble(arguments[0]) ?? 0;
+      height = parseDouble(arguments[1]) ?? 0;
+    }
+    return Size(width, height);
+  }
+}
+
 class IAlignment implements LoxFlutterFunction, LoxGetCallable {
   @override
   Object? get(Token name) {

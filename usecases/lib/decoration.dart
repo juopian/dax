@@ -38,7 +38,6 @@ class IBoxDecoration implements LoxFlutterFunction {
         borderRadius: borderRadius,
         boxShadow: boxShadow);
   }
-
 }
 
 class ILinearGradient implements LoxFlutterFunction {
@@ -62,7 +61,6 @@ class ILinearGradient implements LoxFlutterFunction {
     }
     return LinearGradient(begin: begin, end: end, colors: colors);
   }
-
 }
 
 class ITextStyle implements LoxFlutterFunction {
@@ -85,7 +83,6 @@ class ITextStyle implements LoxFlutterFunction {
     }
     return TextStyle(fontWeight: fontWeight, fontSize: fontSize, color: color);
   }
-
 }
 
 class IBoxShadow implements LoxFlutterFunction {
@@ -110,7 +107,6 @@ class IBoxShadow implements LoxFlutterFunction {
         blurRadius: blurRadius,
         spreadRadius: spreadRadius);
   }
-
 }
 
 class IInputDecoration implements LoxFlutterFunction {
@@ -287,7 +283,87 @@ class IInputDecoration implements LoxFlutterFunction {
         suffixText: suffixText,
         errorText: errorText);
   }
+}
 
+class ICircleBorder implements LoxFlutterFunction {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    BorderSide side = BorderSide.none;
+    var sideParsed = namedArguments[const Symbol('side')];
+    if (sideParsed != null) {
+      side = sideParsed as BorderSide;
+    }
+    return CircleBorder(side: side);
+  }
+}
+
+class IStadiumBorder implements LoxFlutterFunction {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    BorderSide side = BorderSide.none;
+    var sideParsed = namedArguments[const Symbol('side')];
+    if (sideParsed != null) {
+      side = sideParsed as BorderSide;
+    }
+    return StadiumBorder(side: side);
+  }
+}
+
+
+class IContinuousRectangleBorder implements LoxFlutterFunction {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    BorderSide side = BorderSide.none;
+    var sideParsed = namedArguments[const Symbol('side')];
+    if (sideParsed != null) {
+      side = sideParsed as BorderSide;
+    }
+    BorderRadius borderRadius = BorderRadius.zero;
+    var borderRadiusParsed = namedArguments[const Symbol('borderRadius')];
+    if (borderRadiusParsed != null) {
+      borderRadius = borderRadiusParsed as BorderRadius;
+    }
+    return ContinuousRectangleBorder(side: side, borderRadius: borderRadius);
+  }
+}
+
+class IRoundedRectangleBorder implements LoxFlutterFunction {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    BorderSide side = BorderSide.none;
+    var sideParsed = namedArguments[const Symbol('side')];
+    if (sideParsed != null) {
+      side = sideParsed as BorderSide;
+    }
+    BorderRadius borderRadius = BorderRadius.zero;
+    var borderRadiusParsed = namedArguments[const Symbol('borderRadius')];
+    if (borderRadiusParsed != null) {
+      borderRadius = borderRadiusParsed as BorderRadius;
+    }
+    return RoundedRectangleBorder(side: side, borderRadius: borderRadius);
+  }
+}
+
+class IBeveledRectangleBorder implements LoxFlutterFunction {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    BorderSide side = BorderSide.none;
+    var sideParsed = namedArguments[const Symbol('side')];
+    if (sideParsed != null) {
+      side = sideParsed as BorderSide;
+    }
+    BorderRadius borderRadius = BorderRadius.zero;
+    var borderRadiusParsed = namedArguments[const Symbol('borderRadius')];
+    if (borderRadiusParsed != null) {
+      borderRadius = borderRadiusParsed as BorderRadius;
+    }
+    return BeveledRectangleBorder(side: side, borderRadius: borderRadius);
+  }
 }
 
 class IUnderlineInputBorder implements LoxFlutterFunction {
@@ -312,14 +388,13 @@ class IUnderlineInputBorder implements LoxFlutterFunction {
       borderSide: borderSide,
     );
   }
-
 }
 
 class IOutlineInputBorder implements LoxFlutterFunction {
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
-    BorderSide borderSide = const BorderSide(); 
+    BorderSide borderSide = const BorderSide();
     var borderSideParsed = namedArguments[const Symbol('borderSide')];
     if (borderSideParsed != null) {
       borderSide = borderSideParsed as BorderSide;
@@ -337,7 +412,6 @@ class IOutlineInputBorder implements LoxFlutterFunction {
       gapPadding: gapPadding,
     );
   }
-
 }
 
 class IBorderSide implements LoxFlutterFunction {
@@ -357,5 +431,4 @@ class IBorderSide implements LoxFlutterFunction {
     }
     return BorderSide(color: color, width: width, style: style);
   }
-
 }

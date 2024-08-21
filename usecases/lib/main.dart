@@ -194,6 +194,10 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
             OutlinedButton(
               child:Text("btn2"), 
+              style: OutlinedButton.styleFrom(
+                primary: Colors.red, 
+                shape: CircleBorder(),
+                side: BorderSide(width: 1.0, color: Colors.red) ),
               onPressed: (){
                 showSnackBar(SnackBar(
                   width: 100,
@@ -459,6 +463,7 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("TabBarIndicatorSize", tabBarIndicatorSizeMap);
     interpreter.registerGlobal("StackFix", stackFitMap);
     interpreter.registerGlobal("Offset", IOffset());
+    interpreter.registerGlobal("Size", ISize());
     interpreter.registerGlobal("Image", IImage());
     interpreter.registerGlobal("AssetImage", IAssetImage());
     interpreter.registerGlobal("NetworkImage", INetworkImage());
@@ -500,6 +505,11 @@ class _MyHomePageState extends State<MyHomePage> {
     interpreter.registerGlobal("InputDecoration", IInputDecoration());
     interpreter.registerGlobal("UnderlineInputBorder", IUnderlineInputBorder());
     interpreter.registerGlobal("OutlineInputBorder", IOutlineInputBorder());
+    interpreter.registerGlobal("CircleBorder", ICircleBorder());
+    interpreter.registerGlobal("StadiumBorder", IStadiumBorder());
+    interpreter.registerGlobal("ContinuousRectangleBorder", IContinuousRectangleBorder());
+    interpreter.registerGlobal("RoundedRectangleBorder", IRoundedRectangleBorder());
+    interpreter.registerGlobal("BeveledRectangleBorder", IBeveledRectangleBorder());
     interpreter.registerGlobal("Icon", IIcon());
     interpreter.registerGlobal("IconButton", IIconButton());
     interpreter.registerGlobal("Checkbox", ICheckbox());

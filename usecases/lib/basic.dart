@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:dax/dax.dart';
 import 'package:dax/runtime_error.dart';
 import 'package:dax/token_type.dart';
@@ -21,7 +23,85 @@ class IText implements LoxFlutterFunction {
   }
 }
 
-class IElevatedButton implements LoxFlutterFunction {
+class ElevatedButtonStyleBuilder implements LoxFlutterFunction {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    Color? primary;
+    var primaryParsed = namedArguments[const Symbol('primary')];
+    if (primaryParsed != null) {
+      primary = primaryParsed as Color;
+    }
+    Color? backgroundColor;
+    var backgroundColorParsed = namedArguments[const Symbol('backgroundColor')];
+    if (backgroundColorParsed != null) {
+      backgroundColor = backgroundColorParsed as Color;
+    }
+    Color? shadowColor;
+    var shadowColorParsed = namedArguments[const Symbol('shadowColor')];
+    if (shadowColorParsed != null) {
+      shadowColor = shadowColorParsed as Color;
+    }
+    double? elevation = parseDouble(namedArguments[const Symbol('elevation')]);
+    TextStyle? textStyle;
+    var textStyleParsed = namedArguments[const Symbol('textStyle')];
+    if (textStyleParsed != null) {
+      textStyle = textStyleParsed as TextStyle;
+    }
+    EdgeInsetsGeometry? padding;
+    var paddingParsed = namedArguments[const Symbol('padding')];
+    if (paddingParsed != null) {
+      padding = paddingParsed as EdgeInsetsGeometry;
+    }
+    BorderSide? side;
+    var sideParsed = namedArguments[const Symbol('side')];
+    if (sideParsed != null) {
+      side = sideParsed as BorderSide;
+    }
+    Size? minimumSize;
+    var minimumSizeParsed = namedArguments[const Symbol('minimumSize')];
+    if (minimumSizeParsed != null) {
+      minimumSize = minimumSizeParsed as Size;
+    }
+    Size? maximumSize;
+    var maximumSizeParsed = namedArguments[const Symbol('maximumSize')];
+    if (maximumSizeParsed != null) {
+      maximumSize = maximumSizeParsed as Size;
+    }
+    Size? fixedSize;
+    var fixedSizeParsed = namedArguments[const Symbol('fixedSize')];
+    if (fixedSizeParsed != null) {
+      fixedSize = fixedSizeParsed as Size;
+    }
+    OutlinedBorder? shape;
+    var shapeParsed = namedArguments[const Symbol('shape')];
+    if (shapeParsed != null) {
+      shape = shapeParsed as OutlinedBorder;
+    }
+    return ElevatedButton.styleFrom(
+      primary: primary,
+      shadowColor: shadowColor,
+      elevation: elevation,
+      textStyle: textStyle,
+      side: side,
+      shape: shape,
+      minimumSize: minimumSize,
+      maximumSize: maximumSize,
+      fixedSize: fixedSize,
+      padding: padding
+    );
+  }
+}
+
+class IElevatedButton implements LoxFlutterFunction, LoxGetCallable {
+  final builder = ElevatedButtonStyleBuilder();
+  @override
+  Object? get(Token name) {
+    if (name.lexeme == "styleFrom") {
+      return builder;
+    } 
+    throw "Unknown property: ${name.lexeme}";
+  }
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -41,7 +121,88 @@ class IElevatedButton implements LoxFlutterFunction {
   }
 }
 
-class IOutlinedButton implements LoxFlutterFunction {
+
+class OutlinedButtonStyleBuilder implements LoxFlutterFunction {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    Color? primary;
+    var primaryParsed = namedArguments[const Symbol('primary')];
+    if (primaryParsed != null) {
+      primary = primaryParsed as Color;
+    }
+    Color? backgroundColor;
+    var backgroundColorParsed = namedArguments[const Symbol('backgroundColor')];
+    if (backgroundColorParsed != null) {
+      backgroundColor = backgroundColorParsed as Color;
+    }
+    Color? shadowColor;
+    var shadowColorParsed = namedArguments[const Symbol('shadowColor')];
+    if (shadowColorParsed != null) {
+      shadowColor = shadowColorParsed as Color;
+    }
+    double? elevation = parseDouble(namedArguments[const Symbol('elevation')]);
+    TextStyle? textStyle;
+    var textStyleParsed = namedArguments[const Symbol('textStyle')];
+    if (textStyleParsed != null) {
+      textStyle = textStyleParsed as TextStyle;
+    }
+    EdgeInsetsGeometry? padding;
+    var paddingParsed = namedArguments[const Symbol('padding')];
+    if (paddingParsed != null) {
+      padding = paddingParsed as EdgeInsetsGeometry;
+    }
+    BorderSide? side;
+    var sideParsed = namedArguments[const Symbol('side')];
+    if (sideParsed != null) {
+      side = sideParsed as BorderSide;
+    }
+    Size? minimumSize;
+    var minimumSizeParsed = namedArguments[const Symbol('minimumSize')];
+    if (minimumSizeParsed != null) {
+      minimumSize = minimumSizeParsed as Size;
+    }
+    Size? maximumSize;
+    var maximumSizeParsed = namedArguments[const Symbol('maximumSize')];
+    if (maximumSizeParsed != null) {
+      maximumSize = maximumSizeParsed as Size;
+    }
+    Size? fixedSize;
+    var fixedSizeParsed = namedArguments[const Symbol('fixedSize')];
+    if (fixedSizeParsed != null) {
+      fixedSize = fixedSizeParsed as Size;
+    }
+    OutlinedBorder? shape;
+    var shapeParsed = namedArguments[const Symbol('shape')];
+    if (shapeParsed != null) {
+      shape = shapeParsed as OutlinedBorder;
+    }
+    return OutlinedButton.styleFrom(
+      primary: primary,
+      backgroundColor: backgroundColor,
+      shadowColor: shadowColor,
+      elevation: elevation,
+      textStyle: textStyle,
+      side: side,
+      shape: shape,
+      minimumSize: minimumSize,
+      maximumSize: maximumSize,
+      fixedSize: fixedSize,
+      padding: padding
+    );
+  }
+}
+
+
+class IOutlinedButton implements LoxFlutterFunction, LoxGetCallable {
+  final builder = OutlinedButtonStyleBuilder();
+  @override
+  Object? get(Token name) {
+    if (name.lexeme == "styleFrom") {
+      return builder;
+    } 
+    throw "Unknown property: ${name.lexeme}";
+  }
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -53,15 +214,100 @@ class IOutlinedButton implements LoxFlutterFunction {
     if (onPressed == null) {
       throw "onPressed required in OutlinedButton";
     }
+    ButtonStyle? style;
+    var styleParsed = namedArguments[const Symbol('style')];
+    if (styleParsed != null) {
+      style = styleParsed as ButtonStyle;
+    }
     return OutlinedButton(
         child: child as Widget,
+        style: style,
         onPressed: () {
           (onPressed as LoxFunction).call(interpreter, [], {});
         });
   }
 }
 
-class ITextButton implements LoxFlutterFunction {
+class TextButtonStyleBuilder implements LoxFlutterFunction {
+  @override
+  Object? call(Interpreter interpreter, List<Object?> arguments,
+      Map<Symbol, Object?> namedArguments) {
+    Color? primary;
+    var primaryParsed = namedArguments[const Symbol('primary')];
+    if (primaryParsed != null) {
+      primary = primaryParsed as Color;
+    }
+    Color? backgroundColor;
+    var backgroundColorParsed = namedArguments[const Symbol('backgroundColor')];
+    if (backgroundColorParsed != null) {
+      backgroundColor = backgroundColorParsed as Color;
+    }
+    Color? shadowColor;
+    var shadowColorParsed = namedArguments[const Symbol('shadowColor')];
+    if (shadowColorParsed != null) {
+      shadowColor = shadowColorParsed as Color;
+    }
+    double? elevation = parseDouble(namedArguments[const Symbol('elevation')]);
+    TextStyle? textStyle;
+    var textStyleParsed = namedArguments[const Symbol('textStyle')];
+    if (textStyleParsed != null) {
+      textStyle = textStyleParsed as TextStyle;
+    }
+    EdgeInsetsGeometry? padding;
+    var paddingParsed = namedArguments[const Symbol('padding')];
+    if (paddingParsed != null) {
+      padding = paddingParsed as EdgeInsetsGeometry;
+    }
+    BorderSide? side;
+    var sideParsed = namedArguments[const Symbol('side')];
+    if (sideParsed != null) {
+      side = sideParsed as BorderSide;
+    }
+    Size? minimumSize;
+    var minimumSizeParsed = namedArguments[const Symbol('minimumSize')];
+    if (minimumSizeParsed != null) {
+      minimumSize = minimumSizeParsed as Size;
+    }
+    Size? maximumSize;
+    var maximumSizeParsed = namedArguments[const Symbol('maximumSize')];
+    if (maximumSizeParsed != null) {
+      maximumSize = maximumSizeParsed as Size;
+    }
+    Size? fixedSize;
+    var fixedSizeParsed = namedArguments[const Symbol('fixedSize')];
+    if (fixedSizeParsed != null) {
+      fixedSize = fixedSizeParsed as Size;
+    }
+    OutlinedBorder? shape;
+    var shapeParsed = namedArguments[const Symbol('shape')];
+    if (shapeParsed != null) {
+      shape = shapeParsed as OutlinedBorder;
+    }
+    return TextButton.styleFrom(
+      primary: primary,
+      backgroundColor: backgroundColor,
+      shadowColor: shadowColor,
+      elevation: elevation,
+      textStyle: textStyle,
+      side: side,
+      shape: shape,
+      minimumSize: minimumSize,
+      maximumSize: maximumSize,
+      fixedSize: fixedSize,
+      padding: padding
+    );
+  }
+}
+
+class ITextButton implements LoxFlutterFunction, LoxGetCallable {
+  final builder = TextButtonStyleBuilder();
+  @override
+  Object? get(Token name) {
+    if (name.lexeme == "styleFrom") {
+      return builder;
+    } 
+    throw "Unknown property: ${name.lexeme}";
+  }
   @override
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments) {
@@ -73,8 +319,14 @@ class ITextButton implements LoxFlutterFunction {
     if (onPressed == null) {
       throw "onPressed required in TextButton";
     }
+    ButtonStyle? style;
+    var styleParsed = namedArguments[const Symbol('style')];
+    if (styleParsed != null) {
+      style = styleParsed as ButtonStyle;
+    }
     return TextButton(
         child: child as Widget,
+        style: style,
         onPressed: () {
           (onPressed as LoxFunction).call(interpreter, [], {});
         });
