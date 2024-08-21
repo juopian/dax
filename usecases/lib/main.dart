@@ -49,10 +49,6 @@ class _MyHomePageState extends State<MyHomePage> {
   final Interpreter interpreter = Interpreter();
   late Widget renderedWidget;
 
-  void loadData() async {
-    var result =
-        await Api.get('https://i-lambda.gzuni.com/sbox/com.test/fn/fn');
-  }
 
   @override
   void initState() {
@@ -439,95 +435,96 @@ class _MyHomePageState extends State<MyHomePage> {
 
   void registerGlobalFunctions() {
     interpreter.registerGlobal("context", context);
-    interpreter.registerGlobal("Colors", colorMap);
-    interpreter.registerGlobal("FontWeight", fontWeightMap);
-    interpreter.registerGlobal("EdgeInsets", edgeInsetsMap);
-    interpreter.registerGlobal("Icons", iconMap);
-    interpreter.registerGlobal("Border", borderMap);
-    interpreter.registerGlobal("Navigator", navigatorMap);
-    interpreter.registerGlobal("BorderRadius", borderRadiusMap);
-    interpreter.registerGlobal("SnackBarBehavior", snackBarBehaviorMap);
-    interpreter.registerGlobal("Transform", transformMap);
-    interpreter.registerGlobal("Matrix4", matrix4Map);
-    interpreter.registerGlobal("MainAxisAlignment", mainAxisAlignmentMap);
-    interpreter.registerGlobal("CrossAxisAlignment", crossAxisAlignmentMap);
-    interpreter.registerGlobal("TextAlign", textAlignMap);
-    interpreter.registerGlobal("BoxFit", boxFitMap);
-    interpreter.registerGlobal("Radius", radiusMap);
     interpreter.registerGlobal("Api", apiMap);
-    interpreter.registerGlobal("TextInputType", textInputTypeMap);
-    interpreter.registerGlobal("BorderStyle", borderStyleMap);
     interpreter.registerGlobal("AxisDirection", axisDirectionMap);
-    interpreter.registerGlobal("WrapAlignment", wrapAlignmentMap);
-    interpreter.registerGlobal("TextDirection", textDirectionMap);
-    interpreter.registerGlobal("TabBarIndicatorSize", tabBarIndicatorSizeMap);
+    interpreter.registerGlobal("Border", borderMap);
+    interpreter.registerGlobal("BoxFit", boxFitMap);
+    interpreter.registerGlobal("BorderRadius", borderRadiusMap);
+    interpreter.registerGlobal("BorderStyle", borderStyleMap);
+    interpreter.registerGlobal("Colors", colorMap);
+    interpreter.registerGlobal("CrossAxisAlignment", crossAxisAlignmentMap);
+    interpreter.registerGlobal("EdgeInsets", edgeInsetsMap);
+    interpreter.registerGlobal("FontWeight", fontWeightMap);
+    interpreter.registerGlobal("Icons", iconMap);
+    interpreter.registerGlobal("MainAxisAlignment", mainAxisAlignmentMap);
+    interpreter.registerGlobal("Matrix4", matrix4Map);
+    interpreter.registerGlobal("Navigator", navigatorMap);
+    interpreter.registerGlobal("Radius", radiusMap);
+    interpreter.registerGlobal("SnackBarBehavior", snackBarBehaviorMap);
     interpreter.registerGlobal("StackFix", stackFitMap);
-    interpreter.registerGlobal("Offset", IOffset());
-    interpreter.registerGlobal("Size", ISize());
-    interpreter.registerGlobal("Image", IImage());
-    interpreter.registerGlobal("AssetImage", IAssetImage());
-    interpreter.registerGlobal("NetworkImage", INetworkImage());
+    interpreter.registerGlobal("TabBarIndicatorSize", tabBarIndicatorSizeMap);
+    interpreter.registerGlobal("TextAlign", textAlignMap);
+    interpreter.registerGlobal("TextInputType", textInputTypeMap);
+    interpreter.registerGlobal("TextDirection", textDirectionMap);
+    interpreter.registerGlobal("Transform", transformMap);
+    interpreter.registerGlobal("WrapAlignment", wrapAlignmentMap);
+
+    interpreter.registerGlobal("AlertDialog", IAlertDialog());
+    interpreter.registerGlobal("Align", IAlign());
     interpreter.registerGlobal("Alignment", IAlignment());
-    interpreter.registerGlobal("Color", IColor());
-    interpreter.registerGlobal("Expanded", IExpanded());
-    interpreter.registerGlobal("Stack", IStack());
-    interpreter.registerGlobal("Positioned", IPositioned());
+    interpreter.registerGlobal("AppBar", IAppBar());
+    interpreter.registerGlobal("AssetImage", IAssetImage());
+    interpreter.registerGlobal("BeveledRectangleBorder", IBeveledRectangleBorder());
+    interpreter.registerGlobal("BorderSide", IBorderSide());
+    interpreter.registerGlobal("BottomNavigationBar", IBottomNavigationBar());
+    interpreter.registerGlobal(
+        "BottomNavigationBarItem", IBottomNavigationBarItem());
+    interpreter.registerGlobal("BoxDecoration", IBoxDecoration());
+    interpreter.registerGlobal("BoxShadow", IBoxShadow());
+    interpreter.registerGlobal("Checkbox", ICheckbox());
+    interpreter.registerGlobal("CircleBorder", ICircleBorder());
+    interpreter.registerGlobal(
+        "CircularProgressIndicator", ICircularProgressIndicator());
     interpreter.registerGlobal("ClipOval", IClipOval());
     interpreter.registerGlobal("ClipRRect", IClipRRect());
     interpreter.registerGlobal("ClipRect", IClipRect());
-    interpreter.registerGlobal("Align", IAlign());
-    interpreter.registerGlobal("Wrap", IWrap());
-    interpreter.registerGlobal("TextStyle", ITextStyle());
-    interpreter.registerGlobal("Text", IText());
-    interpreter.registerGlobal("Divider", IDivider());
-    interpreter.registerGlobal("SnackBar", ISnackBar());
-    interpreter.registerGlobal("Row", IRow());
+    interpreter.registerGlobal("Color", IColor());
     interpreter.registerGlobal("Column", IColumn());
-    interpreter.registerGlobal("ListView", IListView());
-    interpreter.registerGlobal(
-        "SingleChildScrollView", ISingleChildScrollView());
-    interpreter.registerGlobal("TextButton", ITextButton());
-    interpreter.registerGlobal("BorderSide", IBorderSide());
-    interpreter.registerGlobal("ElevatedButton", IElevatedButton());
-    interpreter.registerGlobal("OutlinedButton", IOutlinedButton());
-    interpreter.registerGlobal("LinearGradient", ILinearGradient());
-    interpreter.registerGlobal("GestureDetector", IGestureDetector());
-    interpreter.registerGlobal("AlertDialog", IAlertDialog());
-    interpreter.registerGlobal(
-        "TextEditingController", ITextEditingController());
+    interpreter.registerGlobal("Container", IContainer());
+    interpreter.registerGlobal("ContinuousRectangleBorder", IContinuousRectangleBorder());
     interpreter.registerGlobal(
         "CupertinoActivityIndicator", ICupertinoActivityIndicator());
-    interpreter.registerGlobal(
-        "CircularProgressIndicator", ICircularProgressIndicator());
-    interpreter.registerGlobal("Container", IContainer());
-    interpreter.registerGlobal("Padding", IPadding());
-    interpreter.registerGlobal("BoxShadow", IBoxShadow());
-    interpreter.registerGlobal("InputDecoration", IInputDecoration());
-    interpreter.registerGlobal("UnderlineInputBorder", IUnderlineInputBorder());
-    interpreter.registerGlobal("OutlineInputBorder", IOutlineInputBorder());
-    interpreter.registerGlobal("CircleBorder", ICircleBorder());
-    interpreter.registerGlobal("StadiumBorder", IStadiumBorder());
-    interpreter.registerGlobal("ContinuousRectangleBorder", IContinuousRectangleBorder());
-    interpreter.registerGlobal("RoundedRectangleBorder", IRoundedRectangleBorder());
-    interpreter.registerGlobal("BeveledRectangleBorder", IBeveledRectangleBorder());
+    interpreter.registerGlobal("DefaultTabController", IDefaultTabController());
+    interpreter.registerGlobal("Divider", IDivider());
+    interpreter.registerGlobal("ElevatedButton", IElevatedButton());
+    interpreter.registerGlobal("Expanded", IExpanded());
+    interpreter.registerGlobal("FloatingActionButton", IFloatingActionButton());
+    interpreter.registerGlobal("GestureDetector", IGestureDetector());
     interpreter.registerGlobal("Icon", IIcon());
     interpreter.registerGlobal("IconButton", IIconButton());
-    interpreter.registerGlobal("Checkbox", ICheckbox());
-    interpreter.registerGlobal("TextField", ITextField());
-    interpreter.registerGlobal("AppBar", IAppBar());
-    interpreter.registerGlobal("Scaffold", IScaffold());
-    interpreter.registerGlobal("TabBar", ITabBar());
-    interpreter.registerGlobal("TabBarView", ITabBarView());
-    interpreter.registerGlobal("DefaultTabController", IDefaultTabController());
-    interpreter.registerGlobal("Tab", ITab());
-    interpreter.registerGlobal("FloatingActionButton", IFloatingActionButton());
-    interpreter.registerGlobal(
-        "BottomNavigationBarItem", IBottomNavigationBarItem());
-    interpreter.registerGlobal("BottomNavigationBar", IBottomNavigationBar());
+    interpreter.registerGlobal("Image", IImage());
+    interpreter.registerGlobal("InputDecoration", IInputDecoration());
+    interpreter.registerGlobal("LinearGradient", ILinearGradient());
     interpreter.registerGlobal("ListTile", IListTile());
-    interpreter.registerGlobal("BoxDecoration", IBoxDecoration());
+    interpreter.registerGlobal("ListView", IListView());
+    interpreter.registerGlobal("NetworkImage", INetworkImage());
+    interpreter.registerGlobal("Offset", IOffset());
+    interpreter.registerGlobal("OutlinedButton", IOutlinedButton());
+    interpreter.registerGlobal("OutlineInputBorder", IOutlineInputBorder());
+    interpreter.registerGlobal("Padding", IPadding());
+    interpreter.registerGlobal("Positioned", IPositioned());
+    interpreter.registerGlobal("Row", IRow());
+    interpreter.registerGlobal("RoundedRectangleBorder", IRoundedRectangleBorder());
+    interpreter.registerGlobal("Scaffold", IScaffold());
+    interpreter.registerGlobal("Size", ISize());
+    interpreter.registerGlobal("SnackBar", ISnackBar());
+    interpreter.registerGlobal(
+        "SingleChildScrollView", ISingleChildScrollView());
+    interpreter.registerGlobal(
+        "TextEditingController", ITextEditingController());
+    interpreter.registerGlobal("Stack", IStack());
+    interpreter.registerGlobal("StadiumBorder", IStadiumBorder());
     interpreter.registerGlobal("showDialog", IShowDialog());
     interpreter.registerGlobal("showModalBottomSheet", IShowModalBottomSheet());
+    interpreter.registerGlobal("Tab", ITab());
+    interpreter.registerGlobal("TabBar", ITabBar());
+    interpreter.registerGlobal("TabBarView", ITabBarView());
+    interpreter.registerGlobal("Text", IText());
+    interpreter.registerGlobal("TextButton", ITextButton());
+    interpreter.registerGlobal("TextField", ITextField());
+    interpreter.registerGlobal("TextStyle", ITextStyle());
+    interpreter.registerGlobal("UnderlineInputBorder", IUnderlineInputBorder());
+    interpreter.registerGlobal("Wrap", IWrap());
     interpreter.registerGlobal(
         "getDeviceWidth",
         GenericLoxCallable(() => 0, (Interpreter interpreter,
@@ -542,19 +539,12 @@ class _MyHomePageState extends State<MyHomePage> {
               .showSnackBar(arguments.first as SnackBar);
         }));
     interpreter.registerGlobal(
-        "update",
-        GenericLoxCallable(() => 0, (Interpreter interpreter,
-            List<Object?> arguments, Map<Symbol, Object?> namedArguments) {
-          updateUI();
-        }));
-    interpreter.registerGlobal(
         "setState",
         GenericLoxCallable(() => 1, (Interpreter interpreter,
             List<Object?> arguments, Map<Symbol, Object?> namedArguments) {
           (arguments.first as LoxFunction).call(interpreter, [], {});
           updateUI();
         }));
-    WidgetsBinding.instance!.addPostFrameCallback((_) {});
   }
 
   @override
