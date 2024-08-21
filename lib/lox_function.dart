@@ -48,8 +48,6 @@ class LoxFunction implements LoxCallable {
       return returnValue.value;
     } on RuntimeError catch (error) {
       runtimeError(error);
-    } on FormatException catch (error) {
-      print("111error: $error"); 
     }
     if (isInitializer) {
       return closure.getAt(0, "this");

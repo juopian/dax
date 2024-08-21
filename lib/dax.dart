@@ -3,6 +3,7 @@ export 'parser.dart';
 export 'interpreter.dart';
 export 'stmt.dart';
 export 'token.dart';
+export 'error.dart';
 export 'resolver.dart';
 export 'lox_callable.dart';
 export 'lox_function.dart';

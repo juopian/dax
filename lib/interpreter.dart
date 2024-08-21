@@ -33,18 +33,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     if (callable != null && callable is LoxCallable) {
       return callable.call(this, [], {});
     }
-    throw RuntimeError((callable as LoxFunction).declaration.name,
-        'Function not found: $name');
   }
-
-  // void interpret(Expr expression) {
-  //   try {
-  //     Object? value = evaluate(expression);
-  //     print(stringify(value));
-  //   } on RuntimeError catch (error) {
-  //     runtimeError(error);
-  //   }
-  // }
 
   Object getRenderedWidget() {
     return renderWidget;
