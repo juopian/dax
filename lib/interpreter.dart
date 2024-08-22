@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'environment.dart';
 import 'error.dart';
 import 'expr.dart' as Expr;
@@ -16,7 +18,9 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   final Environment globals = Environment(null);
   final Map<Expr.Expr, int> locals = {};
   late Environment environment;
-  late Object renderWidget;
+  Object? renderWidget;
+  static bool hadError = false;
+  static bool hadRuntimeError = false;
 
   Interpreter() {
     environment = globals;
@@ -35,7 +39,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     }
   }
 
-  Object getRenderedWidget() {
+  Object? getRenderedWidget() {
     return renderWidget;
   }
 
@@ -46,6 +50,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       }
     } on RuntimeError catch (error) {
       runtimeError(error);
+      rethrow;
     }
   }
 
@@ -151,8 +156,9 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     }
     var result = function.call(this, arguments, namedArguments);
     if (function is LoxFunction &&
-        function.declaration.name.lexeme == "build") {
-      renderWidget = result!;
+        function.declaration.name.lexeme == "build" &&
+        result != null) {
+      renderWidget = result;
     }
     return result;
   }
@@ -445,13 +451,10 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   }
 
   @override
-  void visitVarStmt(Stmt.Var stmt) async {
+  void visitVarStmt(Stmt.Var stmt)  {
     Object? value;
     if (stmt.initializer != null) {
       value = evaluate(stmt.initializer!);
-      if (value is Future) {
-        value = await value;
-      }
     }
     // 如果初始化用到了自身，很明显environment 找不到这个值
     environment.define(stmt.name.lexeme, value);
@@ -532,6 +535,28 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       }
     } finally {
       this.environment = previous;
+    }
+  }
+
+  static void error(int line, String message) {
+    report(line, "", message);
+  }
+
+  static void runtimeError(RuntimeError error) {
+    print('[line ${error.token.line}] ${error.message}\n');
+    hadRuntimeError = true;
+  }
+
+  static void report(int line, String where, String message) {
+    print("[line $line] Error $where: $message\n");
+    hadError = true;
+  }
+
+  static void error1(Token token, String message) {
+    if (token.type == TokenType.EOF) {
+      report(token.line, " at end", message);
+    } else {
+      report(token.line, " at '${token.lexeme}'", message);
     }
   }
 }

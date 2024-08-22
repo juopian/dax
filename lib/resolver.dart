@@ -86,11 +86,6 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
     if (stmt.superclass != null) endScope();
     currentClassType = enclosingClassType;
     return;
-    // if (stmt.superclass != null) {
-    //   if (stmt.name.lexeme == stmt.superclass!.name.lexeme) {
-    //     error1(stmt.superclass!.name, 'A class can not inherit from itself.');
-    //   }
-    // }
   }
 
   @override
@@ -164,8 +159,8 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
 
   @override
   void visitAnonymousExpr(Expr.Anonymous expr) {
-    declare(expr.name);
-    define(expr.name);
+    // declare(expr.name);
+    // define(expr.name);
     FunctionType enclosingFunctionType = currentFunctionType;
     currentFunctionType = FunctionType.FUNCTION;
     beginScope();

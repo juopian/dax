@@ -17,7 +17,7 @@ void runtimeError(RuntimeError error) {
 }
 
 void report(int line, String where, String message) {
-  stdout.writeln("[line $line] Error $where: $message");
+  print("[line $line] Error $where: $message");
   hadError = true;
 }
 

@@ -4,7 +4,10 @@ import 'stmt.dart';
 import 'token.dart';
 import 'token_type.dart';
 
-class ParseError implements Exception {}
+class ParseError implements Exception {
+  final String msg;
+  ParseError(this.msg);
+}
 
 class Parser {
   final List<Token> tokens;
@@ -39,7 +42,8 @@ class Parser {
       return statement();
     } on ParseError {
       synchronize();
-      return null;
+      rethrow;
+      // return null;
     }
   }
 
@@ -529,7 +533,7 @@ class Parser {
 
   ParseError error(Token token, String message) {
     error1(token, message);
-    return ParseError();
+    return ParseError(message);
   }
 
   void synchronize() {
