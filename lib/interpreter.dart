@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'environment.dart';
 import 'error.dart';
 import 'expr.dart' as Expr;
@@ -14,21 +12,25 @@ import 'token.dart';
 import 'token_type.dart';
 import 'global_function.dart';
 
+Environment top = Environment(null);
 class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
-  final Environment globals = Environment(null);
+  final Environment globals = Environment(top);
   final Map<Expr.Expr, int> locals = {};
-  late Environment environment;
+  late Environment environment = globals; 
   Object? renderWidget;
   static bool hadError = false;
   static bool hadRuntimeError = false;
 
   Interpreter() {
-    environment = globals;
-    globals.define("clock", ClockFunction());
-    globals.define("str", StringFunction());
+    top.define("clock", ClockFunction());
+    top.define("str", StringFunction());
   }
 
   void registerGlobal(String name, Object obj) {
+    top.define(name, obj);
+  }
+
+  void registerLocal(String name, Object obj) {
     globals.define(name, obj);
   }
 
@@ -537,26 +539,5 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       this.environment = previous;
     }
   }
-
-  static void error(int line, String message) {
-    report(line, "", message);
-  }
-
-  static void runtimeError(RuntimeError error) {
-    print('[line ${error.token.line}] ${error.message}\n');
-    hadRuntimeError = true;
-  }
-
-  static void report(int line, String where, String message) {
-    print("[line $line] Error $where: $message\n");
-    hadError = true;
-  }
-
-  static void error1(Token token, String message) {
-    if (token.type == TokenType.EOF) {
-      report(token.line, " at end", message);
-    } else {
-      report(token.line, " at '${token.lexeme}'", message);
-    }
-  }
+  
 }

@@ -5,8 +5,8 @@ import 'token.dart';
 import 'token_type.dart';
 
 class ParseError implements Exception {
-  final String msg;
-  ParseError(this.msg);
+  final String message;
+  ParseError(this.message);
 }
 
 class Parser {

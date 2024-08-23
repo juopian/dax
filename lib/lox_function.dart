@@ -46,6 +46,8 @@ class LoxFunction implements LoxCallable {
         return closure.getAt(0, "this");
       }
       return returnValue.value;
+    } on RuntimeError catch (error) {
+       runtimeError(error);
     }
     if (isInitializer) {
       return closure.getAt(0, "this");
