@@ -34,7 +34,7 @@ class Parser {
     return statements;
   }
 
-  Stmt? declaration() {
+  Stmt? declaration({bool rethrowError = true}) {
     try {
       if (match([TokenType.CLASS])) return classDeclaration();
       if (match([TokenType.FUN])) return function("function");
@@ -42,8 +42,11 @@ class Parser {
       return statement();
     } on ParseError {
       synchronize();
-      rethrow;
-      // return null;
+      if (rethrowError) {
+        rethrow;
+      } else {
+        return null;
+      }
     }
   }
 
@@ -230,14 +233,14 @@ class Parser {
     Expr expr = or();
     Expr? thenExpr;
     Expr? elseExpr;
-    while(match([TokenType.QUESTION, TokenType.COLON])){
-      if (previous().type == TokenType.QUESTION){
+    while (match([TokenType.QUESTION, TokenType.COLON])) {
+      if (previous().type == TokenType.QUESTION) {
         thenExpr = or();
-      } else if (previous().type == TokenType.COLON){
+      } else if (previous().type == TokenType.COLON) {
         elseExpr = or();
       }
     }
-    if (thenExpr != null && elseExpr != null){
+    if (thenExpr != null && elseExpr != null) {
       return Conditional(expr, thenExpr, elseExpr);
     }
     return expr;

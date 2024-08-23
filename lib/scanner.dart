@@ -139,8 +139,11 @@ class Scanner {
       case '\n':
         line++;
         break;
+      case "'":
+        string("'");
+        break;
       case '"':
-        string();
+        string('"');
         break;
       default:
         if (isDigit(c, false)) {
@@ -180,9 +183,9 @@ class Scanner {
     addToken(type);
   }
 
-  void string() {
+  void string(String c) {
     bool interplote = false;
-    while (peek() != '"' && !isAtEnd()) {
+    while (peek() != c && !isAtEnd()) {
       if (peek() == '\n') line++;
       if (peek() == '\$') {
         advance();
