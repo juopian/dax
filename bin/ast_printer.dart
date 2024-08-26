@@ -73,6 +73,11 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
   }
 
   @override
+  String visitArrayifExpr(Expr.Arrayif expr) {
+    return parenthesize2("arrayif", [expr.condition, expr.thenBranch, expr.elseBranch]);
+  }
+
+  @override
   String visitLogicalExpr(Expr.Logical expr) {
     return parenthesize(expr.operator.lexeme, [expr.left, expr.right]);
   }

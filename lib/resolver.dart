@@ -213,6 +213,16 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
   }
 
   @override
+  void visitArrayifExpr(Expr.Arrayif expr) {
+    resolveExpr(expr.condition);
+    resolveExpr(expr.thenBranch);
+    if (expr.elseBranch != null) {
+      resolveExpr(expr.elseBranch!);
+    }
+    return;
+  }
+
+  @override
   void visitMappingExpr(Expr.Mapping expr) {
     resolveExpr(expr.callee);
     if (expr.lambda is Stmt.Functional) {

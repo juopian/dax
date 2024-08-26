@@ -16,6 +16,7 @@ void main(List<String> args) {
     "Dict     : Map<String,Expr> entries",
     "Then     : Expr future, Token name, Object then",
     "Conditional: Expr condition, Expr thenBranch, Expr elseBranch",
+    "Arrayif  : Expr condition, Expr thenBranch, Expr? elseBranch",
     "Anonymous: Token name, List<Token> params, List<Stmt> body",
     "Mapping  : Expr callee, Token name, Object lambda",
     "Indexing : Expr callee, Token name, Expr key",

@@ -13,10 +13,11 @@ import 'token_type.dart';
 import 'global_function.dart';
 
 Environment top = Environment(null);
+
 class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   final Environment globals = Environment(top);
   final Map<Expr.Expr, int> locals = {};
-  late Environment environment = globals; 
+  late Environment environment = globals;
   Object? renderWidget;
   static bool hadError = false;
   static bool hadRuntimeError = false;
@@ -199,9 +200,22 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   Object visitArrayExpr(Expr.Array expr) {
     List<Object?> elements = [];
     for (Expr.Expr element in expr.elements) {
-      elements.add(evaluate(element));
+      var result = evaluate(element);
+      if (result != null) {
+        elements.add(result);
+      }
     }
     return elements;
+  }
+
+  @override
+  Object? visitArrayifExpr(Expr.Arrayif expr) {
+    if (isTruthy(evaluate(expr.condition))) {
+      return evaluate(expr.thenBranch);
+    } else if (expr.elseBranch != null) {
+      return evaluate(expr.elseBranch!);
+    }
+    return null;
   }
 
   @override
@@ -214,6 +228,9 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       return object[expr.name.lexeme];
     }
     if (object is List) {
+      if (expr.name.lexeme == "length") {
+        return object.length;
+      }
       if (expr.name.lexeme == "add") {
         return object.add;
       } else if (expr.name.lexeme == "pop") {
@@ -453,7 +470,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   }
 
   @override
-  void visitVarStmt(Stmt.Var stmt)  {
+  void visitVarStmt(Stmt.Var stmt) {
     Object? value;
     if (stmt.initializer != null) {
       value = evaluate(stmt.initializer!);
@@ -539,5 +556,4 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       this.environment = previous;
     }
   }
-  
 }

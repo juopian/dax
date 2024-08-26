@@ -428,12 +428,22 @@ class Parser {
   }
 
   Expr primary() {
-    // print("name is ${peek().lexeme}, type: ${peek().type}}");
     if (match([TokenType.FALSE])) return Literal(false);
     if (match([TokenType.TRUE])) return Literal(true);
     if (match([TokenType.NIL])) return Literal(null);
     if (match([TokenType.NUMBER, TokenType.STRING])) {
       return Literal(previous().literal);
+    }
+    if (match([TokenType.IF])) {
+      consume(TokenType.LEFT_PAREN, "Expect '(' after 'if'.");
+      Expr condition = expression();
+      consume(TokenType.RIGHT_PAREN, "Expect ')' after if condition.");
+      Expr thenBranch = expression();
+      Expr? elseBranch;
+      if (match([TokenType.ELSE])) {
+        elseBranch = expression();
+      }
+      return Arrayif(condition, thenBranch, elseBranch);
     }
 
     if (match([TokenType.SUPER])) {

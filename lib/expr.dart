@@ -63,6 +63,15 @@ class Conditional extends Expr {
   T accept<T>(Visitor<T> visitor) => visitor.visitConditionalExpr(this);
 }
 
+class Arrayif extends Expr {
+  final Expr condition;
+  final Expr thenBranch;
+  final Expr? elseBranch;
+  Arrayif(this.condition, this.thenBranch, this.elseBranch, );
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitArrayifExpr(this);
+}
+
 class Anonymous extends Expr {
   final Token name;
   final List<Token> params;
@@ -176,6 +185,7 @@ abstract class Visitor<T> {
   T visitDictExpr(Dict expr);
   T visitThenExpr(Then expr);
   T visitConditionalExpr(Conditional expr);
+  T visitArrayifExpr(Arrayif expr);
   T visitAnonymousExpr(Anonymous expr);
   T visitMappingExpr(Mapping expr);
   T visitIndexingExpr(Indexing expr);
