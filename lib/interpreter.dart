@@ -144,8 +144,20 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       }
     }
     if (callee is Function) {
+      if (arguments.isNotEmpty && arguments.first is LoxFunction) {
+        return Function.apply(
+            callee,
+            [
+              (i) {
+                (arguments.first as LoxFunction)
+                    .call(this, [i], namedArguments);
+              }
+            ],
+            namedArguments);
+      }
       return Function.apply(callee, arguments, namedArguments);
     }
+
     if (callee is LoxFlutterFunction) {
       return callee.call(this, arguments, namedArguments);
     }
@@ -183,6 +195,9 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     }
     if (object is Map) {
       return object[evaluate(expr.key) as String];
+    }
+    if (object is RegExpMatch) {
+      return object[evaluate(expr.key) as int];
     }
     throw RuntimeError(expr.name, "Only list or map can be used in indexing.");
   }
@@ -224,8 +239,38 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     if (expr.name.lexeme == "toString") {
       return object.toString();
     }
+    if (object is RegExp) {
+      switch (expr.name.lexeme) {
+        case "allMatches":
+          return object.allMatches;
+        case "firstMatch":
+          return object.firstMatch;
+        case "hasMatch":
+          return object.hasMatch;
+        case "stringMatch":
+          return object.stringMatch;
+      }
+    }
     if (object is Map) {
       return object[expr.name.lexeme];
+    }
+    if (object is Iterable) {
+      switch (expr.name.lexeme) {
+        case 'first':
+          return object.first;
+        case 'last':
+          return object.last;
+        case 'single':
+          return object.single;
+        case 'length':
+          return object.length;
+        case 'isEmpty':
+          return object.isEmpty;
+        case 'isNotEmpty':
+          return object.isNotEmpty;
+        case 'forEach':
+          return object.forEach;
+      }
     }
     if (object is List) {
       if (expr.name.lexeme == "length") {
@@ -537,9 +582,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     }
     LoxClass klass = LoxClass(stmt.name.lexeme,
         superclass == null ? null : superclass as LoxClass, methods);
-    if (superclass != null) {
-      environment = environment.enclosing!;
-    }
     environment.assign(stmt.name, klass);
     return;
   }
