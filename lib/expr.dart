@@ -40,7 +40,8 @@ class Array extends Expr {
 
 class Dict extends Expr {
   final Map<String,Expr> entries;
-  Dict(this.entries, );
+  final bool isNamed;
+  Dict(this.entries, this.isNamed, );
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitDictExpr(this);
 }
@@ -48,7 +49,7 @@ class Dict extends Expr {
 class Then extends Expr {
   final Expr future;
   final Token name;
-  final Object then;
+  final Expr then;
   Then(this.future, this.name, this.then, );
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitThenExpr(this);
@@ -84,7 +85,7 @@ class Anonymous extends Expr {
 class Mapping extends Expr {
   final Expr callee;
   final Token name;
-  final Object lambda;
+  final Expr lambda;
   Mapping(this.callee, this.name, this.lambda, );
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitMappingExpr(this);

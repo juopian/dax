@@ -30,10 +30,9 @@ class Expression extends Stmt {
 
 class Functional extends Stmt {
   final Token name;
-  final bool isAsync;
   final List<Token> params;
   final List<Stmt> body;
-  Functional(this.name, this.isAsync, this.params, this.body, );
+  Functional(this.name, this.params, this.body, );
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitFunctionalStmt(this);
 }
@@ -52,6 +51,15 @@ class Print extends Stmt {
   Print(this.expression, );
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitPrintStmt(this);
+}
+
+class ForEach extends Stmt {
+  final Expr iterable;
+  final Token name;
+  final Expr lambda;
+  ForEach(this.iterable, this.name, this.lambda, );
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitForEachStmt(this);
 }
 
 class Return extends Stmt {
@@ -85,6 +93,7 @@ abstract class Visitor<T> {
   T visitFunctionalStmt(Functional stmt);
   T visitIfStmt(If stmt);
   T visitPrintStmt(Print stmt);
+  T visitForEachStmt(ForEach stmt);
   T visitReturnStmt(Return stmt);
   T visitVarStmt(Var stmt);
   T visitWhileStmt(While stmt);

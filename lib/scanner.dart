@@ -29,6 +29,7 @@ class Scanner {
     "while": TokenType.WHILE,
     "await": TokenType.AWAIT,
     "async": TokenType.ASYNC,
+    "forEach": TokenType.FOREACH
   };
 
   Scanner(this.source);

@@ -137,24 +137,14 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     Map<Symbol, Object?> namedArguments = {};
     for (Expr.Expr argument in expr.arguments) {
       var arg = evaluate(argument);
-      if (arg is Map) {
-        namedArguments.addAll({Symbol(arg.keys.first): arg.values.first});
+      if (argument is Expr.Dict && argument.isNamed) {
+        Map args = arg as Map;
+        namedArguments.addAll({Symbol(args.keys.first): args.values.first});
       } else {
-        arguments.add(evaluate(argument));
+        arguments.add(arg);
       }
     }
     if (callee is Function) {
-      if (arguments.isNotEmpty && arguments.first is LoxFunction) {
-        return Function.apply(
-            callee,
-            [
-              (i) {
-                (arguments.first as LoxFunction)
-                    .call(this, [i], namedArguments);
-              }
-            ],
-            namedArguments);
-      }
       return Function.apply(callee, arguments, namedArguments);
     }
 
@@ -344,25 +334,25 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
 
   @override
   Object? visitMappingExpr(Expr.Mapping expr) {
+    Stmt.Functional mp;
+    var func = evaluate(expr.lambda);
+    if (func is! LoxFunction) {
+      throw RuntimeError(
+          expr.name, "Only func can be used as Mapping function");
+    } else {
+      mp = func.declaration;
+    }
     Object? objects = evaluate(expr.callee);
+    LoxFunction mapFun = LoxFunction(mp, environment, false);
     if (objects is List<Object?>) {
       List<Object?> results = [];
-      Stmt.Functional mp;
-      if (expr.lambda is Stmt.Functional) {
-        mp = expr.lambda as Stmt.Functional;
-      } else if (expr.lambda is Expr.Expr) {
-        var func = evaluate(expr.lambda as Expr.Expr);
-        if (func is! LoxFunction) {
-          throw RuntimeError(
-              expr.name, "Only func can be used as Mapping function");
-        } else {
-          mp = func.declaration;
-        }
-      } else {
-        throw RuntimeError(
-            expr.name, "Only func can be used as Mapping function");
+      for (var i in objects) {
+        var result = mapFun.call(this, [i], {});
+        results.add(result);
       }
-      LoxFunction mapFun = LoxFunction(mp, environment, false);
+      return results;
+    } else if (objects is Iterable) {
+      List<Object?> results = [];
       for (var i in objects) {
         var result = mapFun.call(this, [i], {});
         results.add(result);
@@ -386,19 +376,12 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     Object? object = evaluate(expr.future);
     if (object is Future) {
       Stmt.Functional then;
-      if (expr.then is Stmt.Functional) {
-        then = expr.then as Stmt.Functional;
-      } else if (expr.then is Expr.Expr) {
-        var func = evaluate(expr.then as Expr.Expr);
-        if (func is! LoxFunction) {
-          throw RuntimeError(
-              expr.name, "Only func can be used as Mapping function");
-        } else {
-          then = func.declaration;
-        }
-      } else {
+      var func = evaluate(expr.then);
+      if (func is! LoxFunction) {
         throw RuntimeError(
             expr.name, "Only func can be used as Mapping function");
+      } else {
+        then = func.declaration;
       }
       return object.then((value) {
         LoxFunction thenFun = LoxFunction(then, environment, false);
@@ -426,7 +409,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
 
   @override
   Object? visitAnonymousExpr(Expr.Anonymous expr) {
-    var fun = Stmt.Functional(expr.name, false, expr.params, expr.body);
+    var fun = Stmt.Functional(expr.name, expr.params, expr.body);
     return LoxFunction(fun, environment, false);
   }
 
@@ -489,6 +472,36 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
 
   Object? evaluate(Expr.Expr expr) {
     return expr.accept(this);
+  }
+
+  @override
+  void visitForEachStmt(Stmt.ForEach stmt) {
+    Stmt.Functional mp;
+    var func = evaluate(stmt.lambda);
+    if (func is! LoxFunction) {
+      throw RuntimeError(
+          stmt.name, "Only func can be used as forEach function");
+    } else {
+      mp = func.declaration;
+    }
+    LoxFunction iterableFun = LoxFunction(mp, environment, false);
+    Object? object = evaluate(stmt.iterable);
+    if (object is Iterable) {
+      for (var i in object) {
+        iterableFun.call(this, [i], {});
+      }
+    } else if (object is Map) {
+      object.forEach((k, v) {
+        iterableFun.call(this, [k, v], {});
+      });
+    } else if (object is List) {
+      for (var i in object) {
+        iterableFun.call(this, [i], {});
+      }
+    } else {
+      throw RuntimeError(
+          stmt.name, "Only Iterable or List or Map have forEach.");
+    }
   }
 
   @override

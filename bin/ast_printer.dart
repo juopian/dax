@@ -148,6 +148,11 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
   }
 
   @override
+  String visitForEachStmt(Stmt.ForEach stmt) {
+    return parenthesize2("foreach", [stmt.iterable, stmt.lambda]);
+  }
+
+  @override
   String visitIfStmt(Stmt.If stmt) {
     if (stmt.elseBranch == null) {
       return parenthesize2("if", [stmt.condition, stmt.thenBranch]);

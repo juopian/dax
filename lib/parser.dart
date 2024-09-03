@@ -87,13 +87,10 @@ class Parser {
       } while (match([TokenType.COMMA]));
     }
     consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
-    bool isAsync = false;
-    if (match([TokenType.ASYNC])) {
-      isAsync = true;
-    }
+    match([TokenType.ASYNC]);
     consume(TokenType.LEFT_BRACE, "Expect '{' before $kind body.");
     List<Stmt> body = block();
-    return Functional(name, isAsync, parameters, body);
+    return Functional(name, parameters, body);
   }
 
   Stmt varDeclaration() {
@@ -117,7 +114,21 @@ class Parser {
     if (match([TokenType.RETURN])) return returnStatement();
     if (match([TokenType.WHILE])) return whileStatement();
     if (match([TokenType.LEFT_BRACE])) return Block(block());
+    if (matchforEach()) return foreachStatement();
     return expressionStatement();
+  }
+
+  bool matchforEach() {
+    var currentSnap = current;
+    bool isMatch = false;
+    arrayOrMap();
+    if (match([TokenType.DOT])) {
+      if (check(TokenType.FOREACH)) {
+        isMatch = true;
+      }
+    }
+    current = currentSnap;
+    return isMatch;
   }
 
   Stmt forStatement() {
@@ -198,6 +209,17 @@ class Parser {
     }
     consume(TokenType.RIGHT_BRACE, "Expect '}' after block.");
     return statements;
+  }
+
+  Stmt foreachStatement() {
+    Expr callee = arrayOrMap();
+    consume(TokenType.DOT, "Expect '.' before 'foreach'.");
+    Token name = consume(TokenType.FOREACH, "Expect 'foreach'.");
+    consume(TokenType.LEFT_PAREN, "Expect '(' after 'map'.");
+    Expr expr = expression();
+    consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+    consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+    return ForEach(callee, name, expr);
   }
 
   Stmt expressionStatement() {
@@ -377,18 +399,19 @@ class Parser {
   Expr finishCall(Expr callee) {
     List<Expr> arguments = [];
     if (!check(TokenType.RIGHT_PAREN)) {
+      bool isNamed = peekNext().type == TokenType.COLON;
       do {
         if (check(TokenType.RIGHT_PAREN)) break;
         if (arguments.length >= 255) {
           error(peek(), "Can't have more than 255 arguments.");
         }
         // 检测是否名称参数
-        if (peekNext().type == TokenType.COLON) {
+        if (isNamed) {
           Token name =
               consume(TokenType.IDENTIFIER, "Expect argument name before :.");
           consume(TokenType.COLON, "Expect : after $name.");
           Expr expr = expression();
-          arguments.add(Dict({name.lexeme: expr}));
+          arguments.add(Dict({name.lexeme: expr}, true));
         } else {
           arguments.add(expression());
         }
@@ -422,7 +445,7 @@ class Parser {
         } while (match([TokenType.COMMA]));
       }
       consume(TokenType.RIGHT_BRACE, "Expect '}' after array elements.");
-      return Dict(entries);
+      return Dict(entries, false);
     }
     return primary();
   }
