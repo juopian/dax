@@ -399,14 +399,13 @@ class Parser {
   Expr finishCall(Expr callee) {
     List<Expr> arguments = [];
     if (!check(TokenType.RIGHT_PAREN)) {
-      bool isNamed = peekNext().type == TokenType.COLON;
       do {
         if (check(TokenType.RIGHT_PAREN)) break;
         if (arguments.length >= 255) {
           error(peek(), "Can't have more than 255 arguments.");
         }
         // 检测是否名称参数
-        if (isNamed) {
+        if (peekNext().type == TokenType.COLON) {
           Token name =
               consume(TokenType.IDENTIFIER, "Expect argument name before :.");
           consume(TokenType.COLON, "Expect : after $name.");
