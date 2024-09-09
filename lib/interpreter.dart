@@ -229,18 +229,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     if (expr.name.lexeme == "toString") {
       return object.toString();
     }
-    if (object is RegExp) {
-      switch (expr.name.lexeme) {
-        case "allMatches":
-          return object.allMatches;
-        case "firstMatch":
-          return object.firstMatch;
-        case "hasMatch":
-          return object.hasMatch;
-        case "stringMatch":
-          return object.stringMatch;
-      }
-    }
     if (object is Map) {
       return object[expr.name.lexeme];
     }
