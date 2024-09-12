@@ -20,7 +20,7 @@
 基本使用场景：
 
 ```
-var n = nil;  // 空
+var n = null;  // 空
 var i = 1; 
 var b = true; 
 i = 2; // 赋值

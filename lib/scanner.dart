@@ -18,7 +18,7 @@ class Scanner {
     "for": TokenType.FOR,
     "fun": TokenType.FUN,
     "if": TokenType.IF,
-    "nil": TokenType.NIL,
+    "null": TokenType.NIL,
     "or": TokenType.OR,
     "print": TokenType.PRINT,
     "return": TokenType.RETURN,
