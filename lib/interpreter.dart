@@ -23,7 +23,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   static bool hadRuntimeError = false;
 
   Interpreter() {
-    top.define("clock", ClockFunction());
     top.define("str", StringFunction());
   }
 
@@ -66,7 +65,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   }
 
   String stringify(Object? object) {
-    if (object == null) return "nil";
+    if (object == null) return "null";
 
     if (object is num) {
       String text = object.toString();
@@ -148,7 +147,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       return Function.apply(callee, arguments, namedArguments);
     }
 
-    if (callee is LoxFlutterFunction) {
+    if (callee is DaxCallable) {
       return callee.call(this, arguments, namedArguments);
     }
     if (callee is! LoxCallable) {

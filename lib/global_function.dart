@@ -1,23 +1,6 @@
 import 'interpreter.dart';
 import 'lox_callable.dart';
 
-class ClockFunction implements LoxCallable {
-  @override
-  int arity() {
-    return 0;
-  }
-
-  @override
-  Object? call(Interpreter interpreter, List<Object?> arguments,
-      Map<Symbol, Object?> namedArguments) {
-    return DateTime.now().millisecondsSinceEpoch / 1000.0;
-  }
-
-  @override
-  String toString() {
-    return "<native fn>";
-  }
-}
 
 class StringFunction implements LoxCallable {
   @override

@@ -15,7 +15,7 @@ abstract class LoxSetCallable {
   void set(Token name, Object? value);
 }
 
-abstract class LoxFlutterFunction {
+abstract class DaxCallable {
   Object? call(Interpreter interpreter, List<Object?> arguments,
       Map<Symbol, Object?> namedArguments);
 }
