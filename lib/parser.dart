@@ -54,7 +54,7 @@ class Parser {
     Token name = consume(TokenType.IDENTIFIER, "Expect class name.");
 
     Variable? superclass;
-    if (match([TokenType.LESS])) {
+    if (match([TokenType.EXTENDS])) {
       consume(TokenType.IDENTIFIER, "Expect superclass name.");
       superclass = Variable(previous());
     }

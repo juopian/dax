@@ -1,12 +1,12 @@
 class Doughnut {
   cook() {
-    super.cook();
     print "Fry until golden brown.";
   }
 }
 
-class BostonCream < Doughnut {
+class BostonCream extends Doughnut {
   cook() {
+    super.cook();
     print "Pipe full of custard and coat with chocolate.";
   }
 }
