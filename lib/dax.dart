@@ -6,5 +6,7 @@ export 'token.dart';
 export 'error.dart';
 export 'resolver.dart';
 export 'lox_callable.dart';
+export 'lox_class.dart';
 export 'lox_function.dart';
+export 'lox_instance.dart';
 export 'global_function.dart';

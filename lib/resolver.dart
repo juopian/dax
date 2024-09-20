@@ -81,7 +81,6 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
       }
       resolveFunction(method, declaration);
     }
-
     endScope();
     if (stmt.superclass != null) endScope();
     currentClassType = enclosingClassType;

@@ -1,17 +1,25 @@
 class Person {
+	init(name, age) {
+		this.name = name;
+		this.age = age;
+	}
 	sayHello() {
 		print "hello, my name is ${this.name} and age is ${this.age}";
 	}
 }
 
 class Student extends Person {
+	run(){
+		print "running...";
+	}
 	study() {
 		print "studying...";
+		this.run();
 	}
 }
 
-var p = Student();
-p.name = "Tom";
-p.age = 20;
+var p = Student('xiecp', 35);
+//p.name = "Tom";
+//p.age = 20;
 p.sayHello();
 p.study();

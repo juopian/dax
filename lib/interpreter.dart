@@ -16,9 +16,8 @@ Environment top = Environment(null);
 
 class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   final Environment globals = Environment(top);
-  final Map<Expr.Expr, int> locals = {};
+  Map<Expr.Expr, int> locals = {};
   late Environment environment = globals;
-  Object? renderWidget;
   static bool hadError = false;
   static bool hadRuntimeError = false;
 
@@ -39,10 +38,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     if (callable != null && callable is LoxCallable) {
       return callable.call(this, [], {});
     }
-  }
-
-  Object? getRenderedWidget() {
-    return renderWidget;
   }
 
   void interpret(List<Stmt.Stmt> statements) {
@@ -146,7 +141,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     if (callee is Function) {
       return Function.apply(callee, arguments, namedArguments);
     }
-
     if (callee is DaxCallable) {
       return callee.call(this, arguments, namedArguments);
     }
@@ -158,13 +152,14 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       throw RuntimeError(expr.paren,
           "Expected ${function.arity()} arguments but got ${arguments.length}.");
     }
-    var result = function.call(this, arguments, namedArguments);
-    if (function is LoxFunction &&
-        function.declaration.name.lexeme == "build" &&
-        result != null) {
-      renderWidget = result;
+    if (function is LoxClass &&
+        function.superclass != null &&
+        (function.superclass!.name == "StatefulWidget" ||
+            function.superclass!.name == "StatelessWidget")) {
+      return (top.getAt(0, "Dax${function.superclass!.name}") as DaxCallable)
+          .call(this, arguments, {Symbol('klass'): function});
     }
-    return result;
+    return function.call(this, arguments, namedArguments);
   }
 
   @override
@@ -567,7 +562,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     }
 
     environment.define(stmt.name.lexeme, null);
-    // LoxClass klass = LoxClass(stmt.name.lexeme);
 
     if (stmt.superclass != null) {
       environment = Environment(environment);
