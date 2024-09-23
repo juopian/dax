@@ -366,6 +366,12 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
         then = func.declaration;
       }
       return object.then((value) {
+        if (expr.then is Expr.Anonymous) {
+          var thenExpr = expr.then as Expr.Anonymous;
+          if (thenExpr.params.isNotEmpty) {
+            environment.define(thenExpr.params.first.lexeme, value);
+          }
+        }
         LoxFunction thenFun = LoxFunction(then, environment, false);
         return thenFun.call(this, [value], {});
       });
@@ -570,8 +576,8 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
 
     Map<String, LoxFunction> methods = {};
     for (Stmt.Functional method in stmt.methods) {
-      LoxFunction function =
-          LoxFunction(method, environment, method.name.lexeme == "init");
+      LoxFunction function = LoxFunction(
+          method, environment, method.name.lexeme == stmt.name.lexeme); // init
       methods[method.name.lexeme] = function;
     }
     LoxClass klass = LoxClass(stmt.name.lexeme,

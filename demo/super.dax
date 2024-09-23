@@ -1,5 +1,5 @@
 class Person {
-	init(name, age) {
+	Person(name, age) {
 		this.name = name;
 		this.age = age;
 	}
@@ -9,6 +9,9 @@ class Person {
 }
 
 class Student extends Person {
+	Student() {
+		super.Person("John", 18);
+	}
 	run(){
 		print "running...";
 	}
@@ -18,7 +21,7 @@ class Student extends Person {
 	}
 }
 
-var p = Student('xiecp', 35);
+var p = Student();
 //p.name = "Tom";
 //p.age = 20;
 p.sayHello();
