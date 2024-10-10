@@ -244,6 +244,58 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
           return object.forEach;
       }
     }
+    if (object is String) {
+      switch (expr.name.lexeme) {
+        case 'substring':
+          return object.substring;
+        case 'indexOf':
+          return object.indexOf;
+        case 'lastIndexOf':
+          return object.lastIndexOf;
+        case 'codeUnitAt':
+          return object.codeUnitAt;
+        case 'length':
+          return object.length;
+        case 'isEmpty':
+          return object.isEmpty;
+        case 'isNotEmpty':
+          return object.isNotEmpty;
+        case 'compareTo':
+          return object.compareTo;
+        case 'contains':
+          return object.contains;
+        case 'startsWith':
+          return object.startsWith;
+        case 'endsWith':
+          return object.endsWith;
+        case 'trim':
+          return object.trim;
+        case 'toLowerCase':
+          return object.toLowerCase;
+        case 'toUpperCase':
+          return object.toUpperCase;
+        case 'padLeft':
+          return object.padLeft;
+        case 'padRight':
+          return object.padRight;
+        case 'replaceAll':
+          return object.replaceAll;
+        case 'replaceFirst':
+          return object.replaceFirst;
+        case 'codeUnits':
+          return object.codeUnits;
+        case 'runes':
+          return object.runes;
+        case 'split':
+          return object.split;
+        case 'trimLeft':
+          return object.trimLeft;
+        case 'trimRight':
+          return object.trimRight;
+        case 'replaceAllMapped':
+          return object.replaceAllMapped;
+      } 
+    }
     if (object is List) {
       if (expr.name.lexeme == "length") {
         return object.length;
