@@ -239,7 +239,6 @@ class Parser {
     if (match([TokenType.EQUAL])) {
       Token equals = previous();
       Expr value = assignment();
-      print(expr);
       if (expr is Variable) {
         Token name = expr.name;
         return Assign(name, value);

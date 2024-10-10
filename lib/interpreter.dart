@@ -294,19 +294,95 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
           return object.trimRight;
         case 'replaceAllMapped':
           return object.replaceAllMapped;
-      } 
+      }
     }
     if (object is List) {
-      if (expr.name.lexeme == "length") {
-        return object.length;
+      switch (expr.name.lexeme) {
+        case 'first':
+          return object.first;
+        case 'last':
+          return object.last;
+        case 'single':
+          return object.single;
+        case 'length':
+          return object.length;
+        case 'isEmpty':
+          return object.isEmpty;
+        case 'isNotEmpty':
+          return object.isNotEmpty;
+        case 'forEach':
+          return object.forEach;
+        case 'add':
+          return object.add;
+        case 'removeLast':
+          return object.removeLast;
+        case 'removeWhere':
+          return object.removeWhere;
+        case 'retainWhere':
+          return object.retainWhere;
+        case 'clear':
+          return object.clear;
+        case 'insert':
+          return object.insert;
+        case 'insertAll':
+          return object.insertAll;
+        case 'setAll':
+          return object.setAll;
+        case 'removeAt':
+          return object.removeAt;
+        case 'remove':
+          return object.remove;
+        case 'indexOf':
+          return object.indexOf;
+        case 'lastIndexOf':
+          return object.lastIndexOf;
+        case 'join':
+          return object.join;
+        case 'any':
+          return object.any;
+        case 'every':
+          return object.every;
+        case 'fold':
+          return object.fold;
+        case 'firstWhere':
+          return object.firstWhere;
+        case 'lastWhere':
+          return object.lastWhere;
+        case 'singleWhere':
+          return object.singleWhere;
+        case 'reduce':
+          return object.reduce;
+        case 'where':
+          return object.where;
+        case 'toList':
+          return object.toList;
+        case 'toSet':
+          return object.toSet;
+        case 'asMap':
+          return object.asMap;
+        case 'expand':
+          return object.expand;
+        case 'map':
+          return object.map;
+        case 'whereType':
+          return object.whereType;
+        case 'cast':
+          return object.cast;
+        case 'shuffle':
+          return object.shuffle;
+        case 'sublist':
+          return object.sublist;
+        case 'getRange':
+          return object.getRange;
+        case 'setRange':
+          return object.setRange;
+        case 'fillRange':
+          return object.fillRange;
+        case 'replaceRange':
+          return object.replaceRange;
       }
-      if (expr.name.lexeme == "add") {
-        return object.add;
-      } else if (expr.name.lexeme == "pop") {
-        return object.removeLast;
-      } else {
-        throw RuntimeError(expr.name, "Only add and pop can be used in array.");
-      }
+
+      throw RuntimeError(expr.name, "Unknown property ${expr.name.lexeme}.");
     }
     if (object is LoxInstance) {
       return object.get(expr.name); // get方法绑定了实例
