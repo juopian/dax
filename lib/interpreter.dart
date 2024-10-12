@@ -223,7 +223,57 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     if (expr.name.lexeme == "toString") {
       return object.toString();
     }
+    if (object is DateTime) {
+      switch(expr.name.lexeme) {
+        case 'year':
+          return object.year;
+        case 'month':
+          return object.month;
+        case 'day':
+          return object.day;
+        case 'hour':
+          return object.hour;
+        case 'minute':
+          return object.minute;
+        case 'second':
+          return object.second;
+        case 'millisecond':
+          return object.millisecond;
+        case 'microsecond':
+          return object.microsecond;
+      }
+    }
     if (object is Map) {
+      switch (expr.name.lexeme) {
+        case 'keys':
+          return object.keys;
+        case 'values':
+          return object.values;
+        case 'entries':
+          return object.entries;
+        case 'length':
+          return object.length;
+        case 'isEmpty':
+          return object.isEmpty;
+        case 'isNotEmpty':
+          return object.isNotEmpty;
+        case 'forEach':
+          return object.forEach;
+        case 'containsKey':
+          return object.containsKey;
+        case 'containsValue':
+          return object.containsValue;
+        case 'remove':
+          return object.remove;
+        case 'clear':
+          return object.clear;
+        case 'removeWhere':
+          return object.removeWhere;
+        case 'update':
+          return object.update;
+        case 'updateAll':
+          return object.updateAll;
+      }
       return object[expr.name.lexeme];
     }
     if (object is Iterable) {
@@ -243,6 +293,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
         case 'forEach':
           return object.forEach;
       }
+      throw RuntimeError(expr.name, "Unknown property ${expr.name.lexeme}.");
     }
     if (object is String) {
       switch (expr.name.lexeme) {
@@ -295,6 +346,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
         case 'replaceAllMapped':
           return object.replaceAllMapped;
       }
+      throw RuntimeError(expr.name, "Unknown property ${expr.name.lexeme}.");
     }
     if (object is List) {
       switch (expr.name.lexeme) {
@@ -381,7 +433,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
         case 'replaceRange':
           return object.replaceRange;
       }
-
       throw RuntimeError(expr.name, "Unknown property ${expr.name.lexeme}.");
     }
     if (object is LoxInstance) {
@@ -411,13 +462,12 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   @override
   Object? visitSetExpr(Expr.Set expr) {
     Object? object = evaluate(expr.object);
+    Object? value = evaluate(expr.value);
     if (object is LoxInstance) {
-      Object? value = evaluate(expr.value);
       object.set(expr.name, value);
       return value;
     }
     if (object is LoxSetCallable) {
-      Object? value = evaluate(expr.value);
       object.set(expr.name, value);
       return value;
     }
