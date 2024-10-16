@@ -58,6 +58,12 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
   }
 
   @override
+  String visitIndexSetExpr(Expr.IndexSet expr) {
+    return parenthesize2("=", [expr.object, expr.name, expr.value]);
+  }
+
+
+  @override
   String visitSetExpr(Expr.Set expr) {
     return parenthesize2("=", [expr.object, expr.name.lexeme, expr.value]);
   }
@@ -93,7 +99,7 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
   }
 
   @override
-  String visitDictExpr(Expr.Dict expr) {
+  String visitNamedArgsExpr(Expr.NamedArgs expr) {
     StringBuffer sb = StringBuffer();
     sb.write("{");
     int i = 0;
@@ -102,6 +108,25 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
         sb.write(", ");
       }
       sb.write(entry.key);
+      sb.write(": ");
+      sb.write(entry.value.accept(this));
+      i++;
+    }
+    sb.write("}");
+    return sb.toString();
+  }
+
+
+  @override
+  String visitDictExpr(Expr.Dict expr) {
+    StringBuffer sb = StringBuffer();
+    sb.write("{");
+    int i = 0;
+    for (var entry in expr.entries.entries) {
+      if (i > 0) {
+        sb.write(", ");
+      }
+      sb.write(entry.key.accept(this));
       sb.write(": ");
       sb.write(entry.value.accept(this));
       i++;

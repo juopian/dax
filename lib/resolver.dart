@@ -215,8 +215,17 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
   }
 
   @override
+  void visitNamedArgsExpr(Expr.NamedArgs expr) {
+   for (MapEntry<String, Expr.Expr> entry in expr.entries.entries) {
+      resolveExpr(entry.value);
+    }
+    return; 
+  }
+
+  @override
   void visitDictExpr(Expr.Dict expr) {
-    for (MapEntry<String, Expr.Expr> entry in expr.entries.entries) {
+    for (MapEntry<Expr.Expr, Expr.Expr> entry in expr.entries.entries) {
+      resolveExpr(entry.key);
       resolveExpr(entry.value);
     }
     return;
@@ -287,6 +296,14 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
 
   @override
   void visitGetExpr(Expr.Get expr) {
+    resolveExpr(expr.object);
+    return;
+  }
+
+  @override
+  void visitIndexSetExpr(Expr.IndexSet expr) {
+    resolveExpr(expr.value);
+    resolveExpr(expr.name);
     resolveExpr(expr.object);
     return;
   }

@@ -39,11 +39,18 @@ class Array extends Expr {
 }
 
 class Dict extends Expr {
-  final Map<String,Expr> entries;
-  final bool isNamed;
-  Dict(this.entries, this.isNamed, );
+  final Map<Expr,Expr> entries;
+  Dict(this.entries, );
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitDictExpr(this);
+}
+
+class NamedArgs extends Expr {
+  final Map<String,Expr> entries;
+  final bool isNamed;
+  NamedArgs(this.entries, this.isNamed, );
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitNamedArgsExpr(this);
 }
 
 class Then extends Expr {
@@ -139,6 +146,15 @@ class Logical extends Expr {
   T accept<T>(Visitor<T> visitor) => visitor.visitLogicalExpr(this);
 }
 
+class IndexSet extends Expr {
+  final Expr object;
+  final Expr name;
+  final Expr value;
+  IndexSet(this.object, this.name, this.value, );
+  @override
+  T accept<T>(Visitor<T> visitor) => visitor.visitIndexSetExpr(this);
+}
+
 class Set extends Expr {
   final Expr object;
   final Token name;
@@ -184,6 +200,7 @@ abstract class Visitor<T> {
   T visitCallExpr(Call expr);
   T visitArrayExpr(Array expr);
   T visitDictExpr(Dict expr);
+  T visitNamedArgsExpr(NamedArgs expr);
   T visitThenExpr(Then expr);
   T visitConditionalExpr(Conditional expr);
   T visitArrayifExpr(Arrayif expr);
@@ -195,6 +212,7 @@ abstract class Visitor<T> {
   T visitGroupingExpr(Grouping expr);
   T visitLiteralExpr(Literal expr);
   T visitLogicalExpr(Logical expr);
+  T visitIndexSetExpr(IndexSet expr);
   T visitSetExpr(Set expr);
   T visitSuperExpr(Super expr);
   T visitThisExpr(This expr);

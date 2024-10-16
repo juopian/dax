@@ -9,7 +9,7 @@ import 'package:dax/interpreter.dart';
 import 'ast_printer.dart';
 
 late Interpreter interpreter;
-bool showTokens = false;
+bool showTokens = true;
 void main(List<String> arguments) {
   interpreter = Interpreter(); // 如果不引用不会执行构造函数
   exitCode = 0;

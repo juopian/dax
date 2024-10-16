@@ -29,7 +29,6 @@ class Scanner {
     "while": TokenType.WHILE,
     "await": TokenType.AWAIT,
     "async": TokenType.ASYNC,
-    "forEach": TokenType.FOREACH,
     "extends": TokenType.EXTENDS
   };
 
@@ -192,11 +191,10 @@ class Scanner {
       if (peek() == '\$') {
         advance();
         if (peek() == '{') {
-          // print("start : $start, current: $current");
+          if (interplote == true) {
+            addToken(TokenType.PLUS);
+          }
           if (current - start > 2) {
-            if (interplote == true) {
-              addToken(TokenType.PLUS);
-            }
             addToken1(
                 TokenType.STRING, source.substring(start + 1, current - 1));
             addToken(TokenType.PLUS);
@@ -291,7 +289,9 @@ class Scanner {
       ((((c.codeUnitAt(0) >= 'a'.codeUnitAt(0) &&
                   c.codeUnitAt(0) <= 'f'.codeUnitAt(0)) |
               (c.codeUnitAt(0) >= '0'.codeUnitAt(0) &&
-                  c.codeUnitAt(0) <= '9'.codeUnitAt(0))) &&
+                  c.codeUnitAt(0) <= '9'.codeUnitAt(0)) |
+              (c.codeUnitAt(0) >= 'A'.codeUnitAt(0) &&
+                  c.codeUnitAt(0) <= 'F'.codeUnitAt(0))) &&
           isHex));
 
   bool isAtEnd() {

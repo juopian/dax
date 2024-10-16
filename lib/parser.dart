@@ -114,7 +114,7 @@ class Parser {
     if (match([TokenType.RETURN])) return returnStatement();
     if (match([TokenType.WHILE])) return whileStatement();
     if (match([TokenType.LEFT_BRACE])) return Block(block());
-    if (matchforEach()) return foreachStatement();
+    // if (matchforEach()) return foreachStatement();
     return expressionStatement();
   }
 
@@ -211,16 +211,16 @@ class Parser {
     return statements;
   }
 
-  Stmt foreachStatement() {
-    Expr callee = arrayOrMap();
-    consume(TokenType.DOT, "Expect '.' before 'foreach'.");
-    Token name = consume(TokenType.FOREACH, "Expect 'foreach'.");
-    consume(TokenType.LEFT_PAREN, "Expect '(' after 'map'.");
-    Expr expr = expression();
-    consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
-    consume(TokenType.SEMICOLON, "Expect ';' after expression.");
-    return ForEach(callee, name, expr);
-  }
+  // Stmt foreachStatement() {
+  //   Expr callee = arrayOrMap();
+  //   consume(TokenType.DOT, "Expect '.' before 'foreach'.");
+  //   Token name = consume(TokenType.FOREACH, "Expect 'foreach'.");
+  //   consume(TokenType.LEFT_PAREN, "Expect '(' after 'map'.");
+  //   Expr expr = expression();
+  //   consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
+  //   consume(TokenType.SEMICOLON, "Expect ';' after expression.");
+  //   return ForEach(callee, name, expr);
+  // }
 
   Stmt expressionStatement() {
     Expr expr = expression();
@@ -243,8 +243,9 @@ class Parser {
         Token name = expr.name;
         return Assign(name, value);
       } else if (expr is Get) {
-        Get _get = expr;
-        return Set(_get.object, _get.name, value);
+        return Set(expr.object, expr.name, value);
+      } else if (expr is Indexing) {
+        return IndexSet(expr.callee, expr.key, value);
       }
       throw error(equals, "Invalid assignment target.");
     }
@@ -255,14 +256,17 @@ class Parser {
     Expr expr = or();
     Expr? thenExpr;
     Expr? elseExpr;
-    while (match([TokenType.QUESTION, TokenType.COLON])) {
-      if (previous().type == TokenType.QUESTION) {
-        thenExpr = or();
-      } else if (previous().type == TokenType.COLON) {
-        elseExpr = or();
-      }
-    }
-    if (thenExpr != null && elseExpr != null) {
+    // while (match([TokenType.QUESTION, TokenType.COLON])) {
+    //   if (previous().type == TokenType.QUESTION) {
+    //     thenExpr = or();
+    //   } else if (previous().type == TokenType.COLON) {
+    //     elseExpr = or();
+    //   }
+    // }
+    if (match([TokenType.QUESTION])) {
+      thenExpr = conditional();
+      consume(TokenType.COLON, "Expected ':' after true branch.");
+      elseExpr = conditional();
       return Conditional(expr, thenExpr, elseExpr);
     }
     return expr;
@@ -360,7 +364,10 @@ class Parser {
       } else if (match([TokenType.DOT])) {
         Token name =
             consume(TokenType.IDENTIFIER, "Expect property name after '.'.");
-        if (name.lexeme == 'map') {
+        if (name.lexeme == 'map' ||
+            name.lexeme == 'forEach' ||
+            name.lexeme == 'where' ||
+            name.lexeme == 'sort') {
           expr = mappingExpr(expr, name);
         } else if (name.lexeme == 'then') {
           expr = thenExpr(expr, name);
@@ -408,9 +415,11 @@ class Parser {
         if (peekNext().type == TokenType.COLON) {
           Token name =
               consume(TokenType.IDENTIFIER, "Expect argument name before :.");
-          consume(TokenType.COLON, "Expect : after $name.");
+          // Expr key = term();
+          consume(TokenType.COLON, "Expect : after map key.");
           Expr expr = expression();
-          arguments.add(Dict({name.lexeme: expr}, true));
+          arguments.add(NamedArgs({name.lexeme: expr}, true));
+          // arguments.add(Dict({key: expr}));
         } else {
           arguments.add(expression());
         }
@@ -434,17 +443,19 @@ class Parser {
       consume(TokenType.RIGHT_BRACKET, "Expect ']' after array elements.");
       return Array(elements);
     } else if (match([TokenType.LEFT_BRACE])) {
-      Map<String, Expr> entries = {};
+      Map<Expr, Expr> entries = {};
       if (!check(TokenType.RIGHT_BRACE)) {
         do {
           if (check(TokenType.RIGHT_BRACE)) break;
-          Token key = consume(TokenType.STRING, 'Expect key.');
+          // Token key = consume(TokenType.STRING, 'Expect key.');
+          Expr key = term();
           consume(TokenType.COLON, "Expect ':' after dictionary key.");
-          entries['${key.literal}'] = expression();
+          entries[key] = expression();
+          // entries['${key.literal}'] = expression();
         } while (match([TokenType.COMMA]));
       }
       consume(TokenType.RIGHT_BRACE, "Expect '}' after array elements.");
-      return Dict(entries, false);
+      return Dict(entries);
     }
     return primary();
   }

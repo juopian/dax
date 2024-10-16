@@ -15,7 +15,7 @@ import 'global_function.dart';
 Environment top = Environment(null);
 
 class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
-  final Environment globals = Environment(top);
+  Environment globals = Environment(top);
   Map<Expr.Expr, int> locals = {};
   late Environment environment = globals;
   static bool hadError = false;
@@ -131,7 +131,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     Map<Symbol, Object?> namedArguments = {};
     for (Expr.Expr argument in expr.arguments) {
       var arg = evaluate(argument);
-      if (argument is Expr.Dict && argument.isNamed) {
+      if (argument is Expr.NamedArgs && argument.isNamed) {
         Map args = arg as Map;
         namedArguments.addAll({Symbol(args.keys.first): args.values.first});
       } else {
@@ -187,10 +187,19 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   }
 
   @override
-  Object visitDictExpr(Expr.Dict expr) {
+  Object visitNamedArgsExpr(Expr.NamedArgs expr) {
     Map<String, Object?> entries = {};
     expr.entries.forEach((key, value) {
       entries[key] = evaluate(value);
+    });
+    return entries;
+  }
+
+  @override
+  Object visitDictExpr(Expr.Dict expr) {
+    Map<Object, Object?> entries = {};
+    expr.entries.forEach((key, value) {
+      entries[evaluate(key)!] = evaluate(value);
     });
     return entries;
   }
@@ -223,8 +232,42 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     if (expr.name.lexeme == "toString") {
       return object.toString();
     }
+    if (object is num) {
+      switch (expr.name.lexeme) {
+        case 'abs':
+          return object.abs;
+        case 'round':
+          return object.round;
+        case 'ceil':
+          return object.ceil;
+        case 'compareTo':
+          return object.compareTo;
+        case 'floor':
+          return object.floor;
+        case 'truncate':
+          return object.truncate;
+        case 'roundToDouble':
+          return object.roundToDouble;
+        case 'ceilToDouble':
+          return object.ceilToDouble;
+        case 'floorToDouble':
+          return object.floorToDouble;
+        case 'truncateToDouble':
+          return object.truncateToDouble;
+        case 'toInt':
+          return object.toInt;
+        case 'toDouble':
+          return object.toDouble;
+        case 'toStringAsFixed':
+          return object.toStringAsFixed;
+        case 'toStringAsExponential':
+          return object.toStringAsExponential;
+        case 'toStringAsPrecision':
+          return object.toStringAsPrecision;
+      }
+    }
     if (object is DateTime) {
-      switch(expr.name.lexeme) {
+      switch (expr.name.lexeme) {
         case 'year':
           return object.year;
         case 'month':
@@ -257,8 +300,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
           return object.isEmpty;
         case 'isNotEmpty':
           return object.isNotEmpty;
-        case 'forEach':
-          return object.forEach;
         case 'containsKey':
           return object.containsKey;
         case 'containsValue':
@@ -267,34 +308,10 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
           return object.remove;
         case 'clear':
           return object.clear;
-        case 'removeWhere':
-          return object.removeWhere;
-        case 'update':
-          return object.update;
-        case 'updateAll':
-          return object.updateAll;
       }
       return object[expr.name.lexeme];
     }
-    if (object is Iterable) {
-      switch (expr.name.lexeme) {
-        case 'first':
-          return object.first;
-        case 'last':
-          return object.last;
-        case 'single':
-          return object.single;
-        case 'length':
-          return object.length;
-        case 'isEmpty':
-          return object.isEmpty;
-        case 'isNotEmpty':
-          return object.isNotEmpty;
-        case 'forEach':
-          return object.forEach;
-      }
-      throw RuntimeError(expr.name, "Unknown property ${expr.name.lexeme}.");
-    }
+
     if (object is String) {
       switch (expr.name.lexeme) {
         case 'substring':
@@ -362,16 +379,10 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
           return object.isEmpty;
         case 'isNotEmpty':
           return object.isNotEmpty;
-        case 'forEach':
-          return object.forEach;
         case 'add':
           return object.add;
         case 'removeLast':
           return object.removeLast;
-        case 'removeWhere':
-          return object.removeWhere;
-        case 'retainWhere':
-          return object.retainWhere;
         case 'clear':
           return object.clear;
         case 'insert':
@@ -392,34 +403,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
           return object.join;
         case 'any':
           return object.any;
-        case 'every':
-          return object.every;
-        case 'fold':
-          return object.fold;
-        case 'firstWhere':
-          return object.firstWhere;
-        case 'lastWhere':
-          return object.lastWhere;
-        case 'singleWhere':
-          return object.singleWhere;
-        case 'reduce':
-          return object.reduce;
-        case 'where':
-          return object.where;
-        case 'toList':
-          return object.toList;
-        case 'toSet':
-          return object.toSet;
-        case 'asMap':
-          return object.asMap;
-        case 'expand':
-          return object.expand;
-        case 'map':
-          return object.map;
-        case 'whereType':
-          return object.whereType;
-        case 'cast':
-          return object.cast;
         case 'shuffle':
           return object.shuffle;
         case 'sublist':
@@ -430,8 +413,20 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
           return object.setRange;
         case 'fillRange':
           return object.fillRange;
-        case 'replaceRange':
-          return object.replaceRange;
+      }
+      throw RuntimeError(expr.name, "Unknown property ${expr.name.lexeme}.");
+    } else if (object is Iterable) {
+      switch (expr.name.lexeme) {
+        case 'first':
+          return object.first;
+        case 'last':
+          return object.last;
+        case 'length':
+          return object.length;
+        case 'isEmpty':
+          return object.isEmpty;
+        case 'isNotEmpty':
+          return object.isNotEmpty;
       }
       throw RuntimeError(expr.name, "Unknown property ${expr.name.lexeme}.");
     }
@@ -457,6 +452,18 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       }
     }
     return evaluate(expr.right);
+  }
+
+  @override
+  Object? visitIndexSetExpr(Expr.IndexSet expr) {
+    Object? object = evaluate(expr.object);
+    Object? index = evaluate(expr.name);
+    Object? value = evaluate(expr.value);
+    if (object is Map) {
+      object[index] = value;
+      return value;
+    }
+    return null;
   }
 
   @override
@@ -503,22 +510,56 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       mp = func.declaration;
     }
     Object? objects = evaluate(expr.callee);
-    LoxFunction mapFun = LoxFunction(mp, environment, false);
-    if (objects is List<Object?>) {
-      List<Object?> results = [];
-      for (var i in objects) {
-        var result = mapFun.call(this, [i], {});
-        results.add(result);
-      }
-      return results;
-    } else if (objects is Iterable) {
-      List<Object?> results = [];
-      for (var i in objects) {
-        var result = mapFun.call(this, [i], {});
-        results.add(result);
-      }
-      return results;
+    LoxFunction iterableFun = LoxFunction(mp, environment, false);
+    switch (expr.name.lexeme) {
+      case 'map':
+        if (objects is! Iterable) {
+          throw RuntimeError(expr.name,
+              "Only iterable can map function");
+        }
+        return objects.map((i) {
+          return iterableFun.call(this, [i], {});
+        }).toList();
+      case 'where':
+        if (objects is! Iterable) {
+          throw RuntimeError(expr.name, "Only iterable can use where function");
+        }
+        return objects.where((i) {
+          return iterableFun.call(this, [i], {}) == true;
+        }).toList();
+      case 'sort':
+        if (objects is! List) {
+          throw RuntimeError(expr.name, "Only List can be sorted");
+        }
+        objects.sort((a, b) {
+          return iterableFun.call(this, [a, b], {}) as int;
+        });
+        return null;
+      case 'forEach':
+        if (objects is! Iterable) {
+          throw RuntimeError(
+              expr.name, "Only iterable can use forEach function");
+        }
+        for (var i in objects) {
+          iterableFun.call(this, [i], {});
+        }
+        return null;
     }
+    // if (objects is List<Object?>) {
+    //   List<Object?> results = [];
+    //   for (var i in objects) {
+    //     var result = mapFun.call(this, [i], {});
+    //     results.add(result);
+    //   }
+    //   return results;
+    // } else if (objects is Iterable) {
+    //   List<Object?> results = [];
+    //   for (var i in objects) {
+    //     var result = mapFun.call(this, [i], {});
+    //     results.add(result);
+    //   }
+    //   return results;
+    // }
     throw RuntimeError(expr.name, "Only Array have mapping.");
   }
 
