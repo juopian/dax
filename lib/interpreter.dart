@@ -610,7 +610,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
         return -(right as num);
     }
 
-    // Unreachable.
+    // Unreachable
     return null;
   }
 
@@ -681,35 +681,35 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     return expr.accept(this);
   }
 
-  @override
-  void visitForEachStmt(Stmt.ForEach stmt) {
-    Stmt.Functional mp;
-    var func = evaluate(stmt.lambda);
-    if (func is! LoxFunction) {
-      throw RuntimeError(
-          stmt.name, "Only func can be used as forEach function");
-    } else {
-      mp = func.declaration;
-    }
-    LoxFunction iterableFun = LoxFunction(mp, environment, false);
-    Object? object = evaluate(stmt.iterable);
-    if (object is Iterable) {
-      for (var i in object) {
-        iterableFun.call(this, [i], {});
-      }
-    } else if (object is Map) {
-      object.forEach((k, v) {
-        iterableFun.call(this, [k, v], {});
-      });
-    } else if (object is List) {
-      for (var i in object) {
-        iterableFun.call(this, [i], {});
-      }
-    } else {
-      throw RuntimeError(
-          stmt.name, "Only Iterable or List or Map have forEach.");
-    }
-  }
+  // @override
+  // void visitForEachStmt(Stmt.ForEach stmt) {
+  //   Stmt.Functional mp;
+  //   var func = evaluate(stmt.lambda);
+  //   if (func is! LoxFunction) {
+  //     throw RuntimeError(
+  //         stmt.name, "Only func can be used as forEach function");
+  //   } else {
+  //     mp = func.declaration;
+  //   }
+  //   LoxFunction iterableFun = LoxFunction(mp, environment, false);
+  //   Object? object = evaluate(stmt.iterable);
+  //   if (object is Iterable) {
+  //     for (var i in object) {
+  //       iterableFun.call(this, [i], {});
+  //     }
+  //   } else if (object is Map) {
+  //     object.forEach((k, v) {
+  //       iterableFun.call(this, [k, v], {});
+  //     });
+  //   } else if (object is List) {
+  //     for (var i in object) {
+  //       iterableFun.call(this, [i], {});
+  //     }
+  //   } else {
+  //     throw RuntimeError(
+  //         stmt.name, "Only Iterable or List or Map have forEach.");
+  //   }
+  // }
 
   @override
   void visitIfStmt(Stmt.If stmt) {

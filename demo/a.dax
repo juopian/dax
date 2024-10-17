@@ -1,0 +1,2 @@
+import "b.dax";
+print "a is 1";

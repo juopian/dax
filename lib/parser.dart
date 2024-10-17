@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'error.dart';
 import 'expr.dart';
 import 'stmt.dart';
@@ -49,6 +51,17 @@ class Parser {
       }
     }
   }
+
+  // Stmt importDeclaration() {
+  //   Token name = consume(TokenType.STRING, "Expect import name.");
+  //   consume(TokenType.SEMICOLON, "Expect ';' after import name.");
+  //   String filePath = name.lexeme;
+  //   print(filePath);
+  //   String fileContent = File(filePath).readAsStringSync();
+  //   List<Token> tokens = Lexer(fileContent).scanTokens();
+  //   Parser parser = Parser(tokens);
+  //   return Import(name);
+  // }
 
   Stmt classDeclaration() {
     Token name = consume(TokenType.IDENTIFIER, "Expect class name.");
@@ -579,7 +592,7 @@ class Parser {
 
   ParseError error(Token token, String message) {
     error1(token, message);
-    return ParseError(message);
+    return ParseError("[line ${token.line}] $message '${token.sourceFile}' ");
   }
 
   void synchronize() {

@@ -10,3 +10,5 @@ export 'lox_class.dart';
 export 'lox_function.dart';
 export 'lox_instance.dart';
 export 'global_function.dart';
+export 'token_type.dart';
+export 'environment.dart';

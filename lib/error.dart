@@ -12,7 +12,7 @@ void error(int line, String message) {
 }
 
 void runtimeError(RuntimeError error) {
-  print('${error.message}\n[line ${error.token.line}]');
+  print('${error.message}\n"${error.token.sourceFile}" [line ${error.token.line}]');
   hadRuntimeError = true;
 }
 
@@ -23,8 +23,8 @@ void report(int line, String where, String message) {
 
 void error1(Token token, String message) {
   if (token.type == TokenType.EOF) {
-    report(token.line, " at end", message);
+    report(token.line, "at end of '${token.sourceFile}'", message);
   } else {
-    report(token.line, " at '${token.lexeme}'", message);
+    report(token.line, "at '${token.lexeme}' of '${token.sourceFile}'", message);
   }
 }

@@ -172,10 +172,10 @@ class AstPrinter implements Expr.Visitor<String>, Stmt.Visitor<String> {
     return expr.name.lexeme;
   }
 
-  @override
-  String visitForEachStmt(Stmt.ForEach stmt) {
-    return parenthesize2("foreach", [stmt.iterable, stmt.lambda]);
-  }
+  // @override
+  // String visitForEachStmt(Stmt.ForEach stmt) {
+  //   return parenthesize2("foreach", [stmt.iterable, stmt.lambda]);
+  // }
 
   @override
   String visitIfStmt(Stmt.If stmt) {

@@ -1,10 +1,15 @@
+import 'dart:io';
+
+import 'lox_callable.dart';
 import "token_type.dart";
 import 'token.dart';
 // import 'interpreter.dart';
 import 'error.dart';
 
 class Scanner {
-  final String source;
+  String source;
+  String sourceFile = '';
+  LoxReader? reader;
   final List<Token> tokens = [];
   int start = 0;
   int current = 0;
@@ -29,22 +34,28 @@ class Scanner {
     "while": TokenType.WHILE,
     "await": TokenType.AWAIT,
     "async": TokenType.ASYNC,
-    "extends": TokenType.EXTENDS
+    "extends": TokenType.EXTENDS,
   };
 
-  Scanner(this.source);
+  Scanner(this.source, {this.reader});
 
-  List<Token> scanTokens() {
+  Future<List<Token>> scanTokens({bool isBase = true}) async {
+    if (reader != null) {
+      Uri u = Uri.parse(reader!.pathOrUrl);
+      source = await reader!.read();
+      sourceFile = u.pathSegments.last;
+    }
     while (!isAtEnd()) {
       start = current;
-      scanToken();
+      await scanToken();
     }
-
-    tokens.add(Token(TokenType.EOF, "", null, line));
+    if (isBase) {
+      tokens.add(Token(TokenType.EOF, "", null, line, sourceFile: sourceFile));
+    }
     return tokens;
   }
 
-  void scanToken() {
+  Future<void> scanToken() async {
     String c = advance();
     switch (c) {
       case '[':
@@ -150,7 +161,7 @@ class Scanner {
         if (isDigit(c, false)) {
           number(c);
         } else if (isAlpha(c)) {
-          identifier();
+          await identifier();
         } else {
           error(line, "Unexpected character.");
         }
@@ -172,11 +183,35 @@ class Scanner {
         previous.type == TokenType.PRINT;
   }
 
-  void identifier() {
+  Future<void> identifier() async {
     while (isAlphaNumeric(peek())) {
       advance();
     }
     String text = source.substring(start, current);
+    if (text == 'import') {
+      while (peek() == ' ' || peek() == '\t') {
+        advance();
+      }
+      if (peek() != '"' && peek() != "'") throw Exception("Expect '\"' after import.");
+      advance();
+
+      String filePath = "";
+      while ((peek() != '"' && peek() != "'") && !isAtEnd()) {
+        filePath += advance();
+      }
+
+      if (isAtEnd()) throw Exception("Unterminated string in import.");
+
+      advance(); // pass double quote
+      advance(); // pass semicolon
+      var currentFilePath = reader!.pathOrUrl;
+      final currentDirectory = File(currentFilePath).parent.path;
+      reader!.path = '$currentDirectory/$filePath';
+      Scanner scanner = Scanner('', reader: reader);
+      List<Token> tks = await scanner.scanTokens(isBase: false);
+      tokens.addAll(tks);
+      return;
+    }
     TokenType type = TokenType.IDENTIFIER;
     if (keywords.containsKey(text)) {
       type = keywords[text]!;
@@ -310,11 +345,11 @@ class Scanner {
 
   void addToken1(TokenType type, Object? literal) {
     String text = source.substring(start, current);
-    tokens.add(Token(type, text, literal, line));
+    tokens.add(Token(type, text, literal, line, sourceFile: sourceFile));
   }
 
   void addToken2(TokenType type, String lexeme) {
-    tokens.add(Token(type, lexeme, null, line));
+    tokens.add(Token(type, lexeme, null, line, sourceFile: sourceFile));
   }
 
   bool match(String expected) {

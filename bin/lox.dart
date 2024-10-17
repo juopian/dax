@@ -5,12 +5,13 @@ import 'package:dax/resolver.dart';
 import 'package:dax/scanner.dart';
 import 'package:dax/stmt.dart';
 import 'package:dax/token.dart';
+import 'package:dax/lox_callable.dart';
 import 'package:dax/interpreter.dart';
 import 'ast_printer.dart';
 
 late Interpreter interpreter;
-bool showTokens = true;
-void main(List<String> arguments) {
+bool showTokens = false;
+void main(List<String> arguments) async {
   interpreter = Interpreter(); // 如果不引用不会执行构造函数
   exitCode = 0;
   if (arguments.length > 1) {
@@ -25,8 +26,8 @@ void main(List<String> arguments) {
 
 void runFile(String path) {
   // read file from path
-  var fileString = File(path).readAsStringSync();
-  run(fileString);
+  // var fileString = File(path).readAsStringSync();
+  run('', sourceFile: path);
   if (hadError) {
     exitCode = 65;
   }
@@ -35,7 +36,7 @@ void runFile(String path) {
   }
 }
 
-void runPrompt() {
+void runPrompt() async {
   final List<String> history = [];
   int historyIndex = 0;
   stdin.echoMode = false;
@@ -94,7 +95,7 @@ void runPrompt() {
     if (line.isNotEmpty) {
       history.add(line);
       historyIndex = history.length;
-      run(line);
+      await run(line);
       hadError = false;
     }
   }
@@ -102,10 +103,13 @@ void runPrompt() {
   stdin.lineMode = true;
 }
 
-void run(String source) {
-  Scanner scanner = Scanner(source);
-
-  List<Token> tokens = scanner.scanTokens();
+Future<void> run(String source, {String sourceFile = ''}) async {
+  LoxReader? reader;
+  if (sourceFile.isNotEmpty) {
+    reader = LoxReader(sourceFile);
+  }
+  Scanner scanner = Scanner(source, reader: reader);
+  List<Token> tokens = await scanner.scanTokens();
   for (var token in tokens) {
     if (showTokens) {
       stdout.writeln(token.toString());

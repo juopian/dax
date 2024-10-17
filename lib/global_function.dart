@@ -1,7 +1,6 @@
 import 'interpreter.dart';
 import 'lox_callable.dart';
 
-
 class StringFunction implements LoxCallable {
   @override
   int arity() {
@@ -30,3 +29,5 @@ class GenericLoxCallable implements LoxCallable {
           Map<Symbol, Object?> namedArguments) =>
       _call(interpreter, arguments, namedArguments);
 }
+
+

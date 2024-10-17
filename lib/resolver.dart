@@ -110,16 +110,16 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
     return;
   }
 
-  @override
-  void visitForEachStmt(Stmt.ForEach stmt) {
-    resolveExpr(stmt.iterable);
-    if (stmt.lambda is Stmt.Functional) {
-      resolveFunction(stmt.lambda as Stmt.Functional, FunctionType.FUNCTION);
-    } else {
-      resolveExpr(stmt.lambda as Expr.Expr);
-    }
-    return;
-  }
+  // @override
+  // void visitForEachStmt(Stmt.ForEach stmt) {
+  //   resolveExpr(stmt.iterable);
+  //   if (stmt.lambda is Stmt.Functional) {
+  //     resolveFunction(stmt.lambda as Stmt.Functional, FunctionType.FUNCTION);
+  //   } else {
+  //     resolveExpr(stmt.lambda as Expr.Expr);
+  //   }
+  //   return;
+  // }
 
   @override
   void visitFunctionalStmt(Stmt.Functional stmt) {

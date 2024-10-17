@@ -41,10 +41,9 @@ void main(List<String> args) {
     "Functional : Token name, List<Token> params, List<Stmt> body",
     "If         : Expr condition, Stmt thenBranch, Stmt? elseBranch",
     "Print      : Expr expression",
-    "ForEach    : Expr iterable, Token name, Expr lambda",
     "Return     : Token keyword, Expr? value",
     "Var        : Token name, Expr? initializer",
-    "While      : Expr condition, Stmt body"
+    "While      : Expr condition, Stmt body",
   ]);
 }
 

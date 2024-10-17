@@ -5,8 +5,10 @@ class Token {
   final String lexeme;
   final Object? literal;
   final int line;
+  final String sourceFile;
 
-  Token(this.type, this.lexeme, this.literal, this.line);
+  Token(this.type, this.lexeme, this.literal, this.line,
+      {this.sourceFile = ''});
 
   @override
   String toString() {

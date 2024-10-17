@@ -53,15 +53,6 @@ class Print extends Stmt {
   T accept<T>(Visitor<T> visitor) => visitor.visitPrintStmt(this);
 }
 
-class ForEach extends Stmt {
-  final Expr iterable;
-  final Token name;
-  final Expr lambda;
-  ForEach(this.iterable, this.name, this.lambda, );
-  @override
-  T accept<T>(Visitor<T> visitor) => visitor.visitForEachStmt(this);
-}
-
 class Return extends Stmt {
   final Token keyword;
   final Expr? value;
@@ -93,7 +84,6 @@ abstract class Visitor<T> {
   T visitFunctionalStmt(Functional stmt);
   T visitIfStmt(If stmt);
   T visitPrintStmt(Print stmt);
-  T visitForEachStmt(ForEach stmt);
   T visitReturnStmt(Return stmt);
   T visitVarStmt(Var stmt);
   T visitWhileStmt(While stmt);
