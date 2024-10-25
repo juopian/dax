@@ -108,7 +108,7 @@ Future<void> run(String source, {String sourceFile = ''}) async {
   if (sourceFile.isNotEmpty) {
     reader = LoxReader(sourceFile);
   }
-  Scanner scanner = Scanner(source, reader: reader);
+  Scanner scanner = Scanner(source, reader: reader, loadedFiles: []);
   List<Token> tokens = await scanner.scanTokens();
   for (var token in tokens) {
     if (showTokens) {

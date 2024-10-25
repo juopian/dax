@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'lox_callable.dart';
 import "token_type.dart";
 import 'token.dart';
@@ -11,6 +9,7 @@ class Scanner {
   String sourceFile = '';
   LoxReader? reader;
   final List<Token> tokens = [];
+  List<String> loadedFiles;
   int start = 0;
   int current = 0;
   int line = 1;
@@ -37,7 +36,7 @@ class Scanner {
     "extends": TokenType.EXTENDS,
   };
 
-  Scanner(this.source, {this.reader});
+  Scanner(this.source, {this.reader, required this.loadedFiles});
 
   Future<List<Token>> scanTokens({bool isBase = true}) async {
     if (reader != null) {
@@ -192,7 +191,9 @@ class Scanner {
       while (peek() == ' ' || peek() == '\t') {
         advance();
       }
-      if (peek() != '"' && peek() != "'") throw Exception("Expect '\"' after import.");
+      if (peek() != '"' && peek() != "'") {
+        throw Exception("Expect '\"' after import.");
+      }
       advance();
 
       String filePath = "";
@@ -205,9 +206,13 @@ class Scanner {
       advance(); // pass double quote
       advance(); // pass semicolon
       var currentFilePath = reader!.pathOrUrl;
-      final currentDirectory = File(currentFilePath).parent.path;
-      reader!.path = '$currentDirectory/$filePath';
-      Scanner scanner = Scanner('', reader: reader);
+      final currentDirectory = Uri.parse(currentFilePath).resolve(filePath);
+      reader!.path = currentDirectory.toString();
+      if (loadedFiles.contains(filePath)) {
+        return;
+      }
+      loadedFiles.add(filePath);
+      Scanner scanner = Scanner('', reader: reader, loadedFiles: loadedFiles);
       List<Token> tks = await scanner.scanTokens(isBase: false);
       tokens.addAll(tks);
       return;

@@ -188,7 +188,10 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
     if (!scopes.isEmpty && scopes.peek()[expr.name.lexeme] == false) {
       error1(expr.name, 'Can not read local variable in its own initializer.');
     }
-    resolveLocal(expr, expr.name);
+    var i = resolveLocal(expr, expr.name);
+    if (expr.name.lexeme == 'resultData1') {
+      print('args $expr found in $i');
+    }
     return;
   }
 
@@ -216,10 +219,10 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
 
   @override
   void visitNamedArgsExpr(Expr.NamedArgs expr) {
-   for (MapEntry<String, Expr.Expr> entry in expr.entries.entries) {
+    for (MapEntry<String, Expr.Expr> entry in expr.entries.entries) {
       resolveExpr(entry.value);
     }
-    return; 
+    return;
   }
 
   @override
@@ -288,6 +291,10 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
     resolveExpr(expr.callee);
 
     for (Expr.Expr argument in expr.arguments) {
+      // if(argument is Expr.NamedArgs && argument.entries.containsKey('onTap')) {
+      //   print('argument: $argument, ${argument is Expr.NamedArgs}');
+      //   print("= ${argument.entries}");
+      // }
       resolveExpr(argument);
     }
 
@@ -333,7 +340,10 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
       error1(expr.keyword, 'Can not use \'this\' outside of a class.');
       return;
     }
-    resolveLocal(expr, expr.keyword);
+    var i = resolveLocal(expr, expr.keyword);
+    if (expr.keyword.lexeme == 'this') {
+      print('this $expr found in $i');
+    }
     return;
   }
 
@@ -375,12 +385,13 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
     scopes.peek()[name.lexeme] = true;
   }
 
-  void resolveLocal(Expr.Expr expr, Token name) {
+  int resolveLocal(Expr.Expr expr, Token name) {
     for (int i = scopes.length - 1; i >= 0; i--) {
       if (scopes.get(i).containsKey(name.lexeme)) {
         interpreter.resolve(expr, scopes.length - 1 - i);
-        return;
+        return scopes.length - 1 - i;
       }
     }
+    return -1;
   }
 }

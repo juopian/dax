@@ -45,6 +45,16 @@ class Environment {
     values[name] = value;
   }
 
+  int length(){
+    var i = 0;
+    Environment environment = this;
+    while(environment.enclosing != null) {
+      environment = environment.enclosing!; 
+      i++;
+    }
+    return i;
+  }
+
   Environment ancestor(int distance) {
     Environment environment = this;
     for (int i = 0; i < distance; i++) {

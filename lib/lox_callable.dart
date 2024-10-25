@@ -5,20 +5,14 @@ import 'token.dart';
 
 class LoxReader {
   String pathOrUrl;
-  String? jwt;
-  LoxReader(this.pathOrUrl, {this.jwt});
+  LoxReader(this.pathOrUrl);
 
   set path(String path) => pathOrUrl = path;
 
-  Future<String> read() {
+  Future<String> read() async {
     if (pathOrUrl.startsWith("http")) {
-      Map<String, String>? headers;
-      if (jwt != null) {
-        headers = {'Authorization': 'Bearer $jwt'};
-      }
-      return http.get(Uri.parse(pathOrUrl), headers: headers).then((s) {
-        return s.body;
-      });
+      var response = await http.get(Uri.parse(pathOrUrl));
+      return response.body;
     }
     return File(pathOrUrl).readAsString();
   }

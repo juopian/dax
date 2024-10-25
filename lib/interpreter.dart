@@ -478,7 +478,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       object.set(expr.name, value);
       return value;
     }
-    throw RuntimeError(expr.name, "Only instances have properties.");
+    throw RuntimeError(expr.name, "Only instances have set properties.");
   }
 
   @override
@@ -514,8 +514,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     switch (expr.name.lexeme) {
       case 'map':
         if (objects is! Iterable) {
-          throw RuntimeError(expr.name,
-              "Only iterable can map function");
+          throw RuntimeError(expr.name, "Only iterable can map function");
         }
         return objects.map((i) {
           return iterableFun.call(this, [i], {});
@@ -584,14 +583,21 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       } else {
         then = func.declaration;
       }
+      Environment previous = environment;
       return object.then((value) {
-        if (expr.then is Expr.Anonymous) {
-          var thenExpr = expr.then as Expr.Anonymous;
-          if (thenExpr.params.isNotEmpty) {
-            environment.define(thenExpr.params.first.lexeme, value);
-          }
+        // if (expr.then is Expr.Anonymous) {
+        //   var thenExpr = expr.then as Expr.Anonymous;
+        //   if (thenExpr.params.isNotEmpty) {
+        //     previous.define(thenExpr.params.first.lexeme, value);
+        //   }
+        //   if (thenExpr.params.first.lexeme == 'success') {
+        //     print("env.length is ${environment.length()}, previ.length is ${previous.length()} ${environment.getAt(1, 'args')}");
+        //   }
+        // }
+        if(expr.then is! Expr.Anonymous){
+          previous = environment;
         }
-        LoxFunction thenFun = LoxFunction(then, environment, false);
+        LoxFunction thenFun = LoxFunction(then, previous, false);
         return thenFun.call(this, [value], {});
       });
     }
@@ -629,6 +635,9 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   Object? lookUpVariable(Token name, Expr.Expr expr) {
     if (locals.containsKey(expr)) {
       int distance = locals[expr]!;
+      if (name.lexeme == "this") {
+        print("this distance: $distance");
+      }
       return environment.getAt(distance, name.lexeme);
     } else {
       return globals.get(name);
@@ -764,6 +773,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
 
   @override
   void visitBlockStmt(Stmt.Block stmt) {
+    print('visitblock');
     executeBlock(stmt.statements, Environment(environment));
     return;
   }
@@ -797,6 +807,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     for (Stmt.Functional method in stmt.methods) {
       LoxFunction function = LoxFunction(
           method, environment, method.name.lexeme == stmt.name.lexeme); // init
+      print("${method.name.lexeme} : ${environment.length()} : ${environment.values}");
       methods[method.name.lexeme] = function;
     }
     LoxClass klass = LoxClass(stmt.name.lexeme,
@@ -813,7 +824,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     Environment previous = this.environment;
     try {
       this.environment = environment;
-
+      print('now environment length is ${environment.length()} ${statements.first}');
       for (Stmt.Stmt statement in statements) {
         execute(statement);
       }
