@@ -189,10 +189,7 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
       error1(expr.name, 'Can not read local variable in its own initializer.');
     }
     var i = resolveLocal(expr, expr.name);
-    if (expr.name.lexeme == 'resultData1') {
-      print('args $expr found in $i');
-    }
-    return;
+     //urn;
   }
 
   @override
@@ -291,10 +288,6 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
     resolveExpr(expr.callee);
 
     for (Expr.Expr argument in expr.arguments) {
-      // if(argument is Expr.NamedArgs && argument.entries.containsKey('onTap')) {
-      //   print('argument: $argument, ${argument is Expr.NamedArgs}');
-      //   print("= ${argument.entries}");
-      // }
       resolveExpr(argument);
     }
 
