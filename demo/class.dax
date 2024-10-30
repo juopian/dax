@@ -11,4 +11,16 @@ class BostonCream extends Doughnut {
   }
 }
 
+class NamedClass {
+  NamedClass(x, {y}) {
+    this.x = x;
+    this.y = y;
+  }
+
+  show() {
+    print "x: ${this.x}, y: ${this.y}";
+  }
+}
+
 BostonCream().cook();
+NamedClass("hello").show();

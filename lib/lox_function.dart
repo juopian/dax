@@ -38,7 +38,13 @@ class LoxFunction implements LoxCallable {
     for (int i = 0; i < declaration.params.length; i++) {
       environment.define(declaration.params[i].lexeme, arguments[i]);
     }
-
+    for (var key in declaration.namedParams.keys) {
+      if (namedArguments[Symbol(key.lexeme)] != null) {
+        environment.define(key.lexeme, namedArguments[Symbol(key.lexeme)]);
+      } else {
+        environment.define(key.lexeme, declaration.namedParams[key]);
+      }
+    }
     try {
       interpreter.executeBlock(declaration.body, environment);
     } on ReturnException catch (returnValue) {
@@ -47,8 +53,8 @@ class LoxFunction implements LoxCallable {
       }
       return returnValue.value;
     } on RuntimeError catch (error) {
-       runtimeError(error);
-       rethrow;
+      runtimeError(error);
+      rethrow;
     }
     if (isInitializer) {
       return closure.getAt(0, "this");

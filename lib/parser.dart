@@ -88,22 +88,36 @@ class Parser {
     Token name = consume(TokenType.IDENTIFIER, "Expect $kind name.");
     consume(TokenType.LEFT_PAREN, "Expect '(' after $kind name.");
     List<Token> parameters = [];
+    Map<Token, Object?> namedParams = {};
     if (!check(TokenType.RIGHT_PAREN)) {
       do {
         if (check(TokenType.RIGHT_PAREN)) break;
         if (parameters.length >= 255) {
           error(peek(), "Can't have more than 255 parameters.");
         }
-        parameters.add(
-          consume(TokenType.IDENTIFIER, "Expect parameter name."),
-        );
+
+        if (match([TokenType.LEFT_BRACE])) {
+          do {
+            Token name =
+                consume(TokenType.IDENTIFIER, "Expect argument name before :.");
+            Expr? expr;
+            if (match([TokenType.EQUAL])) {
+              expr = expression();
+            }
+            namedParams.addAll({name: expr});
+          } while (match([TokenType.COMMA]));
+          consume(TokenType.RIGHT_BRACE, "Expect '}' after named arguments.");
+        } else {
+          parameters
+              .add(consume(TokenType.IDENTIFIER, "Expect parameter name."));
+        }
       } while (match([TokenType.COMMA]));
     }
     consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
     match([TokenType.ASYNC]);
     consume(TokenType.LEFT_BRACE, "Expect '{' before $kind body.");
     List<Stmt> body = block();
-    return Functional(name, parameters, body);
+    return Functional(name, parameters, namedParams, body);
   }
 
   Stmt varDeclaration() {
@@ -431,7 +445,7 @@ class Parser {
           // Expr key = term();
           consume(TokenType.COLON, "Expect : after map key.");
           Expr expr = expression();
-          arguments.add(NamedArgs({name.lexeme: expr}, true));
+          arguments.add(NamedArgs({name.lexeme: expr}));
           // arguments.add(Dict({key: expr}));
         } else {
           arguments.add(expression());

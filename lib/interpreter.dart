@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'environment.dart';
 import 'error.dart';
 import 'expr.dart' as Expr;
@@ -131,7 +133,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     Map<Symbol, Object?> namedArguments = {};
     for (Expr.Expr argument in expr.arguments) {
       var arg = evaluate(argument);
-      if (argument is Expr.NamedArgs && argument.isNamed) {
+      if (argument is Expr.NamedArgs) {
         Map args = arg as Map;
         namedArguments.addAll({Symbol(args.keys.first): args.values.first});
       } else {
@@ -585,7 +587,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       }
       Environment previous = environment;
       return object.then((value) {
-        if(expr.then is! Expr.Anonymous){
+        if (expr.then is! Expr.Anonymous) {
           previous = environment;
         }
         LoxFunction thenFun = LoxFunction(then, previous, false);
@@ -613,7 +615,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
 
   @override
   Object? visitAnonymousExpr(Expr.Anonymous expr) {
-    var fun = Stmt.Functional(expr.name, expr.params, expr.body);
+    var fun = Stmt.Functional(expr.name, expr.params, {}, expr.body);
     return LoxFunction(fun, environment, false);
   }
 
@@ -768,6 +770,12 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   @override
   void visitFunctionalStmt(Stmt.Functional stmt) {
     LoxFunction function = LoxFunction(stmt, environment, false);
+    for (var key in function.declaration.namedParams.keys) {
+      if (function.declaration.namedParams[key] != null) {
+        function.declaration.namedParams[key] =
+            evaluate(function.declaration.namedParams[key] as Expr.Expr);
+      }
+    }
     environment.define(stmt.name.lexeme, function);
     return;
   }
@@ -794,6 +802,12 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     for (Stmt.Functional method in stmt.methods) {
       LoxFunction function = LoxFunction(
           method, environment, method.name.lexeme == stmt.name.lexeme); // init
+      for (var key in function.declaration.namedParams.keys) {
+        if (function.declaration.namedParams[key] != null) {
+          function.declaration.namedParams[key] =
+              evaluate(function.declaration.namedParams[key] as Expr.Expr);
+        }
+      }
       methods[method.name.lexeme] = function;
     }
     LoxClass klass = LoxClass(stmt.name.lexeme,

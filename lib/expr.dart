@@ -47,8 +47,7 @@ class Dict extends Expr {
 
 class NamedArgs extends Expr {
   final Map<String,Expr> entries;
-  final bool isNamed;
-  NamedArgs(this.entries, this.isNamed, );
+  NamedArgs(this.entries, );
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitNamedArgsExpr(this);
 }

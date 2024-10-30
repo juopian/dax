@@ -31,8 +31,9 @@ class Expression extends Stmt {
 class Functional extends Stmt {
   final Token name;
   final List<Token> params;
+  final Map<Token,Object?> namedParams;
   final List<Stmt> body;
-  Functional(this.name, this.params, this.body, );
+  Functional(this.name, this.params, this.namedParams, this.body, );
   @override
   T accept<T>(Visitor<T> visitor) => visitor.visitFunctionalStmt(this);
 }
