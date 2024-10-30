@@ -12,7 +12,7 @@ class BostonCream extends Doughnut {
 }
 
 class NamedClass {
-  NamedClass(x, {y}) {
+  NamedClass(x, {y = "jessie"}) {
     this.x = x;
     this.y = y;
   }

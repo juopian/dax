@@ -8,10 +8,10 @@ fun add(x, y) {
   return x + y;
 }
 
-fun add1(x, {y}) {
+fun add1(x, {y=1}) {
   return x+y;
 }
 
 print text();
 print add(100, 200);
-print add1(100, y: 2);
+print add1(100);

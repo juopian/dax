@@ -158,8 +158,9 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
         function.superclass != null &&
         (function.superclass!.name == "StatefulWidget" ||
             function.superclass!.name == "StatelessWidget")) {
+      namedArguments[Symbol('_klass_')] = function;
       return (top.getAt(0, "Dax${function.superclass!.name}") as DaxCallable)
-          .call(this, arguments, {Symbol('klass'): function});
+          .call(this, arguments, namedArguments);
     }
     return function.call(this, arguments, namedArguments);
   }
