@@ -208,10 +208,10 @@ class Scanner {
       var currentFilePath = reader!.pathOrUrl;
       final currentDirectory = Uri.parse(currentFilePath).resolve(filePath);
       reader!.path = currentDirectory.toString();
-      if (loadedFiles.contains(filePath)) {
+      if (loadedFiles.contains(currentDirectory.path)) {
         return;
       }
-      loadedFiles.add(filePath);
+      loadedFiles.add(currentDirectory.path);
       Scanner scanner = Scanner('', reader: reader, loadedFiles: loadedFiles);
       List<Token> tks = await scanner.scanTokens(isBase: false);
       tokens.addAll(tks);
