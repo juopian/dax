@@ -339,7 +339,7 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
     }
     var i = resolveLocal(expr, expr.keyword);
     if (expr.keyword.lexeme == 'this') {
-      print('this $expr found in $i');
+      // print('this $expr found in $i');
     }
     return;
   }

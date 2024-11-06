@@ -180,6 +180,9 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     if (object is List) {
       return object[evaluate(expr.key) as int];
     }
+    if (object is String) {
+      return object[evaluate(expr.key) as int];
+    }
     if (object is Map) {
       return object[evaluate(expr.key) as String];
     }
