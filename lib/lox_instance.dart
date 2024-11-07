@@ -23,6 +23,10 @@ class LoxInstance {
     fields[name.lexeme] = value;
   }
 
+  void setField(String name, Object? value) {
+    fields[name] = value;
+  }
+
   @override
   String toString() {
     return klass.name + " instance";
