@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'error.dart';
 import 'expr.dart';
 import 'stmt.dart';

@@ -16,6 +16,7 @@ class Scanner {
 
   final Map<String, TokenType> keywords = {
     "and": TokenType.AND,
+    "&&": TokenType.AND,
     "class": TokenType.CLASS,
     "else": TokenType.ELSE,
     "false": TokenType.FALSE,
@@ -24,6 +25,7 @@ class Scanner {
     "if": TokenType.IF,
     "null": TokenType.NIL,
     "or": TokenType.OR,
+    "||": TokenType.OR,
     "print": TokenType.PRINT,
     "return": TokenType.RETURN,
     "super": TokenType.SUPER,
@@ -310,7 +312,7 @@ class Scanner {
             c.codeUnitAt(0) <= 'z'.codeUnitAt(0)) ||
         (c.codeUnitAt(0) >= 'A'.codeUnitAt(0) &&
             c.codeUnitAt(0) <= 'Z'.codeUnitAt(0)) ||
-        c == '_';
+        c == '_'|| c == '&' || c == '|';
   }
 
   bool isAlphaNumeric(String c) {
