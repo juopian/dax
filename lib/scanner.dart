@@ -184,6 +184,7 @@ class Scanner {
         previous.type == TokenType.PRINT;
   }
 
+
   Future<void> identifier() async {
     while (isAlphaNumeric(peek())) {
       advance();
@@ -207,8 +208,8 @@ class Scanner {
 
       advance(); // pass double quote
       advance(); // pass semicolon
-      var currentFilePath = reader!.pathOrUrl;
-      final currentDirectory = Uri.parse(currentFilePath).resolve(filePath);
+      var oldFilePath = reader!.pathOrUrl;
+      final currentDirectory = Uri.parse(oldFilePath).resolve(filePath);
       reader!.path = currentDirectory.toString();
       if (loadedFiles.contains(currentDirectory.path)) {
         return;
@@ -216,6 +217,7 @@ class Scanner {
       loadedFiles.add(currentDirectory.path);
       Scanner scanner = Scanner('', reader: reader, loadedFiles: loadedFiles);
       List<Token> tks = await scanner.scanTokens(isBase: false);
+      reader!.path = oldFilePath;
       tokens.addAll(tks);
       return;
     }
