@@ -114,17 +114,6 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
     return;
   }
 
-  // @override
-  // void visitForEachStmt(Stmt.ForEach stmt) {
-  //   resolveExpr(stmt.iterable);
-  //   if (stmt.lambda is Stmt.Functional) {
-  //     resolveFunction(stmt.lambda as Stmt.Functional, FunctionType.FUNCTION);
-  //   } else {
-  //     resolveExpr(stmt.lambda as Expr.Expr);
-  //   }
-  //   return;
-  // }
-
   @override
   void visitFunctionalStmt(Stmt.Functional stmt) {
     declare(stmt.name);
@@ -192,8 +181,8 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
     if (!scopes.isEmpty && scopes.peek()[expr.name.lexeme] == false) {
       error1(expr.name, 'Can not read local variable in its own initializer.');
     }
-    var i = resolveLocal(expr, expr.name);
-     //urn;
+    resolveLocal(expr, expr.name);
+    return;
   }
 
   @override
@@ -251,7 +240,7 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
     if (expr.lambda is Stmt.Functional) {
       resolveFunction(expr.lambda as Stmt.Functional, FunctionType.FUNCTION);
     } else {
-      resolveExpr(expr.lambda as Expr.Expr);
+      resolveExpr(expr.lambda);
     }
     return;
   }
@@ -262,7 +251,7 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
     if (expr.then is Stmt.Functional) {
       resolveFunction(expr.then as Stmt.Functional, FunctionType.FUNCTION);
     } else {
-      resolveExpr(expr.then as Expr.Expr);
+      resolveExpr(expr.then);
     }
     return;
   }
@@ -337,10 +326,7 @@ class Resolver implements Expr.Visitor<void>, Stmt.Visitor<void> {
       error1(expr.keyword, 'Can not use \'this\' outside of a class.');
       return;
     }
-    var i = resolveLocal(expr, expr.keyword);
-    if (expr.keyword.lexeme == 'this') {
-      // print('this $expr found in $i');
-    }
+    resolveLocal(expr, expr.keyword);
     return;
   }
 

@@ -50,17 +50,6 @@ class Parser {
     }
   }
 
-  // Stmt importDeclaration() {
-  //   Token name = consume(TokenType.STRING, "Expect import name.");
-  //   consume(TokenType.SEMICOLON, "Expect ';' after import name.");
-  //   String filePath = name.lexeme;
-  //   print(filePath);
-  //   String fileContent = File(filePath).readAsStringSync();
-  //   List<Token> tokens = Lexer(fileContent).scanTokens();
-  //   Parser parser = Parser(tokens);
-  //   return Import(name);
-  // }
-
   Stmt classDeclaration() {
     Token name = consume(TokenType.IDENTIFIER, "Expect class name.");
 
@@ -130,8 +119,6 @@ class Parser {
     return Var(name, initializer);
   }
 
-  // Stmt classDeclaration() {
-
   Stmt statement() {
     if (match([TokenType.FOR])) return forStatement();
     if (match([TokenType.IF])) return ifStatement();
@@ -139,7 +126,6 @@ class Parser {
     if (match([TokenType.RETURN])) return returnStatement();
     if (match([TokenType.WHILE])) return whileStatement();
     if (match([TokenType.LEFT_BRACE])) return Block(block());
-    // if (matchforEach()) return foreachStatement();
     return expressionStatement();
   }
 
@@ -236,17 +222,6 @@ class Parser {
     return statements;
   }
 
-  // Stmt foreachStatement() {
-  //   Expr callee = arrayOrMap();
-  //   consume(TokenType.DOT, "Expect '.' before 'foreach'.");
-  //   Token name = consume(TokenType.FOREACH, "Expect 'foreach'.");
-  //   consume(TokenType.LEFT_PAREN, "Expect '(' after 'map'.");
-  //   Expr expr = expression();
-  //   consume(TokenType.RIGHT_PAREN, "Expect ')' after parameters.");
-  //   consume(TokenType.SEMICOLON, "Expect ';' after expression.");
-  //   return ForEach(callee, name, expr);
-  // }
-
   Stmt expressionStatement() {
     Expr expr = expression();
     consume(TokenType.SEMICOLON, "Expect ';' after expression.");
@@ -255,11 +230,9 @@ class Parser {
 
   Expr expression() {
     return assignment();
-    // return equality();
   }
 
   Expr assignment() {
-    // Expr expr = equality();
     Expr expr = conditional();
     if (match([TokenType.EQUAL])) {
       Token equals = previous();
@@ -281,13 +254,6 @@ class Parser {
     Expr expr = or();
     Expr? thenExpr;
     Expr? elseExpr;
-    // while (match([TokenType.QUESTION, TokenType.COLON])) {
-    //   if (previous().type == TokenType.QUESTION) {
-    //     thenExpr = or();
-    //   } else if (previous().type == TokenType.COLON) {
-    //     elseExpr = or();
-    //   }
-    // }
     if (match([TokenType.QUESTION])) {
       thenExpr = conditional();
       consume(TokenType.COLON, "Expected ':' after true branch.");
@@ -368,7 +334,6 @@ class Parser {
       Expr right = unary();
       return Unary(operator, right);
     }
-    // return call();
     return wait();
   }
 
@@ -436,15 +401,12 @@ class Parser {
         if (arguments.length >= 255) {
           error(peek(), "Can't have more than 255 arguments.");
         }
-        // 检测是否名称参数
         if (peekNext().type == TokenType.COLON) {
           Token name =
               consume(TokenType.IDENTIFIER, "Expect argument name before :.");
-          // Expr key = term();
           consume(TokenType.COLON, "Expect : after map key.");
           Expr expr = expression();
           arguments.add(NamedArgs({name.lexeme: expr}));
-          // arguments.add(Dict({key: expr}));
         } else {
           arguments.add(expression());
         }
@@ -472,11 +434,9 @@ class Parser {
       if (!check(TokenType.RIGHT_BRACE)) {
         do {
           if (check(TokenType.RIGHT_BRACE)) break;
-          // Token key = consume(TokenType.STRING, 'Expect key.');
           Expr key = term();
           consume(TokenType.COLON, "Expect ':' after dictionary key.");
           entries[key] = expression();
-          // entries['${key.literal}'] = expression();
         } while (match([TokenType.COMMA]));
       }
       consume(TokenType.RIGHT_BRACE, "Expect '}' after array elements.");

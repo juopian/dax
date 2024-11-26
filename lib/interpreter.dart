@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'environment.dart';
 import 'error.dart';
 import 'expr.dart' as Expr;
@@ -437,7 +435,7 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
       throw RuntimeError(expr.name, "Unknown property ${expr.name.lexeme}.");
     }
     if (object is LoxInstance) {
-      return object.get(expr.name); // get方法绑定了实例
+      return object.get(expr.name); 
     }
     if (object is LoxGetCallable) {
       return object.get(expr.name);
@@ -550,21 +548,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
         }
         return null;
     }
-    // if (objects is List<Object?>) {
-    //   List<Object?> results = [];
-    //   for (var i in objects) {
-    //     var result = mapFun.call(this, [i], {});
-    //     results.add(result);
-    //   }
-    //   return results;
-    // } else if (objects is Iterable) {
-    //   List<Object?> results = [];
-    //   for (var i in objects) {
-    //     var result = mapFun.call(this, [i], {});
-    //     results.add(result);
-    //   }
-    //   return results;
-    // }
     throw RuntimeError(expr.name, "Only Array have mapping.");
   }
 
@@ -613,7 +596,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
         return -(right as num);
     }
 
-    // Unreachable
     return null;
   }
 
@@ -625,7 +607,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
 
   @override
   Object? visitVariableExpr(Expr.Variable expr) {
-    // return environment.get(expr.name);
     return lookUpVariable(expr.name, expr);
   }
 
@@ -669,7 +650,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   @override
   Object? visitAssignExpr(Expr.Assign expr) {
     Object? value = evaluate(expr.value);
-    // environment.assign(expr.name, value);
     int? distance = locals[expr];
     if (distance != null) {
       environment.assignAt(distance, expr.name, value);
@@ -683,36 +663,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
   Object? evaluate(Expr.Expr expr) {
     return expr.accept(this);
   }
-
-  // @override
-  // void visitForEachStmt(Stmt.ForEach stmt) {
-  //   Stmt.Functional mp;
-  //   var func = evaluate(stmt.lambda);
-  //   if (func is! LoxFunction) {
-  //     throw RuntimeError(
-  //         stmt.name, "Only func can be used as forEach function");
-  //   } else {
-  //     mp = func.declaration;
-  //   }
-  //   LoxFunction iterableFun = LoxFunction(mp, environment, false);
-  //   Object? object = evaluate(stmt.iterable);
-  //   if (object is Iterable) {
-  //     for (var i in object) {
-  //       iterableFun.call(this, [i], {});
-  //     }
-  //   } else if (object is Map) {
-  //     object.forEach((k, v) {
-  //       iterableFun.call(this, [k, v], {});
-  //     });
-  //   } else if (object is List) {
-  //     for (var i in object) {
-  //       iterableFun.call(this, [i], {});
-  //     }
-  //   } else {
-  //     throw RuntimeError(
-  //         stmt.name, "Only Iterable or List or Map have forEach.");
-  //   }
-  // }
 
   @override
   void visitIfStmt(Stmt.If stmt) {
@@ -743,7 +693,6 @@ class Interpreter implements Expr.Visitor<Object?>, Stmt.Visitor<void> {
     if (stmt.initializer != null) {
       value = evaluate(stmt.initializer!);
     }
-    // 如果初始化用到了自身，很明显environment 找不到这个值
     environment.define(stmt.name.lexeme, value);
     return;
   }

@@ -31,15 +31,3 @@ class Stack<T> {
   int get length => _stack.length;
 }
 
-// void main() {
-//   var stack = Stack<int>();
-//   stack.push(1);
-//   stack.push(2);
-//   stack.push(3);
-
-//   print(stack.pop()); // 输出: 3
-//   print(stack.peek()); // 输出: 2
-//   print(stack.pop()); // 输出: 2
-//   print(stack.isEmpty); // 输出: false
-//   print(stack.size); // 输出: 1
-// }
