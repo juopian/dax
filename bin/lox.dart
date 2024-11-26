@@ -11,6 +11,7 @@ import 'ast_printer.dart';
 
 late Interpreter interpreter;
 bool showTokens = false;
+bool showAst = false;
 void main(List<String> arguments) async {
   interpreter = Interpreter(); // 如果不引用不会执行构造函数
   exitCode = 0;
@@ -119,7 +120,9 @@ Future<void> run(String source, {String sourceFile = ''}) async {
   try {
     List<Stmt> statements = parser.parse();
     for (Stmt stmt in statements) {
-      print("ast:" + AstPrinter().printStmt(stmt));
+      if (showAst) {
+        print("ast:" + AstPrinter().printStmt(stmt));
+      }
     }
     Resolver resolver = Resolver(interpreter);
     resolver.resolve(statements);

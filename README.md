@@ -1,131 +1,121 @@
-这是一个基于AST语法树的解析器，名字暂时叫dax，运行以下语句进入控制台体验语法特性：
+This is a interpreter based on AST syntax tree writed by dart language. It is a full-featured script language which named Dax. It can run Dax like language code. To experience the syntax features, run then following command in your terminal:
 `dart run bin/lox.dart`
 
+You can get result like this:
+![localimage](./static/snapshot1.png)
 
-也可以指定某个文件作为解析内容：
+You can also specify a file as input, like this:
 `dart run bin/lox.dart demo/fun.dax`
+![localiamge](./static/snapshot2.png)
 
-### 1.基本数据类型：
 
-* 整数
+### 1.Basic Data Types：
+
+* Interger 
 ```
 var i = 1; 
 ```
-* 浮点
+* Float
 ```
 var d = 1.0;
 ```
-* 布尔
+* Boolean
 ```
-var b = true; 
+var t = true; 
+var f = false;
 ```
-* 字符串
+* String
 ```
-var s = "this is string";  // 采用双引号
-var s1 = 'this is string'; // 采用单引号
+var s1 = "this is string enclosed by double quotes";  
+var s2 = 'this is string enclosed by single quotes'; 
+var s3 = '
+this is 
+multiline 
+string which has three lines.
+';
+var s4 = "this is formated string, ${1+1} is the result of 1 + 1";
 ```
-* 数组
+* List 
 ```
 var arr = [1,2,3];
-var arr1 = [1, if(2>1) 2 ,3];
+var arrIf = [1, if(2 > 1) 2 ,3]; // it returns [1, 2, 3]
 var arrDict = [{"x": 1}, {"x": 2}];
 ```
-* 字典
+* Map 
 ```
 var dict = {"x": 1};
+print dict["x"];
+var compoDict = {"x": 1, "y": {"z": 2}};
 ```
-* 空
+* NULL
 ```
-var n = null;  // 空
+var n;
+if (n == null) print "n is null"; 
 ```
-### 2.基本表达式
-* 赋值运算符
+### 2. Expressions
+* Assignment 
 ```
 var x = 1;
 x = 2;
 ```
-* and/or 运算符
+* And/OR 
 ```
-var x = 2>1 and 2<3;
+var x = 2 > 1 and 2 < 3;
+var x = 2 > 1 && 2 < 3; // it is also ok
+var x = 2 > 1 or 2 < 3;
+var x = 2 > 1 || 2 < 3; // it is also ok
 ```
 
-* 三目运算符
+* Ternary Operator
 ```
 var x = 2 > 1 ? 2 : 3;
+var x = 2 > 1 ? 3 > 2 ? 2 : 3 : 4; // it returns 2
 ```
 
-* 比较运算符
+* Comparison 
 ```
-var x = 2>1;
-```
-
-* 算术运算符
-```
-var x = 1+2;
-var y = 1*2 + 3/6;
+var x = 2 > 1;
 ```
 
-* 单目运算符
+* Arithmetic
+```
+var x = 1 + 2;
+var y = 1 * 2 + 3 / 6;
+```
+
+* Logical
 ```
 var x = -1;
 var b = !true;
 ```
 
-* map 运算符
+* Parentheses
 ```
-var arr = [1,2,3];
-var arr1 = arr.map((i) {return i*i});
-```
-
-* then 运算符
-```
-http.get(url).then(...)
+var x = (1 + 2 )* ( 3 - 4 );
 ```
 
-* . 运算符
+* Anonymous Function
 ```
-var dict = {"x": 1};
-var x = dict.x;
-```
-
-* 下标运算符
-```
-var arr = [1,2,3];
-var x = arr[1];
-var dict = {"y":1};
-var y = dict["y"];
-```
-
-* 括号表达式
-```
-var x = (1+2)*3;
-```
-
-* 匿名表达式
-```
-var arr = [1,2,3];
 var x = (i){ return i*2; };
-var y = arr.map(x);
-print x(2);
+var y = [1, 2, 3].map(x); // it returns [2, 4, 6]
 ```
 
-* 字符串解析
+* Interpolation
 ```
-var s = "1+2 = ${1+2}";
-print s; // 输出 "1+2 = 3"
+var s = "1+2 = ${1+2}"; // it returns 1+2 = 3
 ```
 
-### 3.基本语句
-* if-else 语句
+### 3. Statements
+* If-Else
 ```
-if (2>1) {
-	print "2>1";
+if (2 > 1) {
+	print "2 is greater than 1";
 } else {
-	print "2<=1";
+	print "2 is not greater than 1";
 }
 ```
 
-* while 循环语句
+* While Loop 
 ```
 var i = 0;
 while (i<10) {
@@ -133,46 +123,39 @@ while (i<10) {
 	i = i+1;
 }
 ```
-* for 循环语句
+* For Loop
 ```
 for (var i = 0; i< 10 ; i=i+1){
 	print i;
 }
 ```
 
-* forEach 语句
-```
-var arr = [1,2,3];
-arr.forEach((i) {
-	print i;
-});
-```
-
-* return 语句
+* Return
 ```
 fun add(x, y) {
 	return x+y;
 }
 ```
 
-* 块级语句 
+* Block
 ```
 {
 	var x = 1;
 	var y = 2;
-	print x+y;
+	print x + y;
 }
 ```
 
-### 4. 函数
+### 4. Function
 ```
-fun sayHello(name) {
-	print "Hello, My name is ${name}"
+fun sayHello(name, {age = 20}) {
+	print "Hello, My name is ${name}, age is ${age}"
 }
 sayHello("Tom");
+sayHello("Jerry", age: 25)
 ```
 
-### 5. 类定义
+### 5. Class 
 ```
 class Person {
 	sayHello() {
