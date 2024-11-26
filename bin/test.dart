@@ -1,5 +1,4 @@
 import  'dart:io';
-import 'package:collection/collection.dart';
 
 void main(List<String> args) {
   List arr = [
@@ -16,8 +15,6 @@ void main(List<String> args) {
   print(Uri.parse('http://www.google.com/dir/dir2/file').resolve('file2'));
   print(Uri.parse('http://www.google.com/dir/dir2/file').resolve('../file2'));
   print(Uri.parse('http://www.google.com/dir/dir2/file').resolve('../file2').path);
-  var equals = const ListEquality();
-  print(equals.equals([1,2,3,4,5], [1,2,3,4,5]));
   print([1,2,3,4,[1,2]].toString() == [1,2,3,4,[1,2]].toString());
   var a = {'a': 1, 'b': 2, 'c': (){}};
   var b = {'a': 1, 'b': 2, 'c': (){}};
@@ -27,5 +24,4 @@ void main(List<String> args) {
   print(a.values.toString());
   print(b.values.toString());
   print(b.values.toString() == a.values.toString());
-  print(equals.equals(a.values.toList(), b.values.toList()));
 }

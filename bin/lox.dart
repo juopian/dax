@@ -13,7 +13,7 @@ late Interpreter interpreter;
 bool showTokens = false;
 bool showAst = false;
 void main(List<String> arguments) async {
-  interpreter = Interpreter(); // 如果不引用不会执行构造函数
+  interpreter = Interpreter(); 
   exitCode = 0;
   if (arguments.length > 1) {
     print('Usage: dlox [script].\n');
@@ -26,8 +26,6 @@ void main(List<String> arguments) async {
 }
 
 void runFile(String path) {
-  // read file from path
-  // var fileString = File(path).readAsStringSync();
   run('', sourceFile: path);
   if (hadError) {
     exitCode = 65;
@@ -63,7 +61,7 @@ void runPrompt() async {
         stdin.readByteSync();
         int arrowkey = stdin.readByteSync();
         if (arrowkey == 65) {
-          // up arrow
+          // uparrow
           if (historyIndex > 0) {
             historyIndex--;
             stdout.write('\x1B[2K\r> ${history[historyIndex]}');
@@ -71,7 +69,7 @@ void runPrompt() async {
             inputBuffer.write(history[historyIndex]);
           }
         } else if (arrowkey == 66) {
-          // down arrow
+          // downarrow
           if (historyIndex < history.length - 1) {
             historyIndex++;
             stdout.write('\x1B[2K\r> ${history[historyIndex]}');

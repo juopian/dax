@@ -1,7 +1,6 @@
 import 'lox_callable.dart';
 import "token_type.dart";
 import 'token.dart';
-// import 'interpreter.dart';
 import 'error.dart';
 
 class Scanner {
@@ -38,7 +37,7 @@ class Scanner {
     "extends": TokenType.EXTENDS,
   };
 
-  Scanner(this.source, {this.reader, required this.loadedFiles});
+  Scanner(this.source, {this.reader, this.loadedFiles = const []});
 
   Future<List<Token>> scanTokens({bool isBase = true}) async {
     if (reader != null) {
@@ -184,7 +183,6 @@ class Scanner {
         previous.type == TokenType.PRINT;
   }
 
-
   Future<void> identifier() async {
     while (isAlphaNumeric(peek())) {
       advance();
@@ -314,7 +312,9 @@ class Scanner {
             c.codeUnitAt(0) <= 'z'.codeUnitAt(0)) ||
         (c.codeUnitAt(0) >= 'A'.codeUnitAt(0) &&
             c.codeUnitAt(0) <= 'Z'.codeUnitAt(0)) ||
-        c == '_'|| c == '&' || c == '|';
+        c == '_' ||
+        c == '&' ||
+        c == '|';
   }
 
   bool isAlphaNumeric(String c) {
