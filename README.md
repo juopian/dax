@@ -1,11 +1,17 @@
 This is a interpreter based on AST syntax tree writed by dart language. It is a full-featured script language which named Dax. It can run Dax like language code. To experience the syntax features, run then following command in your terminal:
+
 `dart run bin/lox.dart`
 
 You can get result like this:
+
 ![localimage](./static/snapshot1.png)
 
 You can also specify a file as input, like this:
+
 `dart run bin/lox.dart demo/fun.dax`
+
+You can get result like this:
+
 ![localiamge](./static/snapshot2.png)
 
 
